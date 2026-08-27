@@ -32,11 +32,20 @@
 | `ts-dom` | TypeScript Meets the Browser | Foundation | 55 | narrowing | implemented |
 | `gauntlet-m1` | Checkpoint · Foundation Gauntlet (19 Q, pass ≥70%) | Foundation | 25 | all of Volume I | implemented |
 
-## Volumes II–XI (module-scoped; lessons authored per batch)
+## Volume II — Professional JavaScript (Builder level)
+
+| ID | Title | Level | Min | Prereqs | Status |
+|---|---|---|---|---|---|
+| `es-modules` | ES Modules: Files With Contracts | Builder | 50 | ts-dom | implemented |
+| `module-boundaries` | Boundaries: What a Module Owes the World | Builder | 55 | es-modules | implemented |
+| `circular-and-dynamic` | Circular Dependencies and the Lazy Escape | Builder | 50 | module-boundaries | implemented |
+| V2·M2 | Error Handling That Scales (2+ lessons scoped) | Builder | — | — | planned (next · B-10) |
+| V2·M3 | Tooling: Lint, Format, Build (scoped) | Builder | — | — | planned |
+
+## Volumes III–XI (module-scoped; lessons authored per batch)
 
 | Volume | Phase | Modules | Status |
 |---|---|---|---|
-| II — Professional JavaScript | Deep JavaScript | 3 (Modular JS, Error Handling, Tooling) | planned |
 | III — React | React Phase | 3 (Mental Models, State/Rendering, Effects/Data) | planned |
 | IV — Web Architecture | Web Architecture Phase | 3 (REST, AuthN/AuthZ, Caching/Security) | planned |
 | V — PostgreSQL | Database Phase | 3 (Modeling, SQL, Performance) | planned |

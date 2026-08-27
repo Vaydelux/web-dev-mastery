@@ -9,6 +9,7 @@ import { gitLessons as m4 } from "./lessons4";
 import { m5 } from "./lessons5";
 import { m6 } from "./lessons6";
 import { m7 } from "./lessons7";
+import { m8 } from "./lessons8";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -34,10 +35,7 @@ export const COURSE: VolumeDef[] = [
     mod("v1m7", 7, "TypeScript Foundations", "Types as documentation the compiler enforces.", "implemented", m7),
   ]),
   v(2, "II", "Professional JavaScript", "Deep JavaScript", "Modular code, honest error handling, and the tooling that keeps large codebases healthy.", [
-    mod("v2m1", 1, "Modular JavaScript", "Files with contracts: imports, exports, and boundaries.", "planned", [
-      p("es-modules", "ES Modules: Files With Contracts", 2, 1, 1, 50, "Named vs default exports, hoisted imports, and tree-shaking.", ["ts-dom"], ["modules"]),
-      p("module-boundaries", "Boundaries: What a Module Owes the World", 2, 1, 2, 55, "Small public surfaces and one-way dependency layers.", ["es-modules"], ["architecture"]),
-    ]),
+    mod("v2m1", 1, "Modular JavaScript", "Files with contracts: imports, exports, boundaries, and the knots between them.", "implemented", m8),
     mod("v2m2", 2, "Error Handling That Scales", "Fail loudly in development, gracefully in production.", "planned", [
       p("error-taxonomy", "Bugs vs Expected Failures", 2, 2, 1, 45, "An error taxonomy and throwing with intent.", ["module-boundaries"], ["errors"]),
       p("result-pattern", "The Result Pattern", 2, 2, 2, 50, "Modeling expected failures without exceptions.", ["error-taxonomy"], ["result"]),
@@ -311,6 +309,25 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "Parse → validate → trust", back: "The boundary pattern for foreign data: unknown in, runtime checks, typed out. Never a bare cast.", lesson: "ts-dom" },
     ],
   },
+  {
+    id: "modular-js", title: "Modular JavaScript", blurb: "Volume II · M1 — contracts, boundaries, cycles, and lazy loading.",
+    cards: [
+      { front: "Module", back: "A file with its own scope; exports form its public contract, internals stay private.", lesson: "es-modules" },
+      { front: "Named vs default export", back: "Named: exact name, statically checked, many per file. Default: one per file, any local name — renames surface only at runtime.", lesson: "es-modules" },
+      { front: "Static analysis", back: "Imports/exports are known without running the file — what enables tree-shaking and safe renames.", lesson: "es-modules" },
+      { front: "Tree-shaking", back: "Bundler dead-code elimination. Needs named exports + no top-level side effects; import * and side effects cancel it.", lesson: "es-modules" },
+      { front: "ESM vs CJS", back: "Write ESM, read CJS, never mix in one file. ESM: hoisted, live bindings, analyzable. CJS: runtime, copies.", lesson: "es-modules" },
+      { front: "Verb-shaped API", back: "Export operations (createTask), not raw data (tasks) — callers state intentions, internals stay yours.", lesson: "module-boundaries" },
+      { front: "One-way arrows", back: "Imports point one direction (state → dom → app). An uphill import means a missing wiring layer, not a shortcut.", lesson: "module-boundaries" },
+      { front: "Module state = singleton", back: "Module-level bindings are one shared instance per process. On servers: per-worker and mortal — not a source of truth.", lesson: "module-boundaries" },
+      { front: "Module identity", back: "The RESOLVED specifier, not the file. Two spellings of one file = two modules = two copies of its state.", lesson: "module-boundaries" },
+      { front: "Circular dependency", back: "a↔b imports; the later-entered module reads the earlier one mid-initialization (undefined or TDZ).", lesson: "circular-and-dynamic" },
+      { front: "Why functions survive cycles", back: "Declarations hoist (usable early); const bindings sit in the TDZ — reading them before init throws.", lesson: "circular-and-dynamic" },
+      { front: "The three cycle fixes", back: "Invert (pass it in), Extract (shared third module), Defer (await import). Invert/extract fix design; defer fixes timing.", lesson: "circular-and-dynamic" },
+      { front: "Dynamic import()", back: "A promise for the module namespace — code splitting at coarse seams. Over-splitting causes request waterfalls.", lesson: "circular-and-dynamic" },
+      { front: "Top-level await", back: "Awaiting in a module body stalls EVERY importer until resolved — contagious. Prefer awaiting inside functions.", lesson: "circular-and-dynamic" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -349,6 +366,13 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Narrowing", def: "The compiler eliminating union members as it reads your guards.", domain: "TypeScript", lesson: "narrowing" },
   { term: "Discriminated union", def: "Union members sharing a literal-typed discriminant — impossible states unrepresentable.", domain: "TypeScript", lesson: "narrowing" },
   { term: "Declaration file", def: "A .d.ts file describing a library's types without runtime code.", domain: "TypeScript", lesson: "ts-dom" },
+  { term: "Named export", def: "export const/fn/class — imported by exact name, statically checked at build time.", domain: "Modules", lesson: "es-modules" },
+  { term: "Tree-shaking", def: "Bundler dead-code elimination made possible by statically analyzable exports.", domain: "Modules", lesson: "es-modules" },
+  { term: "Public surface", def: "A module's exported symbols — the contract it promises to support.", domain: "Modules", lesson: "module-boundaries" },
+  { term: "Barrel", def: "An index file re-exporting a boundary's public API; keep it narrow.", domain: "Modules", lesson: "module-boundaries" },
+  { term: "Circular dependency", def: "Two modules importing each other; one always reads the other mid-initialization.", domain: "Modules", lesson: "circular-and-dynamic" },
+  { term: "Code splitting", def: "Shipping code as separate chunks loaded on demand via dynamic import().", domain: "Modules", lesson: "circular-and-dynamic" },
+  { term: "Top-level await", def: "Awaiting in a module body; stalls every importer until resolved.", domain: "Modules", lesson: "circular-and-dynamic" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -362,6 +386,8 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "unreachable-control", symptom: "A menu/button works with the mouse but keyboard users can't reach or activate it.", layer: "HTML semantics / focus", causes: ["Interactivity built on a <div> or <span> with onclick", "No href on an <a>, so it isn't focusable", "outline removed with no visible focus style"], diagnose: ["Press Tab: does a focus ring ever land on the control?", "DevTools → Accessibility pane: what role/name does the node have?"], fix: "Use a native <button> (or <a href>) — role, keyboard activation, and focus come free. Style :focus-visible visibly.", prevent: "Every clickable non-link is a <button>; run a 60-second keyboard pass per screen.", related: "a11y-tree-keyboard" },
   { id: "css-not-applying", symptom: "A CSS rule silently doesn't apply; DevTools shows it struck through.", layer: "CSS specificity", causes: ["A higher-specificity rule targets the same property", "The selector doesn't actually match the element", "An ancestor sets a non-inheriting property you expected to flow down"], diagnose: ["Open DevTools Styles: find the struck-through rule and the one above it", "Compute both specificity tuples", "Check the Computed tab for where the value actually comes from"], fix: "Fix the rank, not the volume: lower the winner's specificity or raise yours honestly. Never reach for !important first.", prevent: "Keep selectors 1–2 classes deep; avoid IDs for styling; use @layer for framework overrides.", related: "css-mental-model" },
   { id: "possibly-undefined", symptom: "tsc reports 'Object is possibly undefined' and the urge is to sprinkle ! everywhere.", layer: "TypeScript null-safety", causes: ["A value genuinely can be undefined and the code doesn't handle it", "An API is typed too loosely (returns T | undefined when it needn't)"], diagnose: ["Read the signature: where can undefined come from?", "Ask the design question: missing means 'use a default' or 'this can't run'?"], fix: "Handle the fork: a default (?? fallback), an early return, or tighten the contract so absence is impossible. Avoid ! and casts.", prevent: "Treat ! like a loaded weapon needing a justifying comment; prefer narrowing and defaults.", related: "ts-strict-basics" },
+  { id: "import-outside-module", symptom: "Uncaught SyntaxError: Cannot use import statement outside a module.", layer: "Module context", causes: ["The entry <script> lacks type=\"module\"", "A Node .js file uses ESM syntax but package.json has no \"type\": \"module\""], diagnose: ["Browser: inspect the <script> tag loading the file", "Node: check package.json for the type field and the file's extension"], fix: "Declare the module context: <script type=\"module\"> in HTML, or \"type\": \"module\" in package.json (or a .mjs extension).", prevent: "Declare the module system on day one of every project; don't mix ESM and CJS in one file.", related: "es-modules" },
+  { id: "circular-undefined", symptom: "An exported value is defined in its file but undefined (or TDZ) when imported elsewhere; works when the file is tested alone.", layer: "Module graph / evaluation order", causes: ["Two modules import each other; one reads the other mid-initialization", "A const arrow/class binding is read before its initializer ran (TDZ)"], diagnose: ["Trace the import graph for a↔b cycles (madge --circular helps)", "Add a top-level log to each module; the one that runs second sees the uninitialized binding"], fix: "Break the cycle: invert (pass the dependency in), extract (shared third module), or defer (await import). Prefer invert/extract.", prevent: "Keep dependency arrows one-way; draw the arrow before adding an import that points at a module already pointing at you.", related: "circular-and-dynamic" },
 ];
 
 /* ————— batch queue ————— */
@@ -376,8 +402,10 @@ export const BATCHES: Batch[] = [
   { id: "B-06", title: "Semantic HTML & Accessibility", scope: "V1·M5", status: "shipped", summary: "HTML as meaning (landmarks/outline/forms/images), the accessibility tree + keyboard flows, ARIA used sparingly — 18 quiz questions, 3 debugging labs, plus the Accessibility Checklist reference." },
   { id: "B-07", title: "CSS & Responsive Design", scope: "V1·M6", status: "shipped", summary: "The cascade as a rulebook (specificity tuples, box model, @layer), flex/grid layout with the min-width:0 lab, and responsive thinking + design tokens — 15 quiz questions, 2 debugging labs." },
   { id: "B-08", title: "TypeScript Foundations", scope: "V1·M7", status: "shipped", summary: "Why types (bug archaeology), the strict vocabulary, narrowing + discriminated unions + the never-check, and TypeScript on the browser — 20 quiz questions, 3 debugging labs, 1 migration walkthrough." },
-  { id: "B-09", title: "Professional JavaScript", scope: "Volume II", status: "next", summary: "The runtime model: closures formalized, the event loop under load, and prototype chains — depth for people who will ship." },
-  { id: "B-10", title: "React", scope: "Volume III", status: "queued", summary: "Mental models, state & rendering, effects & data — the component era begins." },
-  { id: "B-11", title: "Web Architecture", scope: "Volume IV", status: "queued", summary: "REST, AuthN/AuthZ, caching & security — the browser/server boundary made rigorous." },
-  { id: "B-12", title: "PostgreSQL", scope: "Volume V", status: "queued", summary: "Modeling, SQL, and performance — relational data done properly." },
+  { id: "B-09", title: "Volume II · Modular JavaScript", scope: "V2·M1", status: "shipped", summary: "ES modules as contracts (named/default, hoisting, tree-shaking, CJS boundary), verb-shaped public surfaces & one-way arrows, module-level state as singletons, circular dependencies + dynamic import() — 18 quiz questions, 3 debugging labs. The Builder level opens." },
+  { id: "B-10", title: "Volume II · Error Handling That Scales", scope: "V2·M2", status: "next", summary: "Bugs vs expected failures, throwing with intent, custom error types & causes, the Result pattern, and unhandled-rejection discipline." },
+  { id: "B-11", title: "Volume II · Tooling: Lint, Format, Build", scope: "V2·M3", status: "queued", summary: "ESLint + Prettier as team contracts, the build pipeline, and CI that fails loudly — closing Volume II with a Builder Gauntlet." },
+  { id: "B-12", title: "React", scope: "Volume III", status: "queued", summary: "Mental models, state & rendering, effects & data — the component era begins." },
+  { id: "B-13", title: "Web Architecture", scope: "Volume IV", status: "queued", summary: "REST, AuthN/AuthZ, caching & security — the browser/server boundary made rigorous." },
+  { id: "B-14", title: "PostgreSQL", scope: "Volume V", status: "queued", summary: "Modeling, SQL, and performance — relational data done properly." },
 ];
