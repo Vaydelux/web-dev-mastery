@@ -12,6 +12,7 @@ import { m7 } from "./lessons7";
 import { m8 } from "./lessons8";
 import { m9 } from "./lessons9";
 import { m10 } from "./lessons10";
+import { m11 } from "./lessons11";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -41,10 +42,28 @@ export const COURSE: VolumeDef[] = [
     mod("v2m2", 2, "Error Handling That Scales", "Fail loudly in development, gracefully in production.", "implemented", m9),
     mod("v2m3", 3, "Tooling: Lint, Format, Build", "ESLint, Prettier, and bundlers as team agreements.", "implemented", m10),
   ]),
-  v(3, "III", "React", "React Phase", "Component thinking: state, rendering, effects discipline, architecture, testing, and performance.", [
-    mod("v3m1", 1, "React Mental Models", "UI as a function of state; JSX, props, and composition.", "planned", []),
-    mod("v3m2", 2, "State & the Rendering Model", "The state-classification doctrine and how React renders.", "planned", []),
-    mod("v3m3", 3, "Effects Discipline & Data", "Effects done right, and the bridge to server state.", "planned", []),
+  v(3, "III", "React", "React Phase", "Component thinking: state, rendering, effects discipline, forms, architecture, testing, and performance.", [
+    mod("v3m1", 1, "React Mental Models", "UI as a function of state; JSX, props, composition, and the render cycle.", "implemented", m11),
+    mod("v3m2", 2, "State & the Rendering Model", "The state-classification doctrine and how React decides what to re-render.", "planned", [
+      p("state-classification", "The Eight Kinds of State (and Where Each Lives)", 3, 2, 1, 55, "Local, derived, form, URL, server, session, global, persistent — classified before any library.", ["state-render-model"], ["state management"]),
+      p("how-react-renders", "How React Renders: Render, Commit, and What Triggers Each", 3, 2, 2, 50, "The two-phase model, parent re-renders, and memo used only when measured.", ["state-classification"], ["rendering"]),
+    ]),
+    mod("v3m3", 3, "Effects Discipline & Data", "Effects as synchronization, dependency honesty, and the bridge to server state.", "planned", [
+      p("effects-discipline", "Effects Are Synchronization, Not Lifecycle", 3, 3, 1, 60, "What effects are for, the dependency array as a contract, and cleanup.", ["how-react-renders"], ["useEffect"]),
+      p("data-fetching", "Server State: Fetching, Caching, and the Loading/Error Fork", 3, 3, 2, 55, "Why server state isn't client state, race conditions, and the fetch-once discipline.", ["effects-discipline"], ["server state"]),
+    ]),
+    mod("v3m4", 4, "Forms & Controlled Inputs", "Forms as controlled state: validation, UX, and accessible error surfacing.", "planned", [
+      p("controlled-forms", "Controlled Inputs and the Single Source of Truth", 3, 4, 1, 50, "Value + onChange ownership, form events, and why uncontrolled has a place.", ["data-fetching"], ["forms"]),
+      p("forms-validation-ux", "Validation UX: Errors That Help, Not Accuse", 3, 4, 2, 50, "Validate on blur/submit, accessible error wiring, and the submit pipeline.", ["controlled-forms"], ["validation"]),
+    ]),
+    mod("v3m5", 5, "Component Architecture & Testing", "Patterns that scale: composition, colocation, context boundaries, and meaningful tests.", "planned", [
+      p("component-patterns", "Component Patterns: Colocation, Context, and When to Reach for Each", 3, 5, 1, 55, "Prop drilling vs context, compound components, and the colocation principle.", ["forms-validation-ux"], ["architecture"]),
+      p("testing-react", "Testing React: Behavior, Not Implementation", 3, 5, 2, 55, "Testing Library queries, user events, and the tests that earn their keep.", ["component-patterns"], ["testing"]),
+    ]),
+    mod("v3m6", 6, "Performance & Profiling", "Measure first: renders, memo, lists, and the profiling loop that closes Volume III.", "planned", [
+      p("rendering-performance", "Rendering Performance: Memo, Lists, and the Cost of a Render", 3, 6, 1, 55, "When re-renders are fine, when they aren't, and memo as a last resort.", ["testing-react"], ["performance"]),
+      p("profiling-production", "Profiling: From Feeling Slow to Proving Why", 3, 6, 2, 50, "The DevTools profiler loop, virtualization, and the measurement habit.", ["rendering-performance"], ["profiling"]),
+    ]),
   ]),
   v(4, "IV", "Web Architecture", "Web Architecture Phase", "HTTP in production depth: REST, cookies/sessions, authN vs authZ, caching, and security fundamentals.", [
     mod("v4m1", 1, "REST & API Design", "Resources, verbs, and contracts that age well.", "planned", []),
@@ -510,7 +529,12 @@ export const BATCHES: Batch[] = [
   { id: "B-09", title: "Volume II · Modular JavaScript", scope: "V2·M1", status: "shipped", summary: "ES modules as contracts (named/default, hoisting, tree-shaking, CJS boundary), verb-shaped public surfaces & one-way arrows, module-level state as singletons, circular dependencies + dynamic import() — 18 quiz questions, 3 debugging labs. The Builder level opens." },
   { id: "B-10", title: "Volume II · Error Handling That Scales", scope: "V2·M2", status: "shipped", summary: "The bug-vs-failure taxonomy, throwing with intent (cause chains, domain classes), stack traces read bottom-up, the Result pattern as typed failures with exhaustiveness, and async escape hatches (orphaned promises, allSettled, global alarms, retry policy) — 18 quiz questions, 3 debugging labs." },
   { id: "B-11", title: "Volume II · Tooling: Lint, Format, Build", scope: "V2·M3", status: "shipped", summary: "ESLint + Prettier as team agreements (the whitespace-merge-conflict lab), the build pipeline (transform→bundle→minify, tree-shaking, source maps, the 'works in dev, breaks in prod' lab), and CI as a chain of exit codes (the 'passes locally, fails in CI' lab) — 18 quiz questions, 3 debugging labs. Closes Volume II with the 13-question Builder Gauntlet." },
-  { id: "B-12", title: "React", scope: "Volume III", status: "next", summary: "Mental models, state & rendering, effects & data — the component era begins. The Full-Stack level opens after the React gauntlet." },
-  { id: "B-13", title: "Web Architecture", scope: "Volume IV", status: "queued", summary: "REST, AuthN/AuthZ, caching & security — the browser/server boundary made rigorous." },
-  { id: "B-14", title: "PostgreSQL", scope: "Volume V", status: "queued", summary: "Modeling, SQL, and performance — relational data done properly." },
+  { id: "B-12", title: "React Mental Models", scope: "V3·M1", status: "shipped", summary: "Why React exists (Then-vs-Now from the Volume I manual-DOM app, reconciliation traced), JSX's three embedding rules + keys-as-identity with the wrong-checkbox debugging lab, and state/events/render cycle with the undercount + silent-no-op labs — 16 quiz questions, 2 debugging labs. Volume III opens with 6 scoped modules (Mental Models, State & Rendering, Effects & Data, Forms, Architecture & Testing, Performance)." },
+  { id: "B-13", title: "React · State & the Rendering Model", scope: "V3·M2", status: "next", summary: "The state-classification doctrine (local/derived/form/URL/server/session/global/persistent) and the two-phase render-commit model with memo discipline." },
+  { id: "B-14", title: "React · Effects Discipline & Data", scope: "V3·M3", status: "queued", summary: "Effects as synchronization with dependency honesty, cleanup, and server-state fetching with race-condition discipline." },
+  { id: "B-15", title: "React · Forms & Controlled Inputs", scope: "V3·M4", status: "queued", summary: "Controlled components, the single-source-of-truth form, and accessible validation UX." },
+  { id: "B-16", title: "React · Component Architecture & Testing", scope: "V3·M5", status: "queued", summary: "Colocation, context boundaries, compound components, and Testing Library behavior tests." },
+  { id: "B-17", title: "React · Performance, Profiling & Gauntlet", scope: "V3·M6", status: "queued", summary: "Rendering performance, the profiler loop, virtualization — closing Volume III with a React Gauntlet." },
+  { id: "B-18", title: "Web Architecture", scope: "Volume IV", status: "queued", summary: "REST, AuthN/AuthZ, caching & security — the browser/server boundary made rigorous." },
+  { id: "B-19", title: "PostgreSQL", scope: "Volume V", status: "queued", summary: "Modeling, SQL, and performance — relational data done properly." },
 ];
