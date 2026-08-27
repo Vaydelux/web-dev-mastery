@@ -201,7 +201,7 @@ export const m3: Lesson[] = [
         "Leaked secret → rotate first, scrub history second.",
       ]},
       { t: "checkpoint", text: "Classify these from memory: PORT, STRIPE_SECRET_KEY, NEXT_PUBLIC_API_URL, DATABASE_URL — secret or config, and which one still needs care and why." },
-      { t: "bridge", text: "Your workstation is now professional: shell, runtime, toolchain, and safe configuration. That's the whole Foundation toolbox — time to prove it under pressure in the Module 1 checkpoint battle.", next: "battle-gauntlet-m1" },
+      { t: "bridge", text: "Your workstation is professional: shell, runtime, toolchain, and safe configuration. The last tool in the Foundation toolbox is the one that keeps every change recoverable and shareable. Next: Git — three rooms and a snapshot graph.", next: "git-mental-model" },
     ],
   },
 ];

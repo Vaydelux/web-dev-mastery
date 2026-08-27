@@ -21,8 +21,13 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 ### Batch 03 — Volume I · Terminal, Node & Environment (M3) — implemented
 - `terminal-mental-model`, `node-and-runtime`, `env-variables-secrets` (9 quiz questions, 3 debugging labs).
 
+### Batch 05 — Volume I · Git & GitHub Workflow (M4) — implemented
+- `git-mental-model`, `git-daily-workflow`, `branches-prs-review`, `git-recovery` (20 quiz questions, 4 debugging labs).
+- Foundation Gauntlet expanded to span Modules 1–4 (12 questions); repositioned after M4.
+- Added `git-workflow` flashcard set (12 cards), 5 Git glossary terms, 1 merge-conflict troubleshooting entry.
+
 ## Known gaps (classified)
-- `needs-practice` — Git muscle-memory exercises (V1·M4). **Next batch.**
+- ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
 - `needs-assessment` — per-module quizzes exist; a combined Volumes I–III phase assessment is pending.
 - `candidate-new-module` — Browser storage landscape before authenticated progress (V2/V3).
 - `misordered` — CORS deserves a dedicated debugging lesson in V4, not only a callout.
@@ -33,10 +38,10 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Flashcard scheduling is user-driven (Leitner-lite); consider SM-2 as sets grow.
 
 ## Recommended next batch
-**Batch 05 — Git & GitHub Workflow (V1·M4):** author `git-mental-model`, `git-daily-workflow`,
-`branches-prs-review`, `git-recovery` (manifest ids); add hands-on commit/branch/PR drills and recovery
-scenarios; a Git Reference surface. Full scope on the generation queue. Then STOP and request review
-(bounded generation contract).
+**Batch 06 — Semantic HTML & Accessibility (V1·M5):** author `html-as-structure`, `a11y-tree-keyboard`,
+`aria-when-needed` (manifest ids); landmarks/headings/forms/images semantics, the accessibility tree and
+keyboard flows, ARIA used sparingly; ship the Accessibility Checklist reference surface. Full scope on the
+generation queue. Then STOP and request review (bounded generation contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?

@@ -16,9 +16,12 @@
 | `terminal-mental-model` | The Terminal Is a Conversation | Foundation | 40 | js-functions-scope | implemented |
 | `node-and-runtime` | Node.js and the pnpm Toolchain | Foundation | 45 | terminal-mental-model | implemented |
 | `env-variables-secrets` | Environment Variables and Secrets | Foundation | 35 | node-and-runtime | implemented |
-| `gauntlet-m1` | Checkpoint · Foundation Gauntlet (9 Q, pass ≥70%) | Foundation | 20 | modules 1–3 | implemented |
-| V1·M4 | Git & GitHub Workflow (4 lessons scoped) | Foundation | — | — | planned (next · B-05) |
-| V1·M5 | Semantic HTML & Accessibility (3 lessons scoped) | Foundation | — | — | planned |
+| `git-mental-model` | Git Is Three Rooms and a Snapshot Graph | Foundation | 45 | env-variables-secrets | implemented |
+| `git-daily-workflow` | The Daily Loop: Status, Diff, Stage, Commit | Foundation | 45 | git-mental-model | implemented |
+| `branches-prs-review` | Branches, Pull Requests, and Review Culture | Foundation | 50 | git-daily-workflow | implemented |
+| `git-recovery` | The Undo Ladder: Restore, Amend, Revert, Reset, Reflog | Foundation | 55 | branches-prs-review | implemented |
+| `gauntlet-m1` | Checkpoint · Foundation Gauntlet (12 Q, pass ≥70%) | Foundation | 20 | modules 1–4 | implemented |
+| V1·M5 | Semantic HTML & Accessibility (3 lessons scoped) | Foundation | — | — | planned (next · B-06) |
 | V1·M6 | CSS & Responsive Design (3 lessons scoped) | Foundation | — | — | planned |
 | V1·M7 | TypeScript Foundations (4 lessons scoped) | Foundation | — | — | planned |
 
@@ -41,9 +44,9 @@
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | `http-web-basics` (5), `render-pipeline` (4), `js-values` (6), `terminal-tooling` (5) — 4 sets / 20 cards | implemented |
-| Glossary | 15 terms, domain-tagged, lesson-linked | implemented |
-| Troubleshooting index | 5 symptom-based entries | implemented |
+| Flashcard sets | `http-web-basics` (5), `render-pipeline` (4), `js-values` (6), `terminal-tooling` (5), `git-workflow` (12) — 5 sets / 32 cards | implemented |
+| Glossary | 20 terms, domain-tagged, lesson-linked | implemented |
+| Troubleshooting index | 6 symptom-based entries | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |
 

@@ -5,6 +5,7 @@ import type {
 import { m1 } from "./lessons1";
 import { m2 } from "./lessons2";
 import { m3 } from "./lessons3";
+import { gitLessons as m4 } from "./lessons4";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -24,12 +25,7 @@ export const COURSE: VolumeDef[] = [
     mod("v1m1", 1, "How the Web Actually Works", "From a URL to pixels: DNS, TCP, TLS, HTTP, and the render pipeline.", "implemented", m1),
     mod("v1m2", 2, "JavaScript Foundations", "Values, types, scope, functions — taught for mastery, not copy-paste.", "implemented", m2),
     mod("v1m3", 3, "Terminal, Node & Environment Setup", "Shell fluency, the Node runtime, pnpm, and environment variables done safely.", "implemented", m3),
-    mod("v1m4", 4, "Git & GitHub Workflow", "Snapshots, branches, pull requests, and recovery — the undo ladder.", "planned", [
-      p("git-mental-model", "Git Is Three Rooms and a Snapshot Graph", 1, 4, 1, 45, "Working tree, staging, and history as a content-addressed snapshot graph.", ["env-variables-secrets"], ["git", "commit", "branch"]),
-      p("git-daily-workflow", "The Daily Loop: Status, Diff, Stage, Commit", 1, 4, 2, 45, "The reflex: status → diff → add → commit → log, with selective staging.", ["git-mental-model"], ["staging", "diff"]),
-      p("branches-prs-review", "Branches, Pull Requests, and Review Culture", 1, 4, 3, 50, "Branches as labels, merges, conflicts, and the full PR review cycle.", ["git-daily-workflow"], ["branch", "pull request"]),
-      p("git-recovery", "The Undo Ladder: Restore, Amend, Revert, Reset, Reflog", 1, 4, 4, 55, "Every way to undo, and the 'pushed or not?' decision rule.", ["branches-prs-review"], ["reset", "reflog"]),
-    ]),
+    mod("v1m4", 4, "Git & GitHub Workflow", "Snapshots, branches, pull requests, and recovery — the undo ladder.", "implemented", m4),
     mod("v1m5", 5, "Semantic HTML & Accessibility", "HTML as meaning, the accessibility tree, and ARIA used sparingly.", "planned", [
       p("html-as-structure", "HTML Is Meaning: Structure Before Styling", 1, 5, 1, 45, "Landmarks, headings, forms, and images that carry real semantics.", ["git-recovery"], ["semantics", "landmarks"]),
       p("a11y-tree-keyboard", "The Accessibility Tree and the Keyboard-First Page", 1, 5, 2, 50, "Role/name/state, tab order, focus traps, and skip links.", ["html-as-structure"], ["a11y", "focus"]),
@@ -141,14 +137,14 @@ export const courseStats = () => {
 
 /* ————— boss battles ————— */
 export const BATTLE_REFS: BattleRef[] = [
-  { id: "gauntlet-m1", title: "Checkpoint · Foundation Gauntlet", volumeId: 1, afterModule: "v1m3", blurb: "A cumulative fight across the web, JavaScript, and your workstation — pass at 70%." },
+  { id: "gauntlet-m1", title: "Checkpoint · Foundation Gauntlet", volumeId: 1, afterModule: "v1m4", blurb: "A cumulative fight across the web, JavaScript, your workstation, and Git — pass at 70%." },
 ];
 
 export const BATTLES: BossBattle[] = [
   {
     id: "gauntlet-m1",
     title: "Foundation Gauntlet",
-    subtitle: "Modules 1–3 · pass ≥ 70%",
+    subtitle: "Modules 1–4 · pass ≥ 70%",
     passPct: 70,
     intro: [
       "This is not a memory test. Every question asks you to *reason* the way the lessons taught: trace a pipeline, predict an output, diagnose a failure, choose a fix.",
@@ -185,6 +181,15 @@ export const BATTLES: BossBattle[] = [
           { id: "b7", type: "single", prompt: "'command not found' usually means…", options: ["the program crashed", "the binary isn't on PATH", "no permission", "network down"], answer: [1], explain: "The shell scans PATH and found no matching executable." },
           { id: "b8", type: "single", prompt: "Which file makes installs reproducible and must be committed?", options: ["node_modules", "package.json alone", "the lockfile", "index.js"], answer: [2], explain: "The lockfile pins exact versions for the whole tree; node_modules is rebuildable." },
           { id: "b9", type: "single", prompt: "A secret was committed and pushed. First step?", options: ["delete the file", "rewrite history", "rotate the key", "add .gitignore"], answer: [2], explain: "Exposure already happened — rotate (revoke + reissue) first, then scrub history." },
+        ],
+      },
+      {
+        title: "The Workflow",
+        desc: "Snapshots, branches, and the undo ladder.",
+        questions: [
+          { id: "b10", type: "single", prompt: "After git add app.js, the staged content lives in…", options: ["the working tree", "the index (staging area)", "history", "GitHub"], answer: [1], explain: "git add copies the file's current content into the index; it only reaches history on commit." },
+          { id: "b11", type: "single", prompt: "A bad commit is already pushed and pulled by teammates. Undo it with…", options: ["git reset --hard + force-push", "git revert <commit>", "git commit --amend", "delete the repo"], answer: [1], explain: "Shared history is corrected additively: revert adds a new commit that inverts the bad one, keeping teammates' clones valid." },
+          { id: "b12", type: "boolean", prompt: "A Git branch is a full copy of the repository.", options: ["True", "False"], answer: [1], explain: "False — a branch is a cheap movable label pointing at a commit; nothing is copied when you create one." },
         ],
       },
     ],
@@ -234,6 +239,25 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "Leaked secret order", back: "1) ROTATE, 2) scrub history, 3) audit. Deleting the file first is the classic wrong order.", lesson: "env-variables-secrets" },
     ],
   },
+  {
+    id: "git-workflow",
+    title: "Git & GitHub",
+    blurb: "Three rooms, branches as labels, and the undo ladder — Module 4 drilled to reflex.",
+    cards: [
+      { front: "The three rooms", back: "Working tree (desk), staging/index (dock), history (archive). git add → index; git commit → history.", lesson: "git-mental-model" },
+      { front: "A commit", back: "A sealed, content-addressed snapshot with a parent pointer — a full picture, not a diff.", lesson: "git-mental-model" },
+      { front: "git status", back: "Your map: which room each change lives in. Read it before every commit.", lesson: "git-daily-workflow" },
+      { front: "diff vs diff --staged", back: "diff: working tree vs index. diff --staged: index vs last commit (what a commit will seal).", lesson: "git-daily-workflow" },
+      { front: "git add -p", back: "Interactive patch staging: stage individual hunks within one file, keeping commits focused.", lesson: "git-daily-workflow" },
+      { front: "A branch", back: "A cheap movable label pointing at a commit. Creating one copies nothing.", lesson: "branches-prs-review" },
+      { front: "Fast-forward vs three-way", back: "Fast-forward slides the label when there's no divergence; three-way makes a two-parent merge commit when both moved.", lesson: "branches-prs-review" },
+      { front: "Conflict markers", back: "<<<<<<< / ======= / >>>>>>> delimit overlapping edits Git can't auto-merge — you choose, then add + commit.", lesson: "branches-prs-review" },
+      { front: "Rebase golden rule", back: "Never rebase commits you've pushed and others may have built on. Rebase only your private, unshared work.", lesson: "branches-prs-review" },
+      { front: "Undo ladder", back: "restore → amend → revert → reset → reflog, safest first. Stop as soon as the problem is fixed.", lesson: "git-recovery" },
+      { front: "Pushed or not?", back: "Unpushed → amend/reset (rewrite) is fine. Pushed/shared → revert (add a correction), never rewrite.", lesson: "git-recovery" },
+      { front: "git reflog", back: "Local ledger of every HEAD position (~90 days). 'Lost' commits are usually just unreferenced and recoverable.", lesson: "git-recovery" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -254,6 +278,11 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "PATH", def: "The ordered list of directories the shell searches for executables.", domain: "Shell", lesson: "terminal-mental-model" },
   { term: "Lockfile", def: "Exact resolved versions for the whole dependency tree — committed for reproducibility.", domain: "Tooling", lesson: "node-and-runtime" },
   { term: "Secret", def: "A value that grants access — never committed, logged, or client-shipped.", domain: "Security", lesson: "env-variables-secrets" },
+  { term: "Staging (index)", def: "The proposed next snapshot; populated by git add, sealed by git commit.", domain: "Git", lesson: "git-mental-model" },
+  { term: "Commit", def: "A sealed, content-addressed snapshot with a parent pointer.", domain: "Git", lesson: "git-mental-model" },
+  { term: "Branch", def: "A movable label pointing at a commit; creating one copies nothing.", domain: "Git", lesson: "branches-prs-review" },
+  { term: "Rebase", def: "Replaying commits onto a new base; rewrites history — unshared work only.", domain: "Git", lesson: "branches-prs-review" },
+  { term: "Reflog", def: "Local ledger of every HEAD position; the recovery net for 'lost' commits.", domain: "Git", lesson: "git-recovery" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -263,6 +292,7 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "command-not-found", symptom: "'command not found' for a tool you know is installed.", layer: "Shell / PATH", causes: ["The binary's directory isn't on PATH", "The shell started before PATH was updated"], diagnose: ["echo $PATH — is the install directory listed?", "which <tool> — does it resolve?"], fix: "Add the directory to PATH and open a fresh terminal (or source your rc file).", prevent: "Know where your tools install; confirm resolution with which.", related: "terminal-mental-model" },
   { id: "works-on-my-machine", symptom: "Runs locally but crashes on a teammate's machine with a missing library export.", layer: "Dependencies / lockfile", causes: ["No committed lockfile — installs drifted to different versions", "A dependency installed but never added to package.json"], diagnose: ["Compare installed versions of the failing package on both machines.", "Fresh-clone test: install from the lockfile only and run."], fix: "Commit the lockfile; reinstall from it on both machines.", prevent: "Install with --frozen-lockfile in CI so drift fails loudly at build time.", related: "node-and-runtime" },
   { id: "committed-secret", symptom: "A .env with real keys was committed and pushed.", layer: "Secrets / Git history", causes: [".gitignore missing or added after the secret", "No pre-commit secret scanning"], diagnose: ["Confirm the secret is in history: git log -p -- .env", "Check the provider's usage logs for the exposed key."], fix: "ROTATE the key first (revoke + reissue), then scrub history and force-push, then audit.", prevent: ".gitignore on day zero, a pre-commit secret scanner, and .env.example for names.", related: "env-variables-secrets" },
+  { id: "merge-conflict", symptom: "git merge stops with 'CONFLICT (content)' and files full of <<<<<<< markers.", layer: "Git merge", causes: ["Two branches edited the same lines", "A long-lived branch diverging far from main"], diagnose: ["git status lists the conflicted files", "Open each file; markers delimit the two competing versions"], fix: "Edit out ALL markers keeping the correct combined result, then git add <file> and git commit to seal the merge.", prevent: "Merge main into your branch frequently so conflicts stay small and local.", related: "branches-prs-review" },
 ];
 
 /* ————— batch queue ————— */
@@ -272,9 +302,9 @@ export const BATCHES: Batch[] = [
   { id: "B-01", title: "Volume I · How the Web Actually Works", scope: "V1·M1", status: "shipped", summary: "URL→render journey, HTTP conversation rules, and the browser render pipeline — with DNS, Content-Type, and layout-thrashing debugging labs." },
   { id: "B-02", title: "Volume I · JavaScript Foundations", scope: "V1·M2", status: "shipped", summary: "Values & references, control flow & guard clauses, and functions/scope/closures — including the 3,3,3 mystery solved." },
   { id: "B-03", title: "Volume I · Terminal, Node & Environment", scope: "V1·M3", status: "shipped", summary: "The shell conversation, the Node runtime + pnpm toolchain, and environment variables/secrets done safely." },
-  { id: "B-04", title: "Foundation Gauntlet + review", scope: "V1 checkpoint", status: "shipped", summary: "The cumulative 9-question checkpoint battle across Modules 1–3, with remediation links." },
-  { id: "B-05", title: "Git & GitHub Workflow", scope: "V1·M4", status: "next", summary: "Git as a snapshot graph, the daily loop, branches/PRs, and the undo ladder (restore/amend/revert/reset/reflog)." },
-  { id: "B-06", title: "Semantic HTML & Accessibility", scope: "V1·M5", status: "queued", summary: "HTML as meaning, the accessibility tree and keyboard flows, ARIA used sparingly, plus the Accessibility Checklist." },
+  { id: "B-04", title: "Foundation Gauntlet + review", scope: "V1 checkpoint", status: "shipped", summary: "The cumulative 12-question checkpoint battle across Modules 1–4 (web, JavaScript, workstation, Git), with remediation links." },
+  { id: "B-05", title: "Git & GitHub Workflow", scope: "V1·M4", status: "shipped", summary: "Git as a snapshot graph, the daily loop with selective staging, branches/PRs/conflicts, and the undo ladder (restore/amend/revert/reset/reflog) — 20 quiz questions, 4 debugging labs." },
+  { id: "B-06", title: "Semantic HTML & Accessibility", scope: "V1·M5", status: "next", summary: "HTML as meaning, the accessibility tree and keyboard flows, ARIA used sparingly, plus the Accessibility Checklist." },
   { id: "B-07", title: "CSS & Responsive Design", scope: "V1·M6", status: "queued", summary: "The cascade referee, flex/grid, responsive thinking, and design tokens." },
   { id: "B-08", title: "TypeScript Foundations", scope: "V1·M7", status: "queued", summary: "Why types, the strict vocabulary, narrowing, and TypeScript on the DOM." },
 ];
