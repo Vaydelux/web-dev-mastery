@@ -664,6 +664,75 @@ export function TroubleshootingPage() {
   );
 }
 
+/* ============================ A11Y CHECKLIST ============================ */
+const A11Y_GROUPS: { title: string; icon: keyof typeof Icons; lesson: string; items: string[] }[] = [
+  { title: "Semantic structure", icon: "layers", lesson: "html-as-structure", items: ["Exactly one <h1>; heading levels never skip", "Landmarks present: header, nav, main, footer", "Navigation lives in <nav>, content in <main>", "Lists use <ul>/<ol>, tables reserved for data"] },
+  { title: "Forms & labels", icon: "book", lesson: "html-as-structure", items: ["Every input has an associated <label> (for/id or wrapping)", "No placeholder standing in for a label", "Related controls grouped with <fieldset>/<legend>", "Errors are described to the field (aria-describedby) and announced"] },
+  { title: "Keyboard & focus", icon: "zap", lesson: "a11y-tree-keyboard", items: ["Every interactive control reachable by Tab, in visual order", "Visible :focus-visible style — never outline:none without replacement", "No positive tabindex anywhere", "Modals trap focus and return it to the trigger on close"] },
+  { title: "Images & media", icon: "bulb", lesson: "html-as-structure", items: ["Informative images describe content; functional images describe the action", "Decorative images use empty alt=\"\" (attribute present)", "Video has captions; audio has a transcript"] },
+  { title: "Color, contrast & motion", icon: "gauge", lesson: "a11y-tree-keyboard", items: ["Body text ≥ 4.5:1 contrast in BOTH themes", "Color is never the only signal (icon/text pairs it)", "prefers-reduced-motion honored", "Layout survives 200% zoom without horizontal scroll"] },
+  { title: "Dynamic state & ARIA", icon: "a11y", lesson: "aria-when-needed", items: ["Native element used before any ARIA", "aria-expanded/pressed/current kept in sync by code", "Live regions: role=status (polite) vs role=alert (assertive), used correctly", "Icon-only controls have accessible names; decorative icons are aria-hidden"] },
+];
+
+const A11Y_KEY = "ztm.a11y-checks.v1";
+function loadA11y(): Set<string> {
+  try { return new Set(JSON.parse(localStorage.getItem(A11Y_KEY) ?? "[]") as string[]); } catch { return new Set(); }
+}
+
+export function A11yChecklistPage() {
+  const [checked, setChecked] = useState<Set<string>>(loadA11y);
+  useEffect(() => { try { localStorage.setItem(A11Y_KEY, JSON.stringify([...checked])); } catch { /* ignore */ } }, [checked]);
+  const total = A11Y_GROUPS.reduce((n, g) => n + g.items.length, 0);
+  const pct = total ? (checked.size / total) * 100 : 0;
+  const toggle = (id: string) => setChecked((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+  return (
+    <RefShell kicker="reference · ship it accessibly" title="Accessibility Checklist" sub="Run these before calling any page done — progress saves in your browser. Each group links to the lesson that teaches it, so this stays a teaching tool, not a guilt list.">
+      <div className="card-hard mb-8 flex flex-wrap items-center gap-5 p-5">
+        <ProgressRing pct={pct} size={64} stroke={5} />
+        <div className="min-w-0 flex-1">
+          <p className="font-display text-lg font-bold text-ink">{checked.size} of {total} checks verified</p>
+          <p className="text-[13px] leading-relaxed text-soft">{pct === 100 ? "Every check passes — genuinely shippable. Re-run after your next feature; accessibility regresses silently." : "Work top-down: structure, then forms, then keyboard, then the ARIA residue. Don't skip to ARIA."}</p>
+        </div>
+        <button onClick={() => setChecked(new Set())} disabled={checked.size === 0} className="inline-flex items-center gap-1.5 rounded-lg border border-line px-3.5 py-2 font-mono text-[11.5px] font-semibold text-soft transition-colors hover:border-err hover:text-err disabled:cursor-not-allowed disabled:opacity-40"><Icons.refresh size={13} /> Reset</button>
+      </div>
+      <div className="space-y-8">
+        {A11Y_GROUPS.map((g, gi) => {
+          const Ico = Icons[g.icon];
+          const gDone = g.items.filter((it) => checked.has(g.title + it)).length;
+          const full = gDone === g.items.length;
+          return (
+            <Reveal key={g.title} delay={Math.min(gi * 50, 200)}>
+              <section aria-label={g.title}>
+                <div className="mb-3 flex items-center gap-2.5">
+                  <span className={`flex h-8 w-8 items-center justify-center rounded-lg border border-acc/40 bg-accsoft text-accink`}><Ico size={15} /></span>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-display text-[16px] font-bold text-ink">{g.title}</h3>
+                  </div>
+                  <span className={`rounded-full border px-2.5 py-0.5 font-mono text-[11px] font-semibold ${full ? "border-acc/40 bg-accsoft text-accink" : "border-line text-faint"}`}>{gDone}/{g.items.length}</span>
+                  <Link to={`/lesson/${g.lesson}`} className="link-acc inline-flex items-center gap-1 font-mono text-[11px] font-semibold"><Icons.book size={12} /> lesson</Link>
+                </div>
+                <div className="card divide-y divide-line overflow-hidden">
+                  {g.items.map((it) => {
+                    const id = g.title + it;
+                    const on = checked.has(id);
+                    return (
+                      <button key={id} onClick={() => toggle(id)} aria-pressed={on} className={`group flex w-full items-start gap-3 px-4 py-3 text-left transition-colors ${on ? "bg-accsoft/30" : "hover:bg-accsoft/20"}`}>
+                        <span className={`mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded border transition-all ${on ? "border-acc bg-acc text-paper" : "border-linestrong/50"}`}>{on && <Icons.check size={11} />}</span>
+                        <span className={`text-[13.5px] leading-snug ${on ? "text-faint line-through decoration-acc/50" : "text-ink"}`}>{it}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            </Reveal>
+          );
+        })}
+      </div>
+      <p className="card mt-8 border-l-4 border-acc p-4 text-[13.5px] leading-relaxed text-soft"><strong className="font-semibold text-ink">The ordering is the pedagogy:</strong> semantic HTML first, keyboard & focus second, ARIA last. Most "accessibility work" is over by the time you reach the ARIA section — if yours isn't, revisit <Link to="/lesson/html-as-structure" className="link-acc font-semibold">HTML Is Meaning</Link>.</p>
+    </RefShell>
+  );
+}
+
 const COLOR_TOKENS = [
   { group: "Surfaces", tokens: [["--paper", "page background"], ["--surface", "cards & panels"], ["--raise", "raised elements"], ["--code-bg", "code blocks"]] },
   { group: "Ink", tokens: [["--ink", "primary text"], ["--ink-soft", "body copy"], ["--ink-faint", "meta & captions"], ["--line", "hairline borders"]] },

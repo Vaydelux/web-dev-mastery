@@ -6,6 +6,9 @@ import { m1 } from "./lessons1";
 import { m2 } from "./lessons2";
 import { m3 } from "./lessons3";
 import { gitLessons as m4 } from "./lessons4";
+import { m5 } from "./lessons5";
+import { m6 } from "./lessons6";
+import { m7 } from "./lessons7";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -26,22 +29,9 @@ export const COURSE: VolumeDef[] = [
     mod("v1m2", 2, "JavaScript Foundations", "Values, types, scope, functions — taught for mastery, not copy-paste.", "implemented", m2),
     mod("v1m3", 3, "Terminal, Node & Environment Setup", "Shell fluency, the Node runtime, pnpm, and environment variables done safely.", "implemented", m3),
     mod("v1m4", 4, "Git & GitHub Workflow", "Snapshots, branches, pull requests, and recovery — the undo ladder.", "implemented", m4),
-    mod("v1m5", 5, "Semantic HTML & Accessibility", "HTML as meaning, the accessibility tree, and ARIA used sparingly.", "planned", [
-      p("html-as-structure", "HTML Is Meaning: Structure Before Styling", 1, 5, 1, 45, "Landmarks, headings, forms, and images that carry real semantics.", ["git-recovery"], ["semantics", "landmarks"]),
-      p("a11y-tree-keyboard", "The Accessibility Tree and the Keyboard-First Page", 1, 5, 2, 50, "Role/name/state, tab order, focus traps, and skip links.", ["html-as-structure"], ["a11y", "focus"]),
-      p("aria-when-needed", "ARIA: Don't, Unless You Must", 1, 5, 3, 40, "The five rules of ARIA, live regions, and native-first thinking.", ["a11y-tree-keyboard"], ["aria"]),
-    ]),
-    mod("v1m6", 6, "CSS & Responsive Design", "The cascade referee, flex/grid layout, responsive thinking, and design tokens.", "planned", [
-      p("css-mental-model", "The Cascade Is a Rulebook, Not a Battle", 1, 6, 1, 50, "Specificity tuples, the box model, and @layer.", ["aria-when-needed"], ["cascade", "specificity"]),
-      p("layout-flex-grid", "Two Layout Systems, One Decision", 1, 6, 2, 60, "Flexbox vs grid, the axis model, and auto-fit.", ["css-mental-model"], ["flexbox", "grid"]),
-      p("responsive-and-tokens", "Responsive Is a Mindset, Tokens Are the Contract", 1, 6, 3, 55, "Mobile-first, clamp(), container queries, and semantic tokens.", ["layout-flex-grid"], ["tokens", "responsive"]),
-    ]),
-    mod("v1m7", 7, "TypeScript Foundations", "Types as documentation the compiler enforces.", "planned", [
-      p("why-types", "Why Types Change How You Code", 1, 7, 1, 40, "Bug archaeology and strict as the only default.", ["responsive-and-tokens"], ["typescript"]),
-      p("ts-strict-basics", "Strict Mode: The Everyday Vocabulary", 1, 7, 2, 55, "Interfaces, unions, literals, and what strict enforces.", ["why-types"], ["union", "interface"]),
-      p("narrowing", "Narrowing: The Compiler Reads Your If-Statements", 1, 7, 3, 50, "Guards, discriminated unions, and the never-check.", ["ts-strict-basics"], ["narrowing"]),
-      p("ts-dom", "TypeScript Meets the Browser", 1, 7, 4, 55, "lib.dom, event inference, and parse → validate → trust.", ["narrowing"], ["dom", "unknown"]),
-    ]),
+    mod("v1m5", 5, "Semantic HTML & Accessibility", "HTML as meaning, the accessibility tree, and ARIA used sparingly.", "implemented", m5),
+    mod("v1m6", 6, "CSS & Responsive Design", "The cascade referee, flex/grid layout, responsive thinking, and design tokens.", "implemented", m6),
+    mod("v1m7", 7, "TypeScript Foundations", "Types as documentation the compiler enforces.", "implemented", m7),
   ]),
   v(2, "II", "Professional JavaScript", "Deep JavaScript", "Modular code, honest error handling, and the tooling that keeps large codebases healthy.", [
     mod("v2m1", 1, "Modular JavaScript", "Files with contracts: imports, exports, and boundaries.", "planned", [
@@ -137,14 +127,14 @@ export const courseStats = () => {
 
 /* ————— boss battles ————— */
 export const BATTLE_REFS: BattleRef[] = [
-  { id: "gauntlet-m1", title: "Checkpoint · Foundation Gauntlet", volumeId: 1, afterModule: "v1m4", blurb: "A cumulative fight across the web, JavaScript, your workstation, and Git — pass at 70%." },
+  { id: "gauntlet-m1", title: "Checkpoint · Foundation Gauntlet", volumeId: 1, afterModule: "v1m7", blurb: "A cumulative fight across all of Volume I — the web, JavaScript, your workstation, Git, semantics, CSS, and TypeScript — pass at 70%." },
 ];
 
 export const BATTLES: BossBattle[] = [
   {
     id: "gauntlet-m1",
     title: "Foundation Gauntlet",
-    subtitle: "Modules 1–4 · pass ≥ 70%",
+    subtitle: "All of Volume I · pass ≥ 70%",
     passPct: 70,
     intro: [
       "This is not a memory test. Every question asks you to *reason* the way the lessons taught: trace a pipeline, predict an output, diagnose a failure, choose a fix.",
@@ -190,6 +180,25 @@ export const BATTLES: BossBattle[] = [
           { id: "b10", type: "single", prompt: "After git add app.js, the staged content lives in…", options: ["the working tree", "the index (staging area)", "history", "GitHub"], answer: [1], explain: "git add copies the file's current content into the index; it only reaches history on commit." },
           { id: "b11", type: "single", prompt: "A bad commit is already pushed and pulled by teammates. Undo it with…", options: ["git reset --hard + force-push", "git revert <commit>", "git commit --amend", "delete the repo"], answer: [1], explain: "Shared history is corrected additively: revert adds a new commit that inverts the bad one, keeping teammates' clones valid." },
           { id: "b12", type: "boolean", prompt: "A Git branch is a full copy of the repository.", options: ["True", "False"], answer: [1], explain: "False — a branch is a cheap movable label pointing at a commit; nothing is copied when you create one." },
+        ],
+      },
+      {
+        title: "Structure & Access",
+        desc: "Semantics, the accessibility tree, and honest ARIA.",
+        questions: [
+          { id: "b13", type: "single", prompt: "A screen reader announcing every element as 'group' means…", options: ["the font is wrong", "the page is div soup — no semantics, so every node's role is generic", "the screen reader is outdated", "CSS is blocking it"], answer: [1], explain: "Divs compute to 'generic' roles. Landmarks, headings, and real controls give AT something to navigate." },
+          { id: "b14", type: "single", prompt: "First resort for an interactive control?", options: ["role=\"button\" on a div", "a native <button>", "tabindex=\"0\" + keydown", "aria-label"], answer: [1], explain: "Native elements ship role + keyboard + announcements as a maintained bundle. ARIA and tabindex rebuild it by hand, badly." },
+          { id: "b15", type: "boolean", prompt: "aria-expanded updates itself when the panel's CSS class changes.", options: ["True", "False"], answer: [1], explain: "False — ARIA attributes are inert strings; your code must set them in the same update as the visual state, or AT reads a lie." },
+        ],
+      },
+      {
+        title: "Types & Styles",
+        desc: "The cascade, layout, and the compiler that reads your code.",
+        questions: [
+          { id: "b16", type: "single", prompt: "Which specificity wins: #main p or .card .card .title?", options: ["#main p — an ID outranks any number of classes", ".card .card .title — three classes beat one ID", "tie, source order decides", "both are invalid"], answer: [0], explain: "#main p is (0,1,0,1); the classes are (0,0,3,0). The ID column is more significant — compared left to right like a version number." },
+          { id: "b17", type: "single", prompt: "A flex item with a long URL won't shrink. Fix?", options: ["flex-shrink: 1", "min-width: 0", "remove the gap", "use float instead"], answer: [1], explain: "Flex items default to min-width:auto (never smaller than content). min-width:0 restores leftover-space sizing." },
+          { id: "b18", type: "boolean", prompt: "TypeScript adds runtime overhead because annotations ship to the browser.", options: ["True", "False"], answer: [1], explain: "False — all types are erased at compile time; the output is ordinary JavaScript. The value is entirely pre-runtime." },
+          { id: "b19", type: "single", prompt: "The professional response to untrusted JSON at a boundary?", options: ["cast it: as ApiResponse", "type it with an interface and move on", "const x: unknown, then validate before use", "const x: any for flexibility"], answer: [2], explain: "Interfaces promise about YOUR code, not the world. unknown keeps the compiler engaged; validate at the boundary (parse → validate → trust)." },
         ],
       },
     ],
@@ -258,6 +267,50 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "git reflog", back: "Local ledger of every HEAD position (~90 days). 'Lost' commits are usually just unreferenced and recoverable.", lesson: "git-recovery" },
     ],
   },
+  {
+    id: "semantic-a11y", title: "Semantic HTML & Accessibility", blurb: "Module 5 — meaning, the accessibility tree, and ARIA discipline.",
+    cards: [
+      { front: "Landmark", back: "A signed region (header/nav/main/aside/footer) AT users can jump between instead of walking every element.", lesson: "html-as-structure" },
+      { front: "Heading outline", back: "The h1–h6 tree encoding document depth. One h1, levels never skip — size is CSS's job.", lesson: "html-as-structure" },
+      { front: "Alt by role", back: "Informative: describe the content. Functional: describe the action. Decorative: empty alt (never omit the attribute).", lesson: "html-as-structure" },
+      { front: "Accessibility tree", back: "The browser's translation of the document into role/name/state nodes — the ONLY thing screen readers read.", lesson: "a11y-tree-keyboard" },
+      { front: "Accessible name order", back: "Content first → associated label/alt → aria-label last resort. Fixes the claim, not the label.", lesson: "a11y-tree-keyboard" },
+      { front: "Tab order rule", back: "DOM order IS tab order. Positive tabindex is banned; -1 is for script-managed focus.", lesson: "a11y-tree-keyboard" },
+      { front: "Focus trap", back: "Modal: Tab cycles inside, Esc closes, and focus RETURNS to the trigger on close.", lesson: "a11y-tree-keyboard" },
+      { front: "ARIA rule #1", back: "No ARIA beats bad ARIA. Native first; every attribute is a promise your code must keep.", lesson: "aria-when-needed" },
+      { front: "Live regions", back: "role=status (polite) for confirmations; role=alert (assertive) for blocking errors. Region must exist before injection.", lesson: "aria-when-needed" },
+      { front: "The ARIA lie", back: "ARIA changes what AT is TOLD, never behavior. An un-updated aria-expanded announces a permanent falsehood.", lesson: "aria-when-needed" },
+    ],
+  },
+  {
+    id: "css-layout", title: "CSS & Responsive Design", blurb: "Module 6 — the cascade referee, layout systems, and tokens.",
+    cards: [
+      { front: "The cascade's 3 tiebreakers", back: "Origin & importance → specificity → source order. Every conflict has exactly one deterministic winner.", lesson: "css-mental-model" },
+      { front: "Specificity tuple", back: "(inline, IDs, classes, elements) compared left to right like a version number — a higher column always wins.", lesson: "css-mental-model" },
+      { front: "border-box", back: "width counts content + padding + border. Set it globally; it makes width mean what it looks like.", lesson: "css-mental-model" },
+      { front: "Flex vs grid", back: "One axis, content decides → flexbox (content-out). Two dimensions, structure decides → grid (layout-in).", lesson: "layout-flex-grid" },
+      { front: "min-width: 0", back: "Flex items default to min-width:auto (never smaller than content). Set 0 so leftover-space sizing works.", lesson: "layout-flex-grid" },
+      { front: "fr unit", back: "A share of LEFTOVER grid track space. 1fr 2fr splits the remainder 1:2, never the total.", lesson: "layout-flex-grid" },
+      { front: "clamp()", back: "clamp(min, preferred, max) — fluid scaling between hard rem rails, no media queries.", lesson: "responsive-and-tokens" },
+      { front: "Container query", back: "Responsive rules driven by an element's CONTAINER, not the viewport — the component adapts to its home.", lesson: "responsive-and-tokens" },
+      { front: "Design token", back: "A named design decision (--acc, --space-4) defined once, referenced everywhere. Themes are remappings, not rewrites.", lesson: "responsive-and-tokens" },
+    ],
+  },
+  {
+    id: "ts-foundations", title: "TypeScript Foundations", blurb: "Module 7 — types as enforced documentation.",
+    cards: [
+      { front: "What a type IS", back: "A compile-time claim about a value; checked statically, erased at runtime. Zero runtime cost.", lesson: "why-types" },
+      { front: "Strict mode", back: "The tsconfig umbrella enabling the checks (strictNullChecks, noImplicitAny, …) that keep types honest. The only sane default.", lesson: "why-types" },
+      { front: "Union of literals", back: "status: \"idle\" | \"loading\" | \"error\" — a closed menu the compiler enforces. The end of string soup.", lesson: "ts-strict-basics" },
+      { front: "optional vs nullable", back: "? means the key may be absent. | null means present-but-possibly-null. Model deliberately.", lesson: "ts-strict-basics" },
+      { front: "any vs unknown", back: "any switches the compiler off (and spreads). unknown is 'I don't know' — you must inspect before using.", lesson: "ts-strict-basics" },
+      { front: "Narrowing", back: "The compiler eliminating union members as it reads your guards, per branch. You earn precision by proving.", lesson: "narrowing" },
+      { front: "Discriminated union", back: "Union members sharing a literal-typed discriminant (kind) — impossible states become unrepresentable.", lesson: "narrowing" },
+      { front: "The never-check", back: "const _x: never = s in a switch default proves exhaustiveness; a missed case fails the build, naming it.", lesson: "narrowing" },
+      { front: "lib.dom.d.ts", back: "The browser API declarations bundled with TypeScript — why document is typed with nothing installed.", lesson: "ts-dom" },
+      { front: "Parse → validate → trust", back: "The boundary pattern for foreign data: unknown in, runtime checks, typed out. Never a bare cast.", lesson: "ts-dom" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -283,6 +336,19 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Branch", def: "A movable label pointing at a commit; creating one copies nothing.", domain: "Git", lesson: "branches-prs-review" },
   { term: "Rebase", def: "Replaying commits onto a new base; rewrites history — unshared work only.", domain: "Git", lesson: "branches-prs-review" },
   { term: "Reflog", def: "Local ledger of every HEAD position; the recovery net for 'lost' commits.", domain: "Git", lesson: "git-recovery" },
+  { term: "Landmark", def: "A semantic region (header/nav/main/aside/footer) AT users can navigate between directly.", domain: "Accessibility", lesson: "html-as-structure" },
+  { term: "Accessibility tree", def: "The browser's translation of the document into role/name/state nodes that assistive tech reads.", domain: "Accessibility", lesson: "a11y-tree-keyboard" },
+  { term: "Accessible name", def: "What a control is announced as — computed from content, then label/alt, then aria-label.", domain: "Accessibility", lesson: "a11y-tree-keyboard" },
+  { term: "Focus trap", def: "Confining keyboard focus inside an open overlay and returning it to the trigger on close.", domain: "Accessibility", lesson: "a11y-tree-keyboard" },
+  { term: "ARIA", def: "Attributes adding role/name/state to the accessibility tree — annotations, never behavior.", domain: "Accessibility", lesson: "aria-when-needed" },
+  { term: "Specificity", def: "A selector's rank as a tuple (inline, IDs, classes, elements), compared left to right.", domain: "CSS", lesson: "css-mental-model" },
+  { term: "Box model", def: "content + padding + border + margin; border-box counts the first three in width.", domain: "CSS", lesson: "css-mental-model" },
+  { term: "fr unit", def: "A share of leftover grid track space.", domain: "CSS", lesson: "layout-flex-grid" },
+  { term: "Design token", def: "A named design decision defined once and referenced everywhere.", domain: "CSS", lesson: "responsive-and-tokens" },
+  { term: "Union type", def: "A type listing exact possibilities (A | B); the compiler enforces exhaustiveness.", domain: "TypeScript", lesson: "ts-strict-basics" },
+  { term: "Narrowing", def: "The compiler eliminating union members as it reads your guards.", domain: "TypeScript", lesson: "narrowing" },
+  { term: "Discriminated union", def: "Union members sharing a literal-typed discriminant — impossible states unrepresentable.", domain: "TypeScript", lesson: "narrowing" },
+  { term: "Declaration file", def: "A .d.ts file describing a library's types without runtime code.", domain: "TypeScript", lesson: "ts-dom" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -293,6 +359,9 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "works-on-my-machine", symptom: "Runs locally but crashes on a teammate's machine with a missing library export.", layer: "Dependencies / lockfile", causes: ["No committed lockfile — installs drifted to different versions", "A dependency installed but never added to package.json"], diagnose: ["Compare installed versions of the failing package on both machines.", "Fresh-clone test: install from the lockfile only and run."], fix: "Commit the lockfile; reinstall from it on both machines.", prevent: "Install with --frozen-lockfile in CI so drift fails loudly at build time.", related: "node-and-runtime" },
   { id: "committed-secret", symptom: "A .env with real keys was committed and pushed.", layer: "Secrets / Git history", causes: [".gitignore missing or added after the secret", "No pre-commit secret scanning"], diagnose: ["Confirm the secret is in history: git log -p -- .env", "Check the provider's usage logs for the exposed key."], fix: "ROTATE the key first (revoke + reissue), then scrub history and force-push, then audit.", prevent: ".gitignore on day zero, a pre-commit secret scanner, and .env.example for names.", related: "env-variables-secrets" },
   { id: "merge-conflict", symptom: "git merge stops with 'CONFLICT (content)' and files full of <<<<<<< markers.", layer: "Git merge", causes: ["Two branches edited the same lines", "A long-lived branch diverging far from main"], diagnose: ["git status lists the conflicted files", "Open each file; markers delimit the two competing versions"], fix: "Edit out ALL markers keeping the correct combined result, then git add <file> and git commit to seal the merge.", prevent: "Merge main into your branch frequently so conflicts stay small and local.", related: "branches-prs-review" },
+  { id: "unreachable-control", symptom: "A menu/button works with the mouse but keyboard users can't reach or activate it.", layer: "HTML semantics / focus", causes: ["Interactivity built on a <div> or <span> with onclick", "No href on an <a>, so it isn't focusable", "outline removed with no visible focus style"], diagnose: ["Press Tab: does a focus ring ever land on the control?", "DevTools → Accessibility pane: what role/name does the node have?"], fix: "Use a native <button> (or <a href>) — role, keyboard activation, and focus come free. Style :focus-visible visibly.", prevent: "Every clickable non-link is a <button>; run a 60-second keyboard pass per screen.", related: "a11y-tree-keyboard" },
+  { id: "css-not-applying", symptom: "A CSS rule silently doesn't apply; DevTools shows it struck through.", layer: "CSS specificity", causes: ["A higher-specificity rule targets the same property", "The selector doesn't actually match the element", "An ancestor sets a non-inheriting property you expected to flow down"], diagnose: ["Open DevTools Styles: find the struck-through rule and the one above it", "Compute both specificity tuples", "Check the Computed tab for where the value actually comes from"], fix: "Fix the rank, not the volume: lower the winner's specificity or raise yours honestly. Never reach for !important first.", prevent: "Keep selectors 1–2 classes deep; avoid IDs for styling; use @layer for framework overrides.", related: "css-mental-model" },
+  { id: "possibly-undefined", symptom: "tsc reports 'Object is possibly undefined' and the urge is to sprinkle ! everywhere.", layer: "TypeScript null-safety", causes: ["A value genuinely can be undefined and the code doesn't handle it", "An API is typed too loosely (returns T | undefined when it needn't)"], diagnose: ["Read the signature: where can undefined come from?", "Ask the design question: missing means 'use a default' or 'this can't run'?"], fix: "Handle the fork: a default (?? fallback), an early return, or tighten the contract so absence is impossible. Avoid ! and casts.", prevent: "Treat ! like a loaded weapon needing a justifying comment; prefer narrowing and defaults.", related: "ts-strict-basics" },
 ];
 
 /* ————— batch queue ————— */
@@ -304,7 +373,11 @@ export const BATCHES: Batch[] = [
   { id: "B-03", title: "Volume I · Terminal, Node & Environment", scope: "V1·M3", status: "shipped", summary: "The shell conversation, the Node runtime + pnpm toolchain, and environment variables/secrets done safely." },
   { id: "B-04", title: "Foundation Gauntlet + review", scope: "V1 checkpoint", status: "shipped", summary: "The cumulative 12-question checkpoint battle across Modules 1–4 (web, JavaScript, workstation, Git), with remediation links." },
   { id: "B-05", title: "Git & GitHub Workflow", scope: "V1·M4", status: "shipped", summary: "Git as a snapshot graph, the daily loop with selective staging, branches/PRs/conflicts, and the undo ladder (restore/amend/revert/reset/reflog) — 20 quiz questions, 4 debugging labs." },
-  { id: "B-06", title: "Semantic HTML & Accessibility", scope: "V1·M5", status: "next", summary: "HTML as meaning, the accessibility tree and keyboard flows, ARIA used sparingly, plus the Accessibility Checklist." },
-  { id: "B-07", title: "CSS & Responsive Design", scope: "V1·M6", status: "queued", summary: "The cascade referee, flex/grid, responsive thinking, and design tokens." },
-  { id: "B-08", title: "TypeScript Foundations", scope: "V1·M7", status: "queued", summary: "Why types, the strict vocabulary, narrowing, and TypeScript on the DOM." },
+  { id: "B-06", title: "Semantic HTML & Accessibility", scope: "V1·M5", status: "shipped", summary: "HTML as meaning (landmarks/outline/forms/images), the accessibility tree + keyboard flows, ARIA used sparingly — 18 quiz questions, 3 debugging labs, plus the Accessibility Checklist reference." },
+  { id: "B-07", title: "CSS & Responsive Design", scope: "V1·M6", status: "shipped", summary: "The cascade as a rulebook (specificity tuples, box model, @layer), flex/grid layout with the min-width:0 lab, and responsive thinking + design tokens — 15 quiz questions, 2 debugging labs." },
+  { id: "B-08", title: "TypeScript Foundations", scope: "V1·M7", status: "shipped", summary: "Why types (bug archaeology), the strict vocabulary, narrowing + discriminated unions + the never-check, and TypeScript on the browser — 20 quiz questions, 3 debugging labs, 1 migration walkthrough." },
+  { id: "B-09", title: "Professional JavaScript", scope: "Volume II", status: "next", summary: "The runtime model: closures formalized, the event loop under load, and prototype chains — depth for people who will ship." },
+  { id: "B-10", title: "React", scope: "Volume III", status: "queued", summary: "Mental models, state & rendering, effects & data — the component era begins." },
+  { id: "B-11", title: "Web Architecture", scope: "Volume IV", status: "queued", summary: "REST, AuthN/AuthZ, caching & security — the browser/server boundary made rigorous." },
+  { id: "B-12", title: "PostgreSQL", scope: "Volume V", status: "queued", summary: "Modeling, SQL, and performance — relational data done properly." },
 ];

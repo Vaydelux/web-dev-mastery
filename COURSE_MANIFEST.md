@@ -20,10 +20,17 @@
 | `git-daily-workflow` | The Daily Loop: Status, Diff, Stage, Commit | Foundation | 45 | git-mental-model | implemented |
 | `branches-prs-review` | Branches, Pull Requests, and Review Culture | Foundation | 50 | git-daily-workflow | implemented |
 | `git-recovery` | The Undo Ladder: Restore, Amend, Revert, Reset, Reflog | Foundation | 55 | branches-prs-review | implemented |
-| `gauntlet-m1` | Checkpoint · Foundation Gauntlet (12 Q, pass ≥70%) | Foundation | 20 | modules 1–4 | implemented |
-| V1·M5 | Semantic HTML & Accessibility (3 lessons scoped) | Foundation | — | — | planned (next · B-06) |
-| V1·M6 | CSS & Responsive Design (3 lessons scoped) | Foundation | — | — | planned |
-| V1·M7 | TypeScript Foundations (4 lessons scoped) | Foundation | — | — | planned |
+| `html-as-structure` | HTML Is Meaning: Structure Before Styling | Foundation | 45 | git-recovery | implemented |
+| `a11y-tree-keyboard` | The Accessibility Tree and the Keyboard-First Page | Foundation | 50 | html-as-structure | implemented |
+| `aria-when-needed` | ARIA: Don't, Unless You Must | Foundation | 40 | a11y-tree-keyboard | implemented |
+| `css-mental-model` | The Cascade Is a Rulebook, Not a Battle | Foundation | 50 | aria-when-needed | implemented |
+| `layout-flex-grid` | Two Layout Systems, One Decision | Foundation | 60 | css-mental-model | implemented |
+| `responsive-and-tokens` | Responsive Is a Mindset, Tokens Are the Contract | Foundation | 55 | layout-flex-grid | implemented |
+| `why-types` | Why Types Change How You Code | Foundation | 40 | responsive-and-tokens | implemented |
+| `ts-strict-basics` | Strict Mode: The Everyday Vocabulary | Foundation | 55 | why-types | implemented |
+| `narrowing` | Narrowing: The Compiler Reads Your If-Statements | Foundation | 50 | ts-strict-basics | implemented |
+| `ts-dom` | TypeScript Meets the Browser | Foundation | 55 | narrowing | implemented |
+| `gauntlet-m1` | Checkpoint · Foundation Gauntlet (19 Q, pass ≥70%) | Foundation | 25 | all of Volume I | implemented |
 
 ## Volumes II–XI (module-scoped; lessons authored per batch)
 
@@ -44,9 +51,10 @@
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | `http-web-basics` (5), `render-pipeline` (4), `js-values` (6), `terminal-tooling` (5), `git-workflow` (12) — 5 sets / 32 cards | implemented |
-| Glossary | 20 terms, domain-tagged, lesson-linked | implemented |
-| Troubleshooting index | 6 symptom-based entries | implemented |
+| Flashcard sets | `http-web-basics` (5), `render-pipeline` (4), `js-values` (6), `terminal-tooling` (5), `git-workflow` (12), `semantic-a11y` (10) — 6 sets / 42 cards | implemented |
+| Glossary | 25 terms, domain-tagged, lesson-linked | implemented |
+| Troubleshooting index | 7 symptom-based entries | implemented |
+| A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |
 

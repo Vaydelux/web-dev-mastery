@@ -450,16 +450,18 @@ export function LessonBlocks({ blocks, lessonId }: { blocks: Block[]; lessonId: 
             const isBattle = b.next.startsWith("battle-");
             const battle = isBattle ? getBattle(b.next.slice(7)) : undefined;
             const next = isBattle ? undefined : getLesson(b.next);
-            const to = isBattle ? `/battle/${b.next.slice(7)}` : `/lesson/${b.next}`;
-            const label = isBattle ? (battle?.title ?? "Boss battle") : next?.title ?? b.next;
+            const queued = !isBattle && !next;
+            const to = isBattle ? `/battle/${b.next.slice(7)}` : queued ? "/queue" : `/lesson/${b.next}`;
+            const label = isBattle ? (battle?.title ?? "Boss battle") : queued ? "Queued for a future batch" : (next?.title ?? b.next);
             return (
-              <section key={i} className="card-hard my-8 flex flex-col gap-3 border-acc/30 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <section key={i} className={`card-hard my-8 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between ${queued ? "border-dashed border-line-strong/50" : "border-acc/30"}`}>
                 <div>
-                  <p className="eyebrow mb-1">{isBattle ? "Prove it" : "Next lesson"}</p>
+                  <p className="eyebrow mb-1">{isBattle ? "Prove it" : queued ? "What's next" : "Next lesson"}</p>
                   <p className="max-w-xl text-[14.5px] leading-[1.7] text-soft">{b.text}</p>
                 </div>
-                <Link to={to} className="group inline-flex shrink-0 items-center gap-2.5 rounded-lg border border-linestrong bg-ink px-5 py-3 font-mono text-[13px] font-semibold text-paper transition-all hover:-translate-y-0.5">
+                <Link to={to} className={`group inline-flex shrink-0 items-center gap-2.5 rounded-lg border px-5 py-3 font-mono text-[13px] font-semibold transition-all hover:-translate-y-0.5 ${queued ? "border-line text-soft hover:border-acc hover:text-accink" : "border-linestrong bg-ink text-paper"}`}>
                   {isBattle && <Icons.sword size={15} className="text-err" />}
+                  {queued && <Icons.clock size={15} className="text-amber" />}
                   {label}
                   <Icons.arrow size={15} className="transition-transform group-hover:translate-x-1" />
                 </Link>

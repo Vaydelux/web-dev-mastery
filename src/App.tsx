@@ -3,7 +3,7 @@ import { HashRouter, Route, Routes, useLocation } from "react-router-dom";
 import { ProgressProvider } from "./lib/core";
 import { Drawer, SearchOverlay, Shell, Topbar } from "./components/chrome";
 import {
-  BattlePage, DesignTokensPage, FlashcardsIndex, FlashcardsSessionPage, GlossaryPage,
+  A11yChecklistPage, BattlePage, DesignTokensPage, FlashcardsIndex, FlashcardsSessionPage, GlossaryPage,
   Home, LessonPage, ManifestPage, QueuePage, SearchPage, StatusPage, TroubleshootingPage, VersionsPage,
 } from "./pages";
 
@@ -40,6 +40,7 @@ function Layout() {
         <Route path="/queue" element={<Shell><QueuePage /></Shell>} />
         <Route path="/ref/glossary" element={<Shell><GlossaryPage /></Shell>} />
         <Route path="/ref/troubleshooting" element={<Shell><TroubleshootingPage /></Shell>} />
+        <Route path="/ref/a11y" element={<Shell><A11yChecklistPage /></Shell>} />
         <Route path="/ref/design-tokens" element={<Shell><DesignTokensPage /></Shell>} />
         <Route path="/ref/versions" element={<Shell><VersionsPage /></Shell>} />
         <Route path="/ref/status" element={<Shell><StatusPage /></Shell>} />
