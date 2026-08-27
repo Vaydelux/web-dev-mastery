@@ -42,7 +42,10 @@
 | `error-taxonomy` | Bugs vs Expected Failures: The Taxonomy Nobody Taught You | Builder | 45 | circular-and-dynamic | implemented |
 | `result-pattern` | The Result Pattern: Failures as Data, Not Explosions | Builder | 50 | error-taxonomy | implemented |
 | `async-failure-modes` | Asynchronous Failures: The Ones That Escape | Builder | 50 | result-pattern | implemented |
-| V2·M3 | Tooling: Lint, Format, Build (scoped) | Builder | — | — | planned (next · B-11) |
+| `lint-format` | Lint and Format as Agreements | Builder | 40 | async-failure-modes | implemented |
+| `build-pipeline` | The Build Pipeline: From Source to Shipped | Builder | 45 | lint-format | implemented |
+| `ci-gate` | CI: The Gate That Fails Loudly | Builder | 45 | build-pipeline | implemented |
+| `gauntlet-m2` | Checkpoint · Builder Gauntlet (13 Q, pass ≥70%) | Builder | 25 | all of Volume II | implemented |
 
 ## Volumes III–XI (module-scoped; lessons authored per batch)
 
@@ -62,9 +65,9 @@
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | 10 sets / 91 cards: web-basics, render-pipeline, js-values, terminal-tooling, git-workflow, semantic-a11y, css-layout, ts-foundations, modular-js, error-handling | implemented |
-| Glossary | 47 terms, domain-tagged, lesson-linked | implemented |
-| Troubleshooting index | 13 symptom-based entries | implemented |
+| Flashcard sets | 11 sets / 105 cards: web-basics, render-pipeline, js-values, terminal-tooling, git-workflow, semantic-a11y, css-layout, ts-foundations, modular-js, error-handling, tooling | implemented |
+| Glossary | 54 terms, domain-tagged, lesson-linked | implemented |
+| Troubleshooting index | 16 symptom-based entries | implemented |
 | A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |

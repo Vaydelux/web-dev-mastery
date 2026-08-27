@@ -48,9 +48,16 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - `error-handling` flashcard set (16 cards), 7 error glossary terms, 2 troubleshooting entries.
 - Running totals: 10 flashcard sets / 91 cards, 47 glossary terms, 13 troubleshooting entries.
 
+### Batch 11 — Volume II · Tooling: Lint, Format, Build (M3) — implemented
+- `lint-format`, `build-pipeline`, `ci-gate` (18 quiz questions, 3 debugging labs).
+- Builder Gauntlet `gauntlet-m2` (13 Q / 3 fronts / pass ≥70%) closes Volume II.
+- `tooling` flashcard set (14 cards), 7 tooling glossary terms, 3 troubleshooting entries.
+- Running totals: 11 flashcard sets / 105 cards, 54 glossary terms, 16 troubleshooting entries.
+- **Volume II complete: all 3 modules, 9 lessons.** Builder level certified by the Builder Gauntlet.
+
 ## Known gaps (classified)
 - ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
-- `needs-assessment` — per-module quizzes + the Foundation Gauntlet (V1) exist; a combined Volumes II–III Builder assessment is pending (B-11 ships a Builder Gauntlet closing V2).
+- ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11 (Builder Gauntlet `gauntlet-m2` spans V2 M1–M3). A combined Volumes III–V Full-Stack assessment remains pending.
 - `candidate-new-module` — Browser storage landscape before authenticated progress (V2/V3).
 - `misordered` — CORS deserves a dedicated debugging lesson in V4, not only a callout.
 - `needs-production-context` — Monitoring for render-pipeline metrics (V9).
@@ -60,10 +67,11 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Flashcard scheduling is user-driven (Leitner-lite); consider SM-2 as sets grow.
 
 ## Recommended next batch
-**Batch 11 — Volume II · Tooling: Lint, Format, Build (V2·M3):** author `lint-format`, the build-pipeline
-lesson, and CI-as-a-gate; ship ESLint + Prettier as team agreements and close Volume II with a Builder
-Gauntlet spanning Modules 1–3 (modular JS, error handling, tooling). Full scope on the generation queue.
-Then STOP and request review (bounded generation contract).
+**Batch 12 — React (Volume III):** open the Full-Stack track with `v3m1` React Mental Models (UI as a
+function of state, JSX, props, composition), then `v3m2` State & the Rendering Model (state-classification
+doctrine, how React renders), then `v3m3` Effects & Data (effect discipline, data fetching). Close Volume III
+with a React Gauntlet. Full scope on the generation queue. Then STOP and request review (bounded generation
+contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?

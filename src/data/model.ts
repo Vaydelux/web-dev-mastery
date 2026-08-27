@@ -11,6 +11,7 @@ import { m6 } from "./lessons6";
 import { m7 } from "./lessons7";
 import { m8 } from "./lessons8";
 import { m9 } from "./lessons9";
+import { m10 } from "./lessons10";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -38,9 +39,7 @@ export const COURSE: VolumeDef[] = [
   v(2, "II", "Professional JavaScript", "Deep JavaScript", "Modular code, honest error handling, and the tooling that keeps large codebases healthy.", [
     mod("v2m1", 1, "Modular JavaScript", "Files with contracts: imports, exports, boundaries, and the knots between them.", "implemented", m8),
     mod("v2m2", 2, "Error Handling That Scales", "Fail loudly in development, gracefully in production.", "implemented", m9),
-    mod("v2m3", 3, "Tooling: Lint, Format, Build", "ESLint, Prettier, and bundlers as team agreements.", "planned", [
-      p("lint-format", "Lint and Format as Agreements", 2, 3, 1, 40, "ESLint + Prettier and why they end style debates.", ["result-pattern"], ["tooling"]),
-    ]),
+    mod("v2m3", 3, "Tooling: Lint, Format, Build", "ESLint, Prettier, and bundlers as team agreements.", "implemented", m10),
   ]),
   v(3, "III", "React", "React Phase", "Component thinking: state, rendering, effects discipline, architecture, testing, and performance.", [
     mod("v3m1", 1, "React Mental Models", "UI as a function of state; JSX, props, and composition.", "planned", []),
@@ -124,6 +123,7 @@ export const courseStats = () => {
 /* ————— boss battles ————— */
 export const BATTLE_REFS: BattleRef[] = [
   { id: "gauntlet-m1", title: "Checkpoint · Foundation Gauntlet", volumeId: 1, afterModule: "v1m7", blurb: "A cumulative fight across all of Volume I — the web, JavaScript, your workstation, Git, semantics, CSS, and TypeScript — pass at 70%." },
+  { id: "gauntlet-m2", title: "Checkpoint · Builder Gauntlet", volumeId: 2, afterModule: "v2m3", blurb: "A cumulative fight across all of Volume II — modules, boundaries, cycles, error ownership, Results, async failures, and the tooling that enforces it — pass at 70%." },
 ];
 
 export const BATTLES: BossBattle[] = [
@@ -195,6 +195,54 @@ export const BATTLES: BossBattle[] = [
           { id: "b17", type: "single", prompt: "A flex item with a long URL won't shrink. Fix?", options: ["flex-shrink: 1", "min-width: 0", "remove the gap", "use float instead"], answer: [1], explain: "Flex items default to min-width:auto (never smaller than content). min-width:0 restores leftover-space sizing." },
           { id: "b18", type: "boolean", prompt: "TypeScript adds runtime overhead because annotations ship to the browser.", options: ["True", "False"], answer: [1], explain: "False — all types are erased at compile time; the output is ordinary JavaScript. The value is entirely pre-runtime." },
           { id: "b19", type: "single", prompt: "The professional response to untrusted JSON at a boundary?", options: ["cast it: as ApiResponse", "type it with an interface and move on", "const x: unknown, then validate before use", "const x: any for flexibility"], answer: [2], explain: "Interfaces promise about YOUR code, not the world. unknown keeps the compiler engaged; validate at the boundary (parse → validate → trust)." },
+        ],
+      },
+    ],
+  },
+  {
+    id: "gauntlet-m2",
+    title: "Builder Gauntlet",
+    subtitle: "All of Volume II · pass ≥ 70%",
+    passPct: 70,
+    intro: [
+      "Volume II was about writing JavaScript that holds up: modules with contracts, failures you own, and machinery that enforces it all. This gauntlet asks you to reason through the same decisions, not recite them.",
+      "Pass at 70%. Every missed question links back to the lesson that teaches the idea.",
+    ],
+    rules: [
+      "Answer every question, then submit.",
+      "Multi-select questions are all-or-nothing.",
+      "Predict-output questions: commit to an answer before checking.",
+    ],
+    sections: [
+      {
+        title: "Modules & Boundaries",
+        desc: "Contracts, arrows, singletons, and cycles.",
+        questions: [
+          { id: "m2b1", type: "single", prompt: "An exported value is defined in its file but undefined when imported; works when tested alone. Most likely cause?", options: ["The file has a syntax error", "A circular import — one module reads the other mid-initialization", "The export isn't exported", "The bundler dropped it"], answer: [1], explain: "In a↔b cycles, the later-entered module reads the earlier one before its const bindings initialized (TDZ). Functions survive (hoisted); const bindings don't." },
+          { id: "m2b2", type: "single", prompt: "Why prefer named exports over a single default export for a library?", options: ["Defaults are slower", "Named imports are checked statically — a typo fails the build; a renamed default surfaces only at runtime", "You can only have one named export", "Tree-shaking ignores defaults"], answer: [1], explain: "Named imports are compile-time checked, so a misspelling or rename fails immediately. Default imports accept any local name, so rot surfaces at runtime." },
+          { id: "m2b3", type: "single", prompt: "Module-level state (a let at the top of a module) is effectively…", options: ["A fresh value per import", "A singleton — one shared instance per process", "Thread-safe", "Impossible in ESM"], answer: [1], explain: "A module is evaluated once and its bindings shared by all importers — a singleton. On servers it's also per-worker and mortal, so it's never a source of truth." },
+          { id: "m2b4", type: "single", prompt: "You need two modules to stop importing each other. The strongest fix?", options: ["Add a third module both import (extract), or pass the dependency in (invert)", "Use require instead of import", "Make both exports default", "Ignore it — cycles are harmless"], answer: [0], explain: "Invert or extract attacks the design; both remove the cycle at its root. defer (await import) only fixes timing, not the arrow." },
+        ],
+      },
+      {
+        title: "Error Ownership",
+        desc: "The taxonomy, Results, and the async escapes.",
+        questions: [
+          { id: "m2b5", type: "single", prompt: "A payment declines. By the taxonomy, this is…", options: ["A bug — fix the code", "An expected failure — recover gracefully", "Undefined behavior", "A type error"], answer: [1], explain: "Would better conditions make it succeed? A different card would — so it's an expected failure: handle it, don't crash or retry blindly." },
+          { id: "m2b6", type: "single", prompt: "The one question that sorts bugs from failures?", options: ["Is it in production?", "Would changing conditions (input, network, time) make this succeed?", "Does it throw?", "Is it logged?"], answer: [1], explain: "Yes → failure, handle it. No → bug, fix the code. Asked before any try/catch is written." },
+          { id: "m2b7", type: "single", prompt: "Why does Result<E,T> scale better than exceptions for expected failures?", options: ["It's faster at runtime", "The failure is part of the return type, so the compiler forces every caller to handle it", "It prevents all bugs", "It removes the need for types"], answer: [1], explain: "throw exits through a door not in the signature; nothing forces a caller to catch it. Result puts the failure in the type, and narrowing/exhaustiveness make skipping it a compile error." },
+          { id: "m2b8", type: "single", prompt: "A promise is created but never awaited or .catch'd, and it rejects. In a browser this is…", options: ["A hard crash", "An unhandled-rejection event — silent unless you listen; the user sees nothing", "Automatically retried", "A compile error"], answer: [1], explain: "The rejection is orphaned. Browsers fire an event but don't crash, so the failure is invisible unless you attach a global unhandledrejection reporter AND fix the missing owner." },
+          { id: "m2b9", type: "single", prompt: "Promise.all vs Promise.allSettled — when does allSettled win?", options: ["Always", "When the items are independent and you want every fate reported, not aborted on first failure", "Never — all is strictly better", "Only for sync code"], answer: [1], explain: "all aborts the race on the first rejection (unit batches). allSettled waits for everything and reports each outcome individually (independent items like parallel fetches of widgets)." },
+        ],
+      },
+      {
+        title: "The Machinery",
+        desc: "Lint, build, and the gate.",
+        questions: [
+          { id: "m2b10", type: "single", prompt: "Which concern belongs to Prettier, not ESLint?", options: ["Catching == vs ===", "Choosing single vs double quotes", "Flagging unused variables", "Detecting conditional hooks"], answer: [1], explain: "Quote style is pure appearance — Prettier's lane. The others are correctness and belong in the linter." },
+          { id: "m2b11", type: "single", prompt: "A bug reproduces only after pnpm build, and the trace is minified. First move?", options: ["Add console.logs to source", "Serve the real dist/ output and use source maps to translate the trace", "Reinstall node_modules", "Disable minification forever"], answer: [1], explain: "Dev and prod are different programs. Reproduce with the same pipeline, then read the minified trace via source maps." },
+          { id: "m2b12", type: "single", prompt: "A test passes locally but fails in CI. Best interpretation?", options: ["CI is flaky, retry until green", "The code depends on something in my local environment that isn't shipped", "The test should be skipped", "Disable CI for this branch"], answer: [1], explain: "CI runs on a clean machine, surfacing hidden local dependencies (undeclared packages, uncommitted files, timezone). That's CI working, not broken." },
+          { id: "m2b13", type: "boolean", prompt: "Skipping a persistently-failing test to unblock a merge keeps the CI gate trustworthy.", options: ["True", "False"], answer: [1], explain: "False — every skipped check is an agreed hole in the wall and trains the team that red can be ignored. Fix the failure or change the rule deliberately in review." },
         ],
       },
     ],
@@ -347,6 +395,25 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "Optimistic UI's debt", back: "Acting before confirmation obligates a visible rollback. No .catch = the UI silently diverges from the database.", lesson: "async-failure-modes" },
     ],
   },
+  {
+    id: "tooling", title: "Tooling: Lint, Build, CI", blurb: "Volume II · M3 — the machinery that keeps habits enforced.",
+    cards: [
+      { front: "Linter vs formatter", back: "Linter = correctness (catches bugs); formatter = appearance (one shared style). Never let one tool do both.", lesson: "lint-format" },
+      { front: "The linter's admission test", back: "'Does this rule prevent a defect?' Yes → linter. Cosmetic → Prettier or nowhere.", lesson: "lint-format" },
+      { front: "eslint-config-prettier", back: "Goes LAST in the ESLint config to disable all formatting rules, giving Prettier sole ownership of appearance.", lesson: "lint-format" },
+      { front: "prettier --check", back: "The CI mode: exits non-zero on unformatted files WITHOUT rewriting them — proves the gate.", lesson: "lint-format" },
+      { front: "Whitespace merge conflicts", back: "Caused by divergent formatters — Git treats whitespace as content. Fix with one shared enforced formatter + format-on-save.", lesson: "lint-format" },
+      { front: "The 4 build stages", back: "Transform → Bundle → Tree-shake/Minify → Emit. The browser runs the output, not your source.", lesson: "build-pipeline" },
+      { front: "Tree-shaking's limit", back: "Only drops what it can PROVE is unused. A top-level side effect makes removal unsafe, so the module is kept.", lesson: "build-pipeline" },
+      { front: "Source map", back: "Translates minified prod positions back to your original source lines — essential for prod debugging.", lesson: "build-pipeline" },
+      { front: "'Works in dev, breaks in prod'", back: "Dev and prod are different programs. Reproduce by serving the real dist/ output, then read the trace via source maps.", lesson: "build-pipeline" },
+      { front: "Exit code", back: "A process's result: 0 = success, non-zero = failure. CI is just a chain of these joined by &&.", lesson: "ci-gate" },
+      { front: "The essential CI chain", back: "install --frozen-lockfile → tsc --noEmit → eslint → prettier --check → test → build. First non-zero exit fails the pipeline.", lesson: "ci-gate" },
+      { front: "'Passes locally, fails in CI'", back: "CI runs on a clean machine — it surfaces hidden local dependencies (undeclared packages, uncommitted files, timezone). Good news, not flaky.", lesson: "ci-gate" },
+      { front: "Reading a CI log", back: "Find the FIRST failing step and its first error line — later errors are usually consequences.", lesson: "ci-gate" },
+      { front: "Why a slow gate fails", back: "People stop waiting and bypass it, so red loses meaning. Speed and trust are the same property.", lesson: "ci-gate" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -399,6 +466,13 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Failure owner", def: "The specific line responsible for a promise's failure: await+catch, .catch, or a consumed Result.", domain: "Errors", lesson: "async-failure-modes" },
   { term: "Unhandled rejection", def: "A rejected promise with no await or .catch — an event by default, a crash in modern Node.", domain: "Errors", lesson: "async-failure-modes" },
   { term: "Exponential backoff", def: "Retry waits that double (with jitter) and cap out — the polite way to retry transient failures.", domain: "Errors", lesson: "async-failure-modes" },
+  { term: "Linter", def: "A static analyzer that catches correctness problems before runtime (ESLint).", domain: "Tooling", lesson: "lint-format" },
+  { term: "Formatter", def: "A tool enforcing one shared code appearance (Prettier); owns all formatting.", domain: "Tooling", lesson: "lint-format" },
+  { term: "Tree-shaking", def: "Dropping provably-unused exports so they never ship; defeated by top-level side effects.", domain: "Tooling", lesson: "build-pipeline" },
+  { term: "Source map", def: "Maps minified production positions back to original source lines.", domain: "Tooling", lesson: "build-pipeline" },
+  { term: "Exit code", def: "A process's numeric result: 0 = success, non-zero = failure; the primitive CI chains on.", domain: "Tooling", lesson: "ci-gate" },
+  { term: "CI gate", def: "The checks that must pass before merging; green is proven, not assumed.", domain: "Tooling", lesson: "ci-gate" },
+  { term: "Frozen lockfile", def: "Installing exactly the locked dependency versions, failing on drift.", domain: "Tooling", lesson: "ci-gate" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -416,6 +490,9 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "circular-undefined", symptom: "An exported value is defined in its file but undefined (or TDZ) when imported elsewhere; works when the file is tested alone.", layer: "Module graph / evaluation order", causes: ["Two modules import each other; one reads the other mid-initialization", "A const arrow/class binding is read before its initializer ran (TDZ)"], diagnose: ["Trace the import graph for a↔b cycles (madge --circular helps)", "Add a top-level log to each module; the one that runs second sees the uninitialized binding"], fix: "Break the cycle: invert (pass the dependency in), extract (shared third module), or defer (await import). Prefer invert/extract.", prevent: "Keep dependency arrows one-way; draw the arrow before adding an import that points at a module already pointing at you.", related: "circular-and-dynamic" },
   { id: "silent-nothing", symptom: "A button/action sometimes 'does nothing' — no error, no spinner, no message. The feature works most of the time.", layer: "Error handling / catch blocks", causes: ["An empty (or log-only) catch swallowing an expected failure", "An async call with no await and no .catch — the rejection is orphaned"], diagnose: ["Reproduce with the network throttled or the endpoint failing", "Grep for catch {, catch {}, and promise calls lacking await/.catch"], fix: "Give the failure an owner: render an error state, recover, or report with cause. Empty catches get a visible decision.", prevent: "Lint no-empty; review every catch as a sentence: 'when this fails, the user will…'", related: "error-taxonomy" },
   { id: "prod-silent-failure", symptom: "Works in development; in production, data silently goes stale or actions don't persist. No errors in logs or tracker.", layer: "Async failure routing", causes: ["A fire-and-forget promise whose rejection is never awaited (optimistic UI + no .catch)", "A rejection handled only by console.log, invisible in prod"], diagnose: ["Throttle the network / force a 500, perform the action, reload", "Check for 'Unhandled promise rejection' in the browser console"], fix: "Attach the failure: await + try/catch with rollback, or .catch that reports. Add a global unhandledrejection reporter.", prevent: "For every async call, point at the line that handles its failure; treat optimistic updates as requiring a written rollback path.", related: "async-failure-modes" },
+  { id: "editor-format-war", symptom: "Files reformat on every save, or ESLint and your editor keep undoing each other's formatting.", layer: "Lint/format config", causes: ["ESLint formatting rules (indent/quotes/semi) enabled alongside Prettier", "Two different formatters configured", "Format-on-save off for some teammates, on for others"], diagnose: ["Check whether eslint-config-prettier is the LAST ESLint config entry", "Confirm one shared .prettierrc is committed and format-on-save is on for everyone"], fix: "Add eslint-config-prettier last to silence ESLint's formatting rules; commit one Prettier config; enable format-on-save team-wide.", prevent: "Prettier owns all appearance; the linter never formats. One owner per concern.", related: "lint-format" },
+  { id: "works-in-dev-breaks-in-prod", symptom: "A feature works under the dev server but throws after pnpm build; the stack trace is minified (one-letter names).", layer: "Build pipeline", causes: ["A side effect made tree-shaking keep/drop the wrong module", "Code depending on a dev-only global or un-minified behavior", "Debugging the dev build while the prod build is what fails"], diagnose: ["Serve the real dist/ output locally and reproduce", "Load source maps (or an un-minified prod build) to read the trace"], fix: "Fix the root cause in source (declare side effects correctly, stop depending on dev-only globals), rebuild, and re-test dist/.", prevent: "Smoke-test the production build before deploy; ship source maps so prod traces are readable.", related: "build-pipeline" },
+  { id: "passes-locally-fails-ci", symptom: "A branch is green locally but the CI pipeline is red.", layer: "CI / environment", causes: ["An undeclared dependency installed globally on your machine (phantom dependency)", "An uncommitted file that exists only locally", "A test sensitive to timezone/locale or a case-sensitive file path"], diagnose: ["Fresh-clone the repo, run pnpm install --frozen-lockfile, then the failing command", "Compare your local environment (globals, files, OS case-sensitivity) with CI's"], fix: "Commit missing files, declare every imported dependency, and make tests environment-independent.", prevent: "Develop with the clean-room habit; commit the lockfile; write tests that don't care about timezone or filesystem case.", related: "ci-gate" },
 ];
 
 /* ————— batch queue ————— */
@@ -432,8 +509,8 @@ export const BATCHES: Batch[] = [
   { id: "B-08", title: "TypeScript Foundations", scope: "V1·M7", status: "shipped", summary: "Why types (bug archaeology), the strict vocabulary, narrowing + discriminated unions + the never-check, and TypeScript on the browser — 20 quiz questions, 3 debugging labs, 1 migration walkthrough." },
   { id: "B-09", title: "Volume II · Modular JavaScript", scope: "V2·M1", status: "shipped", summary: "ES modules as contracts (named/default, hoisting, tree-shaking, CJS boundary), verb-shaped public surfaces & one-way arrows, module-level state as singletons, circular dependencies + dynamic import() — 18 quiz questions, 3 debugging labs. The Builder level opens." },
   { id: "B-10", title: "Volume II · Error Handling That Scales", scope: "V2·M2", status: "shipped", summary: "The bug-vs-failure taxonomy, throwing with intent (cause chains, domain classes), stack traces read bottom-up, the Result pattern as typed failures with exhaustiveness, and async escape hatches (orphaned promises, allSettled, global alarms, retry policy) — 18 quiz questions, 3 debugging labs." },
-  { id: "B-11", title: "Volume II · Tooling: Lint, Format, Build", scope: "V2·M3", status: "next", summary: "ESLint + Prettier as team contracts, the build pipeline, and CI that fails loudly — closing Volume II with a Builder Gauntlet." },
-  { id: "B-12", title: "React", scope: "Volume III", status: "queued", summary: "Mental models, state & rendering, effects & data — the component era begins." },
+  { id: "B-11", title: "Volume II · Tooling: Lint, Format, Build", scope: "V2·M3", status: "shipped", summary: "ESLint + Prettier as team agreements (the whitespace-merge-conflict lab), the build pipeline (transform→bundle→minify, tree-shaking, source maps, the 'works in dev, breaks in prod' lab), and CI as a chain of exit codes (the 'passes locally, fails in CI' lab) — 18 quiz questions, 3 debugging labs. Closes Volume II with the 13-question Builder Gauntlet." },
+  { id: "B-12", title: "React", scope: "Volume III", status: "next", summary: "Mental models, state & rendering, effects & data — the component era begins. The Full-Stack level opens after the React gauntlet." },
   { id: "B-13", title: "Web Architecture", scope: "Volume IV", status: "queued", summary: "REST, AuthN/AuthZ, caching & security — the browser/server boundary made rigorous." },
   { id: "B-14", title: "PostgreSQL", scope: "Volume V", status: "queued", summary: "Modeling, SQL, and performance — relational data done properly." },
 ];
