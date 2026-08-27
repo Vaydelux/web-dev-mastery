@@ -842,6 +842,7 @@ const LOG = [
   { batch: "Batch 07 · Volume I — CSS & Responsive Design", date: "2026-02", items: ["css-mental-model: the cascade's three tiebreakers, specificity tuples, border-box, @layer", "layout-flex-grid: content-out vs layout-in, fr/minmax/auto-fit, the min-width:0 lab", "responsive-and-tokens: mobile-first, clamp(), container queries, semantic tokens"] },
   { batch: "Batch 08 · Volume I — TypeScript Foundations", date: "2026-02", items: ["why-types: bug archaeology, strict as the only default, reading red underlines", "ts-strict-basics: unions, literals, optional vs nullable, 'possibly undefined' lab", "narrowing: guards, discriminated unions, the never-check, satisfies", "ts-dom: lib.dom, event inference, parse→validate→trust, Volume I complete"] },
   { batch: "Batch 09 · Volume II — Modular JavaScript", date: "2026-02", items: ["es-modules: contracts, named vs default, hoisting, tree-shaking, CJS boundary lab", "module-boundaries: verb-shaped surfaces, one-way arrows, module state as singletons", "circular-and-dynamic: evaluation order, invert/extract/defer, dynamic import()", "Builder level opens · modular-js flashcards + glossary + troubleshooting entries"] },
+  { batch: "Batch 10 · Volume II — Error Handling That Scales", date: "2026-02", items: ["error-taxonomy: bugs vs expected failures, cause chains, stack traces bottom-up, swallowed-catch lab", "result-pattern: Result as a discriminated union, compiler-forced handling, never-check exhaustiveness, throwing→Result refactor", "async-failure-modes: orphaned promises, allSettled, global alarms, retry policy, optimistic-UI rollback lab", "error-handling flashcards (16) · 7 glossary terms · 2 troubleshooting entries · 18 quiz questions · 3 debugging labs"] },
 ];
 
 export function StatusPage() {
@@ -863,7 +864,7 @@ export function StatusPage() {
       </div>
       <div className="card mt-8 border-l-4 border-acc p-5">
         <p className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accink">Recommended next batch</p>
-        <p className="text-[14.5px] leading-[1.75] text-soft"><strong className="font-semibold text-ink">Batch 10 — Volume II · Error Handling That Scales (V2·M2):</strong> bugs vs expected failures, throwing with intent, custom error types, and the Result pattern. Full scope on the <Link to="/queue" className="link-acc font-semibold">generation queue</Link> — it is the ordering authority.</p>
+        <p className="text-[14.5px] leading-[1.75] text-soft"><strong className="font-semibold text-ink">Batch 11 — Volume II · Tooling: Lint, Format, Build (V2·M3):</strong> ESLint + Prettier as team agreements, the build pipeline, CI that fails loudly, and the Builder Gauntlet closing Volume II. Full scope on the <Link to="/queue" className="link-acc font-semibold">generation queue</Link> — it is the ordering authority.</p>
       </div>
     </RefShell>
   );

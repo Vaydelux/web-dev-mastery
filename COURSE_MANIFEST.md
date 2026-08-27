@@ -39,8 +39,10 @@
 | `es-modules` | ES Modules: Files With Contracts | Builder | 50 | ts-dom | implemented |
 | `module-boundaries` | Boundaries: What a Module Owes the World | Builder | 55 | es-modules | implemented |
 | `circular-and-dynamic` | Circular Dependencies and the Lazy Escape | Builder | 50 | module-boundaries | implemented |
-| V2·M2 | Error Handling That Scales (2+ lessons scoped) | Builder | — | — | planned (next · B-10) |
-| V2·M3 | Tooling: Lint, Format, Build (scoped) | Builder | — | — | planned |
+| `error-taxonomy` | Bugs vs Expected Failures: The Taxonomy Nobody Taught You | Builder | 45 | circular-and-dynamic | implemented |
+| `result-pattern` | The Result Pattern: Failures as Data, Not Explosions | Builder | 50 | error-taxonomy | implemented |
+| `async-failure-modes` | Asynchronous Failures: The Ones That Escape | Builder | 50 | result-pattern | implemented |
+| V2·M3 | Tooling: Lint, Format, Build (scoped) | Builder | — | — | planned (next · B-11) |
 
 ## Volumes III–XI (module-scoped; lessons authored per batch)
 
@@ -60,9 +62,9 @@
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | `http-web-basics` (5), `render-pipeline` (4), `js-values` (6), `terminal-tooling` (5), `git-workflow` (12), `semantic-a11y` (10) — 6 sets / 42 cards | implemented |
-| Glossary | 25 terms, domain-tagged, lesson-linked | implemented |
-| Troubleshooting index | 7 symptom-based entries | implemented |
+| Flashcard sets | 10 sets / 91 cards: web-basics, render-pipeline, js-values, terminal-tooling, git-workflow, semantic-a11y, css-layout, ts-foundations, modular-js, error-handling | implemented |
+| Glossary | 47 terms, domain-tagged, lesson-linked | implemented |
+| Troubleshooting index | 13 symptom-based entries | implemented |
 | A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |

@@ -26,9 +26,31 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Foundation Gauntlet expanded to span Modules 1–4 (12 questions); repositioned after M4.
 - Added `git-workflow` flashcard set (12 cards), 5 Git glossary terms, 1 merge-conflict troubleshooting entry.
 
+### Batch 06 — Volume I · Semantic HTML & Accessibility (M5) — implemented
+- `html-as-structure`, `a11y-tree-keyboard`, `aria-when-needed` (18 quiz questions, 3 debugging labs).
+- Accessibility Checklist reference (/ref/a11y) with persisted progress; `semantic-a11y` flashcard set (10 cards).
+
+### Batch 07 — Volume I · CSS & Responsive Design (M6) — implemented
+- `css-mental-model`, `layout-flex-grid`, `responsive-and-tokens` (15 quiz questions, 2 debugging labs).
+- `css-layout` flashcard set (9 cards); gauntlet expanded with a Types & Styles front.
+
+### Batch 08 — Volume I · TypeScript Foundations (M7) — implemented
+- `why-types`, `ts-strict-basics`, `narrowing`, `ts-dom` (20 quiz questions, 3 debugging labs).
+- `ts-foundations` flashcard set (10 cards). **Volume I complete: all 7 modules, 26 lessons.**
+- Foundation Gauntlet spans all of Volume I (19 questions).
+
+### Batch 09 — Volume II · Modular JavaScript (M1) — implemented
+- `es-modules`, `module-boundaries`, `circular-and-dynamic` (18 quiz questions, 3 debugging labs).
+- `modular-js` flashcard set (14 cards). **Builder level opens.**
+
+### Batch 10 — Volume II · Error Handling That Scales (M2) — implemented
+- `error-taxonomy`, `result-pattern`, `async-failure-modes` (18 quiz questions, 3 debugging labs).
+- `error-handling` flashcard set (16 cards), 7 error glossary terms, 2 troubleshooting entries.
+- Running totals: 10 flashcard sets / 91 cards, 47 glossary terms, 13 troubleshooting entries.
+
 ## Known gaps (classified)
 - ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
-- `needs-assessment` — per-module quizzes exist; a combined Volumes I–III phase assessment is pending.
+- `needs-assessment` — per-module quizzes + the Foundation Gauntlet (V1) exist; a combined Volumes II–III Builder assessment is pending (B-11 ships a Builder Gauntlet closing V2).
 - `candidate-new-module` — Browser storage landscape before authenticated progress (V2/V3).
 - `misordered` — CORS deserves a dedicated debugging lesson in V4, not only a callout.
 - `needs-production-context` — Monitoring for render-pipeline metrics (V9).
@@ -38,10 +60,10 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Flashcard scheduling is user-driven (Leitner-lite); consider SM-2 as sets grow.
 
 ## Recommended next batch
-**Batch 06 — Semantic HTML & Accessibility (V1·M5):** author `html-as-structure`, `a11y-tree-keyboard`,
-`aria-when-needed` (manifest ids); landmarks/headings/forms/images semantics, the accessibility tree and
-keyboard flows, ARIA used sparingly; ship the Accessibility Checklist reference surface. Full scope on the
-generation queue. Then STOP and request review (bounded generation contract).
+**Batch 11 — Volume II · Tooling: Lint, Format, Build (V2·M3):** author `lint-format`, the build-pipeline
+lesson, and CI-as-a-gate; ship ESLint + Prettier as team agreements and close Volume II with a Builder
+Gauntlet spanning Modules 1–3 (modular JS, error handling, tooling). Full scope on the generation queue.
+Then STOP and request review (bounded generation contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?

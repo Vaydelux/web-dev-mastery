@@ -10,6 +10,7 @@ import { m5 } from "./lessons5";
 import { m6 } from "./lessons6";
 import { m7 } from "./lessons7";
 import { m8 } from "./lessons8";
+import { m9 } from "./lessons9";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -36,10 +37,7 @@ export const COURSE: VolumeDef[] = [
   ]),
   v(2, "II", "Professional JavaScript", "Deep JavaScript", "Modular code, honest error handling, and the tooling that keeps large codebases healthy.", [
     mod("v2m1", 1, "Modular JavaScript", "Files with contracts: imports, exports, boundaries, and the knots between them.", "implemented", m8),
-    mod("v2m2", 2, "Error Handling That Scales", "Fail loudly in development, gracefully in production.", "planned", [
-      p("error-taxonomy", "Bugs vs Expected Failures", 2, 2, 1, 45, "An error taxonomy and throwing with intent.", ["module-boundaries"], ["errors"]),
-      p("result-pattern", "The Result Pattern", 2, 2, 2, 50, "Modeling expected failures without exceptions.", ["error-taxonomy"], ["result"]),
-    ]),
+    mod("v2m2", 2, "Error Handling That Scales", "Fail loudly in development, gracefully in production.", "implemented", m9),
     mod("v2m3", 3, "Tooling: Lint, Format, Build", "ESLint, Prettier, and bundlers as team agreements.", "planned", [
       p("lint-format", "Lint and Format as Agreements", 2, 3, 1, 40, "ESLint + Prettier and why they end style debates.", ["result-pattern"], ["tooling"]),
     ]),
@@ -328,6 +326,27 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "Top-level await", back: "Awaiting in a module body stalls EVERY importer until resolved — contagious. Prefer awaiting inside functions.", lesson: "circular-and-dynamic" },
     ],
   },
+  {
+    id: "error-handling", title: "Error Handling That Scales", blurb: "Volume II · M2 — the taxonomy, Results, and async escape hatches.",
+    cards: [
+      { front: "Bug vs expected failure", back: "Bug: broken regardless of conditions → fail fast, fix code. Failure: normal world (input, network) → recover gracefully.", lesson: "error-taxonomy" },
+      { front: "The sorting question", back: "'Would better conditions make this succeed?' Yes → handle it. No → fix the code. Asked before any try/catch.", lesson: "error-taxonomy" },
+      { front: "Fail fast", back: "Bugs crash loudly in development so they surface NOW — a red screen today is a prevented incident tomorrow.", lesson: "error-taxonomy" },
+      { front: "Cause chain", back: "new Error(msg, { cause: err }) — context up front, original failure preserved underneath. The end of log-then-rethrow.", lesson: "error-taxonomy" },
+      { front: "Swallowed catch", back: "An empty catch converts every failure into silence. Every catch must recover, rethrow with cause, or report.", lesson: "error-taxonomy" },
+      { front: "Two audiences", back: "Logs get the stack, ids, context. Users get what happened + what to do. Never send stacks to browsers.", lesson: "error-taxonomy" },
+      { front: "Result", back: "Result<E, T> = { ok: true, value } | { ok: false, error } — failure as a typed return value the compiler can enforce.", lesson: "result-pattern" },
+      { front: "Why exceptions are invisible", back: "throw exits through a door not in the signature; no caller is forced to acknowledge it. Result moves the failure INTO the type.", lesson: "result-pattern" },
+      { front: "Result-vs-throw rule", back: "Results for weather (parsing, I/O, input); exceptions for earthquakes (bugs). Result-everywhere drowns the signal.", lesson: "result-pattern" },
+      { front: "andThen / flatMap", back: "Run the next fallible step only on Success; Failures pass through — flat pipelines, first failure short-circuits.", lesson: "result-pattern" },
+      { front: "Failure owner", back: "The specific line responsible for a promise's failure: await+catch, .catch, or a consumed Result. No owner = orphan.", lesson: "async-failure-modes" },
+      { front: "Unhandled rejection", back: "A rejected promise nobody awaited — an event, not a crash, in browsers. Modern Node crashes on it by default.", lesson: "async-failure-modes" },
+      { front: "all vs allSettled", back: "all: unit batch, first failure aborts the race. allSettled: independent items, every fate reported individually.", lesson: "async-failure-modes" },
+      { front: "Smoke detectors", back: "Global unhandledrejection/error listeners REPORT escapes to your tracker; only local handling fixes the user's dead button.", lesson: "async-failure-modes" },
+      { front: "Retry policy", back: "Only idempotent + transient failures; exponential backoff + jitter; a cap. Blind retries on POSTs charge twice.", lesson: "async-failure-modes" },
+      { front: "Optimistic UI's debt", back: "Acting before confirmation obligates a visible rollback. No .catch = the UI silently diverges from the database.", lesson: "async-failure-modes" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -373,6 +392,13 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Circular dependency", def: "Two modules importing each other; one always reads the other mid-initialization.", domain: "Modules", lesson: "circular-and-dynamic" },
   { term: "Code splitting", def: "Shipping code as separate chunks loaded on demand via dynamic import().", domain: "Modules", lesson: "circular-and-dynamic" },
   { term: "Top-level await", def: "Awaiting in a module body; stalls every importer until resolved.", domain: "Modules", lesson: "circular-and-dynamic" },
+  { term: "Bug", def: "A violated contract — wrong regardless of conditions. Response: fail fast, fix the code.", domain: "Errors", lesson: "error-taxonomy" },
+  { term: "Expected failure", def: "A normal outcome against an uncooperative world (bad input, network, absence). Response: recover gracefully.", domain: "Errors", lesson: "error-taxonomy" },
+  { term: "Cause chain", def: "new Error(msg, { cause }) — the original error preserved when rethrowing with added context.", domain: "Errors", lesson: "error-taxonomy" },
+  { term: "Result", def: "Result<E, T>: Success(value) | Failure(reason) — expected failure as a typed return value.", domain: "Errors", lesson: "result-pattern" },
+  { term: "Failure owner", def: "The specific line responsible for a promise's failure: await+catch, .catch, or a consumed Result.", domain: "Errors", lesson: "async-failure-modes" },
+  { term: "Unhandled rejection", def: "A rejected promise with no await or .catch — an event by default, a crash in modern Node.", domain: "Errors", lesson: "async-failure-modes" },
+  { term: "Exponential backoff", def: "Retry waits that double (with jitter) and cap out — the polite way to retry transient failures.", domain: "Errors", lesson: "async-failure-modes" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -388,6 +414,8 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "possibly-undefined", symptom: "tsc reports 'Object is possibly undefined' and the urge is to sprinkle ! everywhere.", layer: "TypeScript null-safety", causes: ["A value genuinely can be undefined and the code doesn't handle it", "An API is typed too loosely (returns T | undefined when it needn't)"], diagnose: ["Read the signature: where can undefined come from?", "Ask the design question: missing means 'use a default' or 'this can't run'?"], fix: "Handle the fork: a default (?? fallback), an early return, or tighten the contract so absence is impossible. Avoid ! and casts.", prevent: "Treat ! like a loaded weapon needing a justifying comment; prefer narrowing and defaults.", related: "ts-strict-basics" },
   { id: "import-outside-module", symptom: "Uncaught SyntaxError: Cannot use import statement outside a module.", layer: "Module context", causes: ["The entry <script> lacks type=\"module\"", "A Node .js file uses ESM syntax but package.json has no \"type\": \"module\""], diagnose: ["Browser: inspect the <script> tag loading the file", "Node: check package.json for the type field and the file's extension"], fix: "Declare the module context: <script type=\"module\"> in HTML, or \"type\": \"module\" in package.json (or a .mjs extension).", prevent: "Declare the module system on day one of every project; don't mix ESM and CJS in one file.", related: "es-modules" },
   { id: "circular-undefined", symptom: "An exported value is defined in its file but undefined (or TDZ) when imported elsewhere; works when the file is tested alone.", layer: "Module graph / evaluation order", causes: ["Two modules import each other; one reads the other mid-initialization", "A const arrow/class binding is read before its initializer ran (TDZ)"], diagnose: ["Trace the import graph for a↔b cycles (madge --circular helps)", "Add a top-level log to each module; the one that runs second sees the uninitialized binding"], fix: "Break the cycle: invert (pass the dependency in), extract (shared third module), or defer (await import). Prefer invert/extract.", prevent: "Keep dependency arrows one-way; draw the arrow before adding an import that points at a module already pointing at you.", related: "circular-and-dynamic" },
+  { id: "silent-nothing", symptom: "A button/action sometimes 'does nothing' — no error, no spinner, no message. The feature works most of the time.", layer: "Error handling / catch blocks", causes: ["An empty (or log-only) catch swallowing an expected failure", "An async call with no await and no .catch — the rejection is orphaned"], diagnose: ["Reproduce with the network throttled or the endpoint failing", "Grep for catch {, catch {}, and promise calls lacking await/.catch"], fix: "Give the failure an owner: render an error state, recover, or report with cause. Empty catches get a visible decision.", prevent: "Lint no-empty; review every catch as a sentence: 'when this fails, the user will…'", related: "error-taxonomy" },
+  { id: "prod-silent-failure", symptom: "Works in development; in production, data silently goes stale or actions don't persist. No errors in logs or tracker.", layer: "Async failure routing", causes: ["A fire-and-forget promise whose rejection is never awaited (optimistic UI + no .catch)", "A rejection handled only by console.log, invisible in prod"], diagnose: ["Throttle the network / force a 500, perform the action, reload", "Check for 'Unhandled promise rejection' in the browser console"], fix: "Attach the failure: await + try/catch with rollback, or .catch that reports. Add a global unhandledrejection reporter.", prevent: "For every async call, point at the line that handles its failure; treat optimistic updates as requiring a written rollback path.", related: "async-failure-modes" },
 ];
 
 /* ————— batch queue ————— */
@@ -403,8 +431,8 @@ export const BATCHES: Batch[] = [
   { id: "B-07", title: "CSS & Responsive Design", scope: "V1·M6", status: "shipped", summary: "The cascade as a rulebook (specificity tuples, box model, @layer), flex/grid layout with the min-width:0 lab, and responsive thinking + design tokens — 15 quiz questions, 2 debugging labs." },
   { id: "B-08", title: "TypeScript Foundations", scope: "V1·M7", status: "shipped", summary: "Why types (bug archaeology), the strict vocabulary, narrowing + discriminated unions + the never-check, and TypeScript on the browser — 20 quiz questions, 3 debugging labs, 1 migration walkthrough." },
   { id: "B-09", title: "Volume II · Modular JavaScript", scope: "V2·M1", status: "shipped", summary: "ES modules as contracts (named/default, hoisting, tree-shaking, CJS boundary), verb-shaped public surfaces & one-way arrows, module-level state as singletons, circular dependencies + dynamic import() — 18 quiz questions, 3 debugging labs. The Builder level opens." },
-  { id: "B-10", title: "Volume II · Error Handling That Scales", scope: "V2·M2", status: "next", summary: "Bugs vs expected failures, throwing with intent, custom error types & causes, the Result pattern, and unhandled-rejection discipline." },
-  { id: "B-11", title: "Volume II · Tooling: Lint, Format, Build", scope: "V2·M3", status: "queued", summary: "ESLint + Prettier as team contracts, the build pipeline, and CI that fails loudly — closing Volume II with a Builder Gauntlet." },
+  { id: "B-10", title: "Volume II · Error Handling That Scales", scope: "V2·M2", status: "shipped", summary: "The bug-vs-failure taxonomy, throwing with intent (cause chains, domain classes), stack traces read bottom-up, the Result pattern as typed failures with exhaustiveness, and async escape hatches (orphaned promises, allSettled, global alarms, retry policy) — 18 quiz questions, 3 debugging labs." },
+  { id: "B-11", title: "Volume II · Tooling: Lint, Format, Build", scope: "V2·M3", status: "next", summary: "ESLint + Prettier as team contracts, the build pipeline, and CI that fails loudly — closing Volume II with a Builder Gauntlet." },
   { id: "B-12", title: "React", scope: "Volume III", status: "queued", summary: "Mental models, state & rendering, effects & data — the component era begins." },
   { id: "B-13", title: "Web Architecture", scope: "Volume IV", status: "queued", summary: "REST, AuthN/AuthZ, caching & security — the browser/server boundary made rigorous." },
   { id: "B-14", title: "PostgreSQL", scope: "Volume V", status: "queued", summary: "Modeling, SQL, and performance — relational data done properly." },
