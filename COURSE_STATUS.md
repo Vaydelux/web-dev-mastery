@@ -114,9 +114,16 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Running totals: 20 flashcard sets / 245 cards, 135 glossary terms, 43 troubleshooting entries, 62 lessons implemented.
 - The database phase opens; Volume V core complete. `query-tuning` + the PostgreSQL Gauntlet (`gauntlet-m5`) ship in B-19b.
 
+### Batch 19b — Volume V · Query Tuning + Gauntlet (M3 finale) — implemented
+- `query-tuning`: the N+1 trap (with the "endpoint fine until the list grows" debugging lab), OFFSET's cliff → keyset pagination, connection pooling (transaction mode), and the review loop.
+- PostgreSQL Gauntlet `gauntlet-m5` (15 Q / 4 fronts, spans M1–M3) closes Volume V.
+- 6 quiz questions, 1 debugging lab, 1 outdated-pattern pair; 7 flashcards, 6 glossary terms, 3 troubleshooting entries.
+- Running totals: 20 flashcard sets / 252 cards, 141 glossary terms, 46 troubleshooting entries, 63 lessons implemented.
+- **Volume V complete: all 3 modules + tuning.** Database phase certified by `gauntlet-m5`. Full-Stack level now has two volumes certified.
+
 ## Known gaps (classified)
 - ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
-- ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11 (Builder Gauntlet `gauntlet-m2` spans V2 M1–M3). Volume III (React Gauntlet) and Volume IV (Web Architecture Gauntlet) now each have cumulative checkpoints. A combined Volumes III–V cross-volume assessment remains pending once PostgreSQL ships.
+- ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11. Volumes III, IV, and V now each have cumulative gauntlets. A combined Volumes III–V cross-volume assessment remains pending (a candidate for a later review pass).
 - `candidate-new-module` — Browser storage landscape before authenticated progress (V2/V3).
 - `misordered` — CORS deserves a dedicated debugging lesson in V4, not only a callout.
 - `needs-production-context` — Monitoring for render-pipeline metrics (V9).
@@ -126,10 +133,12 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Flashcard scheduling is user-driven (Leitner-lite); consider SM-2 as sets grow.
 
 ## Recommended next batch
-**Batch 19b — PostgreSQL · Query Tuning + Gauntlet:** author `query-tuning` (the N+1 trap in the ORM era,
-keyset pagination at scale, connection pooling, and the gauntlet-prep review loop), then ship the PostgreSQL
-Gauntlet (`gauntlet-m5`, spans V5 M1–M3) and record the Database Phase Review. Full scope on the generation
-queue. Then STOP and request review (bounded generation contract).
+**Batch 20 — Supabase · Foundations & RLS (Volume VI):** open the Supabase phase. Author `v6m1` Supabase
+Foundations (the platform, browser/server clients, publishable vs privileged keys, Auth email + OAuth, Storage,
+Realtime, local-first workflows, generated types) and `v6m2` Row Level Security From First Principles (policies
+as the authorization boundary, the user-A-vs-user-B testing discipline carried from Volume IV, and why "never
+disable RLS to make it work"). Close Volume VI with a Supabase Gauntlet. Full scope on the generation queue.
+Then STOP and request review (bounded generation contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?

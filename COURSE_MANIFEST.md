@@ -90,8 +90,8 @@
 | `sql-ctes-transactions` | CTEs and Transactions: Readable Recipes, Atomic Facts | Full-Stack | 50 | sql-joins-aggregates | implemented |
 | `indexes` | Indexes: The Table of Contents Your Database Reads First | Full-Stack | 55 | sql-ctes-transactions | implemented |
 | `explain-analyze` | EXPLAIN ANALYZE: The Difference Between Guessing and Knowing | Full-Stack | 50 | indexes | implemented |
-| `query-tuning` | Query Tuning in the Wild: N+1, Pagination, and Pools | Full-Stack | 50 | explain-analyze | planned (B-19b) |
-| `gauntlet-m5` | Checkpoint · PostgreSQL Gauntlet (ships with B-19b) | Full-Stack | 25 | all of Volume V | planned |
+| `query-tuning` | Query Tuning in the Wild: N+1, Pagination, and Pools | Full-Stack | 50 | explain-analyze | implemented |
+| `gauntlet-m5` | Checkpoint · PostgreSQL Gauntlet (15 Q, pass ≥70%) | Full-Stack | 25 | all of Volume V | implemented |
 
 ## Volumes VI–XI (module-scoped; lessons authored per batch)
 
@@ -99,8 +99,8 @@
 |---|---|---|---|
 | III — React | React Phase | 6 modules complete · React Gauntlet passed-ready | ✅ complete |
 | IV — Web Architecture | Web Architecture Phase | 3 modules complete (REST, AuthN/AuthZ, Caching/Security) · Web Architecture Gauntlet passed-ready | ✅ complete |
-| V — PostgreSQL | Database Phase | 8 lessons implemented (Modeling, SQL, Performance); query-tuning + Gauntlet in B-19b | in progress |
-| VI — Supabase | Supabase Phase | 2 (Foundations, RLS) | planned |
+| V — PostgreSQL | Database Phase | 9 lessons implemented (Modeling, SQL, Performance, Tuning) · PostgreSQL Gauntlet passed-ready | ✅ complete |
+| VI — Supabase | Supabase Phase | 2 (Foundations, RLS) | next · B-20 |
 | VII — Next.js | Next.js Phase | 2 (App Router, Data/Mutations) | planned |
 | VIII — Full-Stack Applications | Full-Stack Phase | 2 (Auth CRUD, Search/Filter/Pagination) | planned |
 | IX — Production Engineering | Production Engineering Phase | 3 (Testing, Queues, CI/CD & Observability) | planned |
@@ -111,9 +111,9 @@
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | 20 sets / 245 cards: …react-performance (14), web-architecture (19), caching-security (14), sql-postgres (21) | implemented |
-| Glossary | 135 terms, domain-tagged, lesson-linked (incl. 15 SQL/Performance) | implemented |
-| Troubleshooting index | 43 symptom-based entries (incl. 3 PostgreSQL) | implemented |
+| Flashcard sets | 20 sets / 252 cards: …react-performance (14), web-architecture (19), caching-security (14), sql-postgres (28) | implemented |
+| Glossary | 141 terms, domain-tagged, lesson-linked (incl. 21 SQL/Performance) | implemented |
+| Troubleshooting index | 46 symptom-based entries (incl. 6 PostgreSQL) | implemented |
 | A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |
