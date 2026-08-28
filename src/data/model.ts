@@ -20,6 +20,7 @@ import { m15 } from "./lessons15";
 import { m16 } from "./lessons16";
 import { m17 } from "./lessons17";
 import { m18 } from "./lessons18";
+import { m19 } from "./lessons19";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -60,10 +61,7 @@ export const COURSE: VolumeDef[] = [
   v(4, "IV", "Web Architecture", "Web Architecture Phase", "HTTP in production depth: REST, cookies/sessions, authN vs authZ, caching, and security fundamentals.", [
     mod("v4m1", 1, "REST & API Design", "Resources, verbs, and contracts that age well.", "implemented", m17),
     mod("v4m2", 2, "Authentication & Authorization", "Cookies, sessions, JWTs, and the authN/authZ split.", "implemented", m18),
-    mod("v4m3", 3, "Caching & Security Fundamentals", "Cache headers, XSS, CSRF, and the trust-boundary mindset.", "planned", [
-      p("caching-fundamentals", "Caching: What May Be Remembered, by Whom, for How Long", 4, 3, 1, 50, "HTTP cache headers, CDN edges, stale-while-revalidate, and the invalidation incidents that teach the rules.", ["sessions-tokens"], ["caching"]),
-      p("web-security-fundamentals", "Security Fundamentals: The Trust-Boundary Mindset", 4, 3, 2, 55, "Input validation at boundaries, output encoding, secret hygiene, dependency risk, and the review checklist that closes Volume IV.", ["caching-fundamentals"], ["security"]),
-    ]),
+    mod("v4m3", 3, "Caching & Security Fundamentals", "Cache headers, XSS, CSRF, and the trust-boundary mindset.", "implemented", m19),
   ]),
   v(5, "V", "PostgreSQL", "Database Phase", "Relational modeling, SQL, transactions, indexes, and EXPLAIN.", [
     mod("v5m1", 1, "Relational Modeling", "Tables, keys, normalization, and ERDs.", "planned", []),
@@ -139,6 +137,7 @@ export const BATTLE_REFS: BattleRef[] = [
   { id: "gauntlet-m1", title: "Checkpoint · Foundation Gauntlet", volumeId: 1, afterModule: "v1m7", blurb: "A cumulative fight across all of Volume I — the web, JavaScript, your workstation, Git, semantics, CSS, and TypeScript — pass at 70%." },
   { id: "gauntlet-m2", title: "Checkpoint · Builder Gauntlet", volumeId: 2, afterModule: "v2m3", blurb: "A cumulative fight across all of Volume II — modules, boundaries, cycles, error ownership, Results, async failures, and the tooling that enforces it — pass at 70%." },
   { id: "gauntlet-m3", title: "Checkpoint · React Gauntlet", volumeId: 3, afterModule: "v3m6", blurb: "A cumulative fight across all of Volume III — the mental model, state & rendering, effects & data, forms, architecture & testing, and performance — pass at 70% to close the React phase." },
+  { id: "gauntlet-m4", title: "Checkpoint · Web Architecture Gauntlet", volumeId: 4, afterModule: "v4m3", blurb: "A cumulative fight across all of Volume IV — REST grammar, API contracts, authentication & authorization, sessions & tokens, caching, and the trust-boundary mindset — pass at 70% to close the web architecture phase." },
 ];
 
 export const BATTLES: BossBattle[] = [
@@ -314,6 +313,62 @@ export const BATTLES: BossBattle[] = [
           { id: "g3q13", type: "single", prompt: "The profiler shows many small green renders but the app still janks. The cost lives…", options: ["in React's scheduler", "below React: commit, layout, and paint — record the browser Performance tab and hunt the long task", "in the network", "in StrictMode"], answer: [1], explain: "The React Profiler meters render + diff only. Frozen UI with innocent React bars is a main-thread problem: one >50ms synchronous block is blocking paint and input alike.", tags: ["profiling-production"] },
           { id: "g3q14", type: "single", prompt: "A 1,000-row list janks while typing. The fix order is…", options: ["virtualize immediately", "identity first (data keys, memoized derived list, stable callbacks) → memo rows, measured → virtualize only at true scale", "memo the parent", "move filtering to a web worker first"], answer: [1], explain: "Without stable identity, memo comparisons lose and the diff misbehaves; virtualization would hide those bugs instead of fixing them. The ladder is identity → memo → window.", tags: ["rendering-performance"] },
           { id: "g3q15", type: "multi", prompt: "Select ALL statements that are TRUE.", options: ["The 16.6ms frame budget is the pass/fail line for interaction response", "memo helps when props keep fresh identities every render", "LCP measures when the main content became visible", "Profiling the dev build gives trustworthy numbers"], answer: [0, 2], explain: "memo compares by reference, so fresh inline props defeat it every time. And dev builds double-render, skip minification, and add checks — throttle a production build before trusting any number.", tags: ["rendering-performance", "profiling-production"] },
+        ],
+      },
+    ],
+  },
+  {
+    id: "gauntlet-m4",
+    title: "Web Architecture Gauntlet",
+    subtitle: "Volume IV cumulative · 15 questions · pass ≥ 70%",
+    passPct: 70,
+    intro: [
+      "Volume IV taught you the grammar of the browser/server relationship: how clients and servers agree on names and outcomes (REST), how that agreement survives change (contracts), who gets in (authentication) and what they may do (authorization), how memory is shared safely (caching), and how wrongness is kept out at every boundary (security).",
+      "This gauntlet mixes all three modules the way production mixes them: a caching decision that leaks user data is a security bug; a contract break is a caching and a versioning problem at once. Read each scenario fully — several answers are 'technically possible but professionally wrong'.",
+    ],
+    rules: [
+      "15 questions across four fronts; you need 70% to pass.",
+      "Every wrong answer links back to the lesson that teaches it — remediate, then retake.",
+      "When two answers seem defensible, choose the one you could defend in a design review.",
+    ],
+    sections: [
+      {
+        title: "REST Grammar & Contracts",
+        desc: "Nouns, verbs, outcomes, and changing your mind without breaking the world.",
+        questions: [
+          { id: "g4q1", type: "single", prompt: "A client wants to update ONLY the 'title' of a task, leaving every other field untouched. The correct call is…", options: ["PUT /tasks/9 with { title }", "PATCH /tasks/9 with { title }", "POST /tasks/9 with { title }", "DELETE then recreate"], answer: [1], explain: "PATCH merges a partial into the resource; PUT replaces the whole thing, so a title-only PUT would clobber every sibling field. This is the Volume IV version of 'know your verbs'.", tags: ["rest-api-design"] },
+          { id: "g4q2", type: "boolean", prompt: "Retrying a failed POST /orders is always safe because the server will deduplicate.", options: ["True", "False"], answer: [1], explain: "False — POST is non-idempotent by definition; a retry may create a second order. Only retry when the operation is idempotent (GET/PUT/DELETE) or you send a client-generated idempotency key the server can dedupe on.", tags: ["rest-api-design"] },
+          { id: "g4q3", type: "single", prompt: "Which change is additive-safe (non-breaking) for existing clients?", options: ["Renaming a response field", "Adding a new optional field to a response", "Making a previously-optional request field required", "Returning 404 where you used to return an empty array"], answer: [1], explain: "New optional output breaks nothing — old clients ignore unknown fields. Renames, new requirements, and semantics changes all fail the client-memory test: a client compiled against the old contract would malfunction.", tags: ["api-contracts-versioning"] },
+          { id: "g4q4", type: "single", prompt: "You must change what an existing endpoint DOES (same URL, same shape, new semantics). The professional move is…", options: ["change it in place and announce it in the changelog", "introduce the new behavior under a new version/endpoint, deprecate the old one with notice and a sunset date", "flip a feature flag at random per user", "wait until no one calls it anymore, then change it"], answer: [1], explain: "Behavior changes are contract changes even when the bytes look identical. Version it, deprecate the old with measured usage and a real sunset window, then retire with 410 Gone.", tags: ["api-contracts-versioning"] },
+        ],
+      },
+      {
+        title: "Identity: AuthN, AuthZ, Sessions & Tokens",
+        desc: "Who are you, may you do this, and how does the web remember the answer.",
+        questions: [
+          { id: "g4q5", type: "single", prompt: "A logged-in user requests another user's invoice by changing the id in the URL and receives it. This is a failure of…", options: ["authentication", "authorization", "caching", "encoding"], answer: [1], explain: "Authentication succeeded (you ARE logged in); authorization failed (nothing checked you MAY read that invoice). It's an IDOR — the data-access layer trusted the id without an ownership predicate.", tags: ["auth-models"] },
+          { id: "g4q6", type: "single", prompt: "The defining property of a correct password store is…", options: ["encrypted with a strong cipher so admins can recover passwords", "hashed with a slow, salted algorithm (bcrypt/argon2) so even the server can't read them", "stored in a separate database", "rotated every 90 days by policy"], answer: [1], explain: "Hashing is one-way: there is nothing to decrypt, so there is nothing to leak in readable form. Slow + salted makes guessing attacks expensive. Recoverable passwords are a design flaw, not a feature.", tags: ["auth-models"] },
+          { id: "g4q7", type: "single", prompt: "Why is an HttpOnly cookie a better home for a session credential than localStorage?", options: ["cookies are faster", "page scripts cannot read it, so XSS on your site can't exfiltrate the token", "localStorage is limited to 5MB", "cookies work offline"], answer: [1], explain: "Any script running in your page (including injected script) can read localStorage. HttpOnly puts the credential behind a wall scripts can't cross — the credential survives XSS as theft, leaving only request-forgery to defend with SameSite.", tags: ["sessions-tokens"] },
+          { id: "g4q8", type: "multi", prompt: "Select ALL attacks that SameSite cookies help defend against.", options: ["CSRF (cross-site request forgery)", "XSS (stored script injection)", "the browser sending your cookie on a forged cross-site form POST", "an attacker reading your cookie via injected script"], answer: [0, 2], explain: "SameSite withholds cookies on cross-site requests, killing classic CSRF. It does nothing for XSS — injected script runs on YOUR origin, where the cookie is still sent/visible. That's the HttpOnly job.", tags: ["sessions-tokens"] },
+          { id: "g4q9", type: "boolean", prompt: "A JWT can be revoked instantly by deleting it from the server.", options: ["True", "False"], answer: [1], explain: "False — a JWT is stateless; it's valid until its exp regardless of what the server does. Instant revocation needs server-side state: short access tokens plus a revocable stored refresh token.", tags: ["sessions-tokens"] },
+        ],
+      },
+      {
+        title: "Memory: Caching Correctly",
+        desc: "What may be remembered, by whom, for how long.",
+        questions: [
+          { id: "g4q10", type: "single", prompt: "After a deploy, real users see the old app for hours but incognito shows the new one. The fix is…", options: ["ask users to clear their cache", "serve HTML with no-cache and assets with content-hashed, immutable names", "raise the CDN TTL", "add a version query string bumped manually"], answer: [1], explain: "The caches are obeying your headers. Make the pointer (HTML) always current via no-cache, and make content immutable-safe via hashed filenames — freshness becomes a build property, not a support ticket.", tags: ["caching-fundamentals"] },
+          { id: "g4q11", type: "single", prompt: "Which header set is appropriate for a logged-in user's account dashboard?", options: ["public, max-age=3600", "public, max-age=31536000, immutable", "private, no-cache (or no-store)", "no headers — let the browser decide"], answer: [2], explain: "User-specific data must never enter a shared cache (public/CDN) — that's how user A's dashboard reaches user B. private caps at the browser; no-cache/no-store controls even that copy.", tags: ["caching-fundamentals"] },
+          { id: "g4q12", type: "boolean", prompt: "Cache-Control: no-cache means the response may not be stored at all.", options: ["True", "False"], answer: [1], explain: "False — no-cache allows storage but requires revalidation (If-None-Match → 304/200) before each use. The directive that forbids storage entirely is no-store. This distinction is both the interview question and the production bug.", tags: ["caching-fundamentals"] },
+        ],
+      },
+      {
+        title: "Boundaries: The Security Mindset",
+        desc: "Validate input, encode output, minimize secrets.",
+        questions: [
+          { id: "g4q13", type: "single", prompt: "Client-side form validation is best understood as…", options: ["the primary security control for input", "UX for honest users — the server must validate independently because requests can bypass the form entirely", "redundant if the server validates", "a CSRF defense"], answer: [1], explain: "A request doesn't need your form — curl sends anything. Client checks help users; only server-side validation is enforcement. Both matter, but they're not interchangeable.", tags: ["web-security-fundamentals"] },
+          { id: "g4q14", type: "single", prompt: "A user's bio contains HTML that renders as a live styled link for every viewer. The root cause is…", options: ["the database stored it wrong", "user text reached the DOM through an unencoded path (innerHTML/dangerouslySetInnerHTML), so stored markup executes on every view", "CORS misconfiguration", "the browser cache"], answer: [1], explain: "Storage was faithful; rendering chose to execute. This is stored XSS — written once, run for everyone, styled by your own CSS. Render user text as text by default; sanitize with a strict allow-list only when rich markup is a real product need.", tags: ["web-security-fundamentals"] },
+          { id: "g4q15", type: "multi", prompt: "Select ALL items that belong in the five-minute security review of a diff.", options: ["Does new inbound data get validated server-side?", "Does user text reach HTML/URLs/queries only through encoded/parameterized paths?", "Does every new route re-check authorization, not just login?", "Did any secret touch client code, logs, or a commit?"], answer: [0, 1, 2, 3], explain: "All four — input, output, authz, secrets (plus the fifth: what new dependency entered the lockfile). Five questions, five minutes, most incidents never start.", tags: ["web-security-fundamentals"] },
         ],
       },
     ],
@@ -625,6 +680,25 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "Refresh rotation reuse", back: "Each refresh token is single-use; presenting one twice means two parties hold it — fail loudly and revoke the family. Reuse is a theft alarm.", lesson: "sessions-tokens" },
     ],
   },
+  {
+    id: "caching-security", title: "Caching & Security Fundamentals", blurb: "Volume IV · M3 — the four cache sites, the golden rules, and the three boundary procedures.",
+    cards: [
+      { front: "A cache is…", back: "A copy of the truth on someone else's computer, with its own lifetime. Caching converts latency problems into consistency problems.", lesson: "caching-fundamentals" },
+      { front: "The four cache sites", back: "Browser → CDN edge → app cache (memory/Redis) → DB query cache. Sites 1–2 are other people's computers: your only control is the headers you send.", lesson: "caching-fundamentals" },
+      { front: "no-store vs no-cache", back: "no-store = never keep. no-cache = may keep, but must revalidate before each use. NOT synonyms — this is the classic bug.", lesson: "caching-fundamentals" },
+      { front: "private vs public", back: "private: browser-only. public: shared caches (CDN) may keep it. User-specific data NEVER goes public — that's a cross-user leak.", lesson: "caching-fundamentals" },
+      { front: "ETag / 304 handshake", back: "Client sends If-None-Match with its fingerprint; server replies 304 (copy current, no body) or 200 (new body + fingerprint). Freshness proven, not assumed.", lesson: "caching-fundamentals" },
+      { front: "The deploy-stale fix", back: "Two lifetimes: HTML gets no-cache (short-lived pointer), assets get content-hashed names + public/max-age/immutable. Versioned URLs make aggressive caching safe.", lesson: "caching-fundamentals" },
+      { front: "stale-while-revalidate", back: "Serve stale now, refresh in background. A bounded staleness window traded for instant responses — for 'eventually fresh' data only.", lesson: "caching-fundamentals" },
+      { front: "The three boundary rules", back: "Validate input where it enters. Encode output where it lands. Minimize secrets. Applied at checkpoints, not by mood.", lesson: "web-security-fundamentals" },
+      { front: "Client validation is…", back: "UX for honest users, never enforcement. Requests bypass the form entirely; the server is the only gate that can't be walked around.", lesson: "web-security-fundamentals" },
+      { front: "Stored XSS", back: "Payload written once, executed for every viewer via an unencoded render path. Defense: text by default, strict allow-list sanitizer for rich text, CSP as depth.", lesson: "web-security-fundamentals" },
+      { front: "CORS protects…", back: "Users' browsers from credentialed cross-origin requests they didn't intend. NOT your data — curl ignores it. Server-side authz is still the real gate.", lesson: "web-security-fundamentals" },
+      { front: "CSP", back: "Your site's declaration of what it may load (scripts, images, origins). Defense in depth: even landed XSS can't load foreign scripts or phone home.", lesson: "web-security-fundamentals" },
+      { front: "Secret leak response order", back: "1) ROTATE — exposure already happened. 2) audit where it went (logs, history, clients). 3) scrub history (cleanup, not containment).", lesson: "web-security-fundamentals" },
+      { front: "The five-minute review", back: "Input validated? Output encoded? AuthZ on every route? Secrets off-limits to client/logs/commits? New dependency vetted? Ask on every diff.", lesson: "web-security-fundamentals" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -742,6 +816,12 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "CSRF", def: "Forged cross-site requests riding the browser's auto-attached cookies.", domain: "Security", lesson: "sessions-tokens" },
   { term: "JWT", def: "Signed, self-describing token: scalable and stateless, readable payload, valid-until-expiry — no instant revocation.", domain: "Security", lesson: "sessions-tokens" },
   { term: "Refresh rotation", def: "Single-use, server-stored refresh tokens; reuse is treated as theft and revokes the family.", domain: "Security", lesson: "sessions-tokens" },
+  { term: "Cache-Control", def: "The per-response caching policy: no-store, no-cache, private/public, max-age, stale-while-revalidate.", domain: "HTTP", lesson: "caching-fundamentals" },
+  { term: "ETag", def: "An opaque fingerprint of a resource version; the basis of conditional requests and the 304 handshake.", domain: "HTTP", lesson: "caching-fundamentals" },
+  { term: "stale-while-revalidate", def: "Serve a stale copy immediately while revalidating in the background; a bounded consistency budget.", domain: "HTTP", lesson: "caching-fundamentals" },
+  { term: "Trust boundary", def: "Any line where untrusted data crosses into a trusted system — the place validation, encoding, and secret rules apply.", domain: "Security", lesson: "web-security-fundamentals" },
+  { term: "Output encoding", def: "Contextually neutralizing text at render time (e.g. < to &lt;) so it displays instead of executing.", domain: "Security", lesson: "web-security-fundamentals" },
+  { term: "CSP", def: "Content-Security-Policy: a site's declaration of which resources it may load; defense in depth against XSS.", domain: "Security", lesson: "web-security-fundamentals" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -782,6 +862,9 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "update-erases-fields", symptom: "Saving one field of a record silently wipes its sibling fields (description, tags, dates vanish after an edit).", layer: "API contract (PUT/PATCH)", causes: ["Client PUTs a partial body while the server implements PUT as full replacement", "A form holding a partial view of the resource used the wrong verb"], diagnose: ["Log the method + body the client sends on save", "Read the server's verb semantics: does PUT replace or merge here?"], fix: "Use PATCH for partial updates (or PUT with the full resource). One method, one meaning, documented in the contract.", prevent: "Forms default to PATCH; editors holding whole resources use PUT. Review diffs for verb/shape mismatches.", related: "rest-api-design" },
   { id: "idor-leak", symptom: "An authenticated user can read or mutate another user's records by changing an id in the URL or request.", layer: "Authorization / data access", causes: ["The handler checks authentication (WHO) but never ownership (MAY-YOU)", "Ownership 'enforced' only by the UI filtering what it renders"], diagnose: ["Log in as user B; replay the request with A's resource id; observe the response", "Read the handler: find the missing ownership predicate"], fix: "Add the predicate at data access: WHERE id = ? AND user_id = caller (or a policy layer). Return 403/404; add a permanent user-A-vs-user-B regression test.", prevent: "Every by-id handler shows its permission predicate in review; write the cross-user test before merge. Supabase RLS (Volume VI) automates this at the DB layer.", related: "auth-models" },
   { id: "token-theft-xss", symptom: "Session tokens appear exfiltrated or sessions hijacked; logs show valid tokens used from new devices/IPs shortly after users viewed user-generated content.", layer: "Client credential storage / injection", causes: ["Session credential stored where page scripts can read it (localStorage / readable cookie)", "Unsanitized user content rendered as HTML, letting foreign script run"], diagnose: ["Reproduce: render a probe payload (<img onerror=...>) in the suspect surface; watch for the outbound request", "Audit where the credential is stored and which scripts can read it"], fix: "Render user text safely (escape by default; sanitize any rich content). Move session credentials to an HttpOnly, Secure, SameSite cookie. Shorten token lifetimes and rotate refresh tokens.", prevent: "Treat all user-supplied text as hostile at render time; keep credentials out of script reach; assume XSS will occur and design tokens to die quickly.", related: "sessions-tokens" },
+  { id: "stale-after-deploy", symptom: "A deploy succeeds and works in incognito/staging, but real users see the old app or old data for hours.", layer: "Caching / delivery policy", causes: ["HTML entry point served with a long max-age and pointing at unversioned asset URLs", "An API response cached as public/long-lived when it's actually user-specific or mutable", "CDN edge holding a stale copy with a long TTL"], diagnose: ["Reproduce with a warm cache (normal window), not incognito; check the Network tab response headers of the entry point", "curl -I the URL to see Cache-Control and ETag; compare with the CDN console TTL"], fix: "Serve HTML with no-cache and assets with content-hashed, immutable names. For APIs, mark user-specific responses private/no-cache and set TTLs as explicit consistency budgets.", prevent: "Default stance: HTML no-cache, fingerprinted assets immutable. Bake it into the deploy config once.", related: "caching-fundamentals" },
+  { id: "cors-blocked-legit", symptom: "The console reports a CORS error for a request that should be allowed; disabling CORS 'fixes' it.", layer: "CORS configuration", causes: ["The API's Access-Control-Allow-Origin doesn't include your frontend's exact origin (scheme+host+port)", "A credentialed request against a wildcard (*) origin, which browsers forbid", "A preflight (OPTIONS) failing because the method/headers aren't allowed"], diagnose: ["Read the exact origin in the error and compare to the Access-Control-Allow-Origin the server returns", "Check whether the request sends credentials (cookies/auth) — wildcard + credentials is invalid"], fix: "Add your frontend origin explicitly to the allow-list (never * with credentials), and allow the methods/headers the preflight asks for. Fix the integration, not the policy.", prevent: "Treat a CORS block as the system working: it names the exact contract to adjust. Keep the allow-list minimal and per-environment.", related: "web-security-fundamentals" },
+  { id: "xss-stored-rendered", symptom: "A user's saved text (bio, comment, name) renders as live markup/links/buttons for every viewer instead of plain text.", layer: "Output encoding", causes: ["User text rendered through an unencoded path (innerHTML / dangerouslySetInnerHTML / v-html)", "A sanitizer configured too loosely, keeping scripts or event attributes"], diagnose: ["View the attacker's content raw (endpoint or DevTools) — the markup is stored, placed by a user", "Save any HTML in your own field; confirm it renders live while plain fields render inert"], fix: "Render user text as text by default ({value} / textContent). If rich markup is a real need, route through a strict allow-list sanitizer and strip scripts, event attributes, and javascript: URLs.", prevent: "Code-review rule: any raw-HTML sink on user-influenced data needs justification + sanitizer. Add a CSP so a miss can't load arbitrary scripts.", related: "web-security-fundamentals" },
 ];
 
 /* ————— batch queue ————— */
@@ -806,6 +889,6 @@ export const BATCHES: Batch[] = [
   { id: "B-16", title: "React · Component Architecture & Testing", scope: "V3·M5", status: "shipped", summary: "The three questions that place state (who/how far/how fast), props vs lift vs context with the PA-system model, the 'everything re-renders when I type' context debugging lab, compound components with baked-in ARIA roles, custom hooks as contract-bearing logic packages (render-props/HOC outdated pair); then behavior-first testing — the query hierarchy, user-event act loops, brittle-test anatomy with the '40 tests break on a rename' debugging lab, boundary mocking + findBy async flows — 12 quiz questions, 2 debugging labs." },
   { id: "B-17", title: "React · Performance, Profiling & Gauntlet", scope: "V3·M6", status: "shipped", summary: "The cost ladder (render → diff → commit → paint) with the 16.6ms frame budget as judge, memo as a measured last resort and the identity rules that make it win, the 'list that janks while you type' debugging lab, virtualization as the scale answer; then the five-step profiling loop, the three profiler verdicts, the 'modal that stutters on open' long-task debugging lab, and Core Web Vitals — 12 quiz questions, 2 debugging labs. Closes Volume III with the 15-question React Gauntlet." },
   { id: "B-18", title: "Web Architecture · Contracts & Identity", scope: "V4·M1–M2", status: "shipped", summary: "REST as three vocabularies (nouns/verbs/outcomes) with the PUT-vs-PATCH clobbering debugging lab and URL-state pagination; API contracts with the client-memory test, additive rules, versioning strategies, and the 'mobile app broke but the web is fine' breaking-change debugging lab; AuthN-vs-AuthZ with salted-slow hashing, opaque sessions, and the IDOR user-A-vs-user-B debugging lab; cookies/tokens with HttpOnly/Secure/SameSite, the XSS-token-theft and CSRF threat models, and the short-access/rotating-refresh design — 24 quiz questions, 4 debugging labs, 2 outdated-pattern pairs." },
-  { id: "B-18b", title: "Web Architecture · Caching & Security + Gauntlet", scope: "V4·M3", status: "next", summary: "HTTP caching as a trust-boundary problem (cache headers, stale-while-revalidate, invalidation debugging labs), security fundamentals (validation at boundaries, output encoding, secret hygiene), and the Web Architecture Gauntlet closing Volume IV." },
-  { id: "B-19", title: "PostgreSQL", scope: "Volume V", status: "queued", summary: "Modeling, SQL, and performance — relational data done properly." },
+  { id: "B-18b", title: "Web Architecture · Caching & Security + Gauntlet", scope: "V4·M3", status: "shipped", summary: "Caching as a trust-boundary problem (four cache sites, Cache-Control vocabulary, ETag/304 handshake, the deploy-stale debugging lab, public-vs-private golden rule) and security fundamentals (the three boundary rules, server-side validation, output encoding + the stored-XSS debugging lab, CORS/CSP as contracts, secret hygiene, the five-minute review) — 12 quiz questions, 2 debugging labs, 2 outdated-pattern pairs. Closes Volume IV with the 15-question Web Architecture Gauntlet." },
+  { id: "B-19", title: "PostgreSQL", scope: "Volume V", status: "next", summary: "Relational modeling (tables, keys, normalization, ERDs), SQL fluency (joins, aggregates, CTEs), and performance (indexes, EXPLAIN) — relational data done properly. Opens the database phase." },
 ];

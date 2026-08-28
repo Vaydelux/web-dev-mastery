@@ -74,16 +74,17 @@
 | `api-contracts-versioning` | API Contracts: Changing Your Mind Without Breaking the World | Full-Stack | 50 | rest-api-design | implemented |
 | `auth-models` | Authentication vs Authorization: The Two Questions, In Order | Full-Stack | 60 | api-contracts-versioning | implemented |
 | `sessions-tokens` | Cookies, Tokens, and the Two Ways Sessions Get Stolen | Full-Stack | 55 | auth-models | implemented |
-| V4·M3 | Caching & Security Fundamentals (2 lessons scoped) | Full-Stack | — | — | planned (next · B-18b) |
-| `gauntlet-m4` | Checkpoint · Web Architecture Gauntlet (ships with B-18b) | Full-Stack | 25 | all of Volume IV | planned |
+| `caching-fundamentals` | Caching: What May Be Remembered, by Whom, for How Long | Full-Stack | 50 | sessions-tokens | implemented |
+| `web-security-fundamentals` | Security Fundamentals: The Trust-Boundary Mindset | Full-Stack | 55 | caching-fundamentals | implemented |
+| `gauntlet-m4` | Checkpoint · Web Architecture Gauntlet (15 Q, pass ≥70%) | Full-Stack | 25 | all of Volume IV | implemented |
 
 ## Volumes V–XI (module-scoped; lessons authored per batch)
 
 | Volume | Phase | Modules | Status |
 |---|---|---|---|
 | III — React | React Phase | 6 modules complete · React Gauntlet passed-ready | ✅ complete |
-| IV — Web Architecture | Web Architecture Phase | 3 (REST ✅, AuthN/AuthZ ✅, Caching/Security) | in progress |
-| V — PostgreSQL | Database Phase | 3 (Modeling, SQL, Performance) | planned |
+| IV — Web Architecture | Web Architecture Phase | 3 modules complete (REST, AuthN/AuthZ, Caching/Security) · Web Architecture Gauntlet passed-ready | ✅ complete |
+| V — PostgreSQL | Database Phase | 3 (Modeling, SQL, Performance) | next · B-19 |
 | VI — Supabase | Supabase Phase | 2 (Foundations, RLS) | planned |
 | VII — Next.js | Next.js Phase | 2 (App Router, Data/Mutations) | planned |
 | VIII — Full-Stack Applications | Full-Stack Phase | 2 (Auth CRUD, Search/Filter/Pagination) | planned |
@@ -95,9 +96,9 @@
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | 18 sets / 210 cards: …react-architecture (16), react-performance (14), web-architecture (19) | implemented |
-| Glossary | 113 terms, domain-tagged, lesson-linked | implemented |
-| Troubleshooting index | 37 symptom-based entries | implemented |
+| Flashcard sets | 19 sets / 224 cards: …react-performance (14), web-architecture (19), caching-security (14) | implemented |
+| Glossary | 120 terms, domain-tagged, lesson-linked | implemented |
+| Troubleshooting index | 40 symptom-based entries | implemented |
 | A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |

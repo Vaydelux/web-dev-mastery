@@ -100,9 +100,16 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Running totals: 18 flashcard sets / 210 cards, 113 glossary terms, 37 troubleshooting entries, 52 lessons implemented.
 - Volume IV opens the Full-Stack level; M3 (Caching & Security) + the Web Architecture Gauntlet (`gauntlet-m4`) are scoped for B-18b.
 
+### Batch 18b — Volume IV · Caching & Security + Gauntlet (M3) — implemented
+- `caching-fundamentals` (four cache sites, Cache-Control vocabulary, ETag/304 handshake walkthrough, deploy-stale debugging lab, content hashing) and `web-security-fundamentals` (three boundary rules, output encoding + stored-XSS debugging lab, CORS/CSP as contracts, secret hygiene, five-minute review).
+- 12 quiz questions, 2 debugging labs, 2 outdated-pattern pairs; Web Architecture Gauntlet `gauntlet-m4` (15 Q / 4 fronts) closes Volume IV.
+- `caching-security` flashcard set (14 cards), 7 glossary terms, 3 troubleshooting entries.
+- Running totals: 19 flashcard sets / 224 cards, 120 glossary terms, 40 troubleshooting entries, 54 lessons implemented.
+- **Volume IV complete: all 3 modules.** Full-Stack level now has its first volume certified by `gauntlet-m4`.
+
 ## Known gaps (classified)
 - ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
-- ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11 (Builder Gauntlet `gauntlet-m2` spans V2 M1–M3). A combined Volumes III–V Full-Stack assessment remains pending.
+- ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11 (Builder Gauntlet `gauntlet-m2` spans V2 M1–M3). Volume III (React Gauntlet) and Volume IV (Web Architecture Gauntlet) now each have cumulative checkpoints. A combined Volumes III–V cross-volume assessment remains pending once PostgreSQL ships.
 - `candidate-new-module` — Browser storage landscape before authenticated progress (V2/V3).
 - `misordered` — CORS deserves a dedicated debugging lesson in V4, not only a callout.
 - `needs-production-context` — Monitoring for render-pipeline metrics (V9).
@@ -112,11 +119,12 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Flashcard scheduling is user-driven (Leitner-lite); consider SM-2 as sets grow.
 
 ## Recommended next batch
-**Batch 18b — Web Architecture · Caching & Security + Gauntlet (V4·M3):** author `caching-fundamentals`
-(HTTP cache headers, ETags/conditional requests, CDN edges, stale-while-revalidate, invalidation debugging
-labs) and `web-security-fundamentals` (validation at trust boundaries, output encoding, secret hygiene,
-dependency risk); close Volume IV with the Web Architecture Gauntlet (`gauntlet-m4`, spans M1–M3). Full scope
-on the generation queue. Then STOP and request review (bounded generation contract).
+**Batch 19 — PostgreSQL (Volume V):** open the database phase. Author `v5m1` Relational Modeling
+(relational thinking, tables/keys/constraints, normalization + when to denormalize, ERDs), then `v5m2` SQL
+Fluency (SELECT discipline, joins, aggregates/GROUP BY, CTEs/subqueries, transactions), then `v5m3`
+Performance (indexes, EXPLAIN/ANALYZE, query planning). Include an intentionally-poor-schema refactoring lab,
+ERD-before-schema practice, and a PostgreSQL Gauntlet closing Volume V. Full scope on the generation queue.
+Then STOP and request review (bounded generation contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?
