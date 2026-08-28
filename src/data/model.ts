@@ -28,6 +28,7 @@ import { m23 } from "./lessons23";
 import { m24 } from "./lessons24";
 import { m25 } from "./lessons25";
 import { m26 } from "./lessons26";
+import { m27 } from "./lessons27";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -91,9 +92,9 @@ export const COURSE: VolumeDef[] = [
     mod("v8m2", 2, "Search, Filter, Pagination", "One query with four parameter kinds, scaled with cursors.", "implemented", m26.slice(2)),
   ]),
   v(9, "IX", "Production Engineering", "Production Engineering Phase", "Testing, queues, caching, email, rate limiting, CI/CD, and observability.", [
-    mod("v9m1", 1, "Testing That Matters", "Unit, integration, and the tests that earn their keep.", "planned", []),
-    mod("v9m2", 2, "Background Jobs & Queues", "Producers, consumers, retries, and idempotency.", "planned", []),
-    mod("v9m3", 3, "CI/CD & Observability", "Pipelines, deploys, logs, and alerts.", "planned", []),
+    mod("v9m1", 1, "Testing That Matters", "The pyramid as economics, behavior tests, and the boundary tests that guard real contracts.", "implemented", [m27[0]]),
+    mod("v9m2", 2, "Background Jobs & Queues", "Work that outlives the request: at-least-once, idempotency, retries, and dead letters.", "implemented", [m27[1]]),
+    mod("v9m3", 3, "CI/CD & Observability", "The gate that ships you, deploys that undo themselves, and the eyes on production.", "implemented", [m27[2]]),
   ]),
   v(10, "X", "Architecture", "Architecture Phase", "Modularity, tradeoffs, and distributed-system fundamentals.", [
     mod("v10m1", 1, "Pragmatic Architecture", "SOLID, boundaries, and decision records.", "planned", []),
@@ -152,6 +153,7 @@ export const BATTLE_REFS: BattleRef[] = [
   { id: "gauntlet-m6", title: "Checkpoint · Supabase Gauntlet", volumeId: 6, afterModule: "v6m2", blurb: "A cumulative fight across all of Volume VI — the platform and its keys, Auth/Storage/Realtime as rooms in one building, RLS as the house rules, and the testing matrix that makes them a contract — pass at 70% to close the Supabase phase." },
   { id: "gauntlet-m7", title: "Checkpoint · Next.js Gauntlet", volumeId: 7, afterModule: "v7m2", blurb: "A cumulative fight across all of Volume VII — the App Router map, Server vs Client decisions, the secrets boundary, hydration, and the caching map — pass at 70% to close the Next.js phase." },
   { id: "gauntlet-m8", title: "Checkpoint · Full-Stack Gauntlet", volumeId: 8, afterModule: "v8m2", blurb: "A cumulative fight across all of Volume VIII — the five-gate anatomy of features, states and resilience under pressure, the URL as query state, and pagination at scale — pass at 70% to close the Full-Stack applications phase." },
+  { id: "gauntlet-m9", title: "Checkpoint · Production Gauntlet", volumeId: 9, afterModule: "v9m3", blurb: "A cumulative fight across all of Volume IX — tests that earn their keep, the at-least-once laws of queues, and the gates, deploys, and dashboards of production — pass at 70% to close the Production Engineering phase." },
 ];
 
 export const BATTLES: BossBattle[] = [
@@ -611,6 +613,62 @@ export const BATTLES: BossBattle[] = [
       },
     ],
   },
+  {
+    id: "gauntlet-m9",
+    title: "Production Gauntlet",
+    subtitle: "Volume IX cumulative · 15 questions · pass ≥ 70%",
+    passPct: 70,
+    intro: [
+      "Volume IX turned you into the person who ships — and keeps things shipped. The tests that earn their keep, the queues that outlive the request, the pipelines that verify every push, and the dashboards that tell you the truth about production.",
+      "This gauntlet mixes all three modules the way production mixes them: a duplicate email is a queue bug, a slow suite is an economics bug, a 3 a.m. page is an alerting bug. Several answers are 'technically possible but professionally wrong'.",
+    ],
+    rules: [
+      "15 questions across four fronts; you need 70% to pass.",
+      "Every wrong answer links back to the lesson that teaches it — remediate, then retake.",
+      "When two answers seem defensible, choose the one that survives a 3 a.m. incident.",
+    ],
+    sections: [
+      {
+        title: "Tests That Earn Their Keep",
+        desc: "The pyramid as economics, behavior over implementation.",
+        questions: [
+          { id: "g9q1", type: "single", prompt: "A test fails after a pure refactor with unchanged behavior. The test was…", options: ["doing its job", "an implementation test coupled to structure — delete or rewrite it as behavior", "flaky", "too slow"], answer: [1], explain: "A contract test fails only when a promise breaks. Red on an innocent refactor means it asserted internals — the tests teams silence, which is how real regressions ship.", tags: ["testing-that-matters"] },
+          { id: "g9q2", type: "single", prompt: "The test pyramid is best understood as…", options: ["a religious ordering", "an economics argument: many cheap fast tests, fewer expensive ones, a few whole-journey surveys", "a coverage target", "a ban on E2E tests"], answer: [1], explain: "Each layer costs more per incident caught. Spend the CI budget where failures teach fastest: millisecond units, second-scale integrations, a handful of minute-scale E2E for critical journeys.", tags: ["testing-that-matters"] },
+          { id: "g9q3", type: "single", prompt: "The most valuable integration test in a multi-user Supabase app is…", options: ["a dashboard snapshot", "the RLS matrix: user B cannot read/write user A's rows, on a real test DB", "a spy-count on the client", "an E2E of login"], answer: [1], explain: "Confidentiality failures are silent and catastrophic; no UI test can see them. The adversarial matrix, run as real roles against real policies, guards the contract that matters most.", tags: ["testing-that-matters", "rls-testing-discipline"] },
+          { id: "g9q4", type: "multi", prompt: "Select ALL appropriate things to mock.", options: ["the system clock", "external network APIs you don't own", "the validator, when the test's subject IS validation", "the database, when the unit under test is pure business logic"], answer: [0, 1, 3], explain: "Mock the world's edges — time, foreign networks — and stand-ins where the seam isn't the subject. Never mock the behavior under test: that test would pass with any implementation, including a broken one.", tags: ["testing-that-matters"] },
+        ],
+      },
+      {
+        title: "Queues & The At-Least-Once Laws",
+        desc: "Duplicates, retries, and the dead-letter drawer.",
+        questions: [
+          { id: "g9q5", type: "single", prompt: "'At-least-once' delivery means…", options: ["every job runs exactly once", "a job may be delivered more than once — so every job must be idempotent", "jobs run at most once", "the queue sorts by priority"], answer: [1], explain: "A consumer can finish work but crash before acknowledging; the queue then redelivers. Duplicates are certain — idempotency is the non-negotiable price of admission.", tags: ["background-jobs-queues"] },
+          { id: "g9q6", type: "single", prompt: "Welcome emails arrive twice, ~40s apart, one user, one signup. This is…", options: ["the signup ran twice", "at-least-once redelivery: the worker crashed after sending but before acking, and the job re-ran without an idempotency guard", "a mail-provider bug", "a cache replay"], answer: [1], explain: "The gap matches the queue's redelivery window. The worker did a side effect before recording completion, so the redelivery had no way to know it was done. Guard on the idempotency key before the side effect.", tags: ["background-jobs-queues"] },
+          { id: "g9q7", type: "single", prompt: "A job fails with a 404 (template missing). The correct handling is…", options: ["retry 5 times with backoff", "straight to the dead-letter queue — a permanent error that will fail identically every time", "retry forever at a low rate", "delete it silently"], answer: [1], explain: "Retries are for transient failures. A 404 is deterministic — five retries burn time and delay the alert. Terminal errors go to the DLQ on attempt 1 so a human fixes the cause.", tags: ["background-jobs-queues"] },
+          { id: "g9q8", type: "single", prompt: "Why add jitter to exponential backoff?", options: ["unpredictability for security", "so workers that failed together don't retry in lockstep and recreate the spike", "required by the queue protocol", "to spread DB load"], answer: [1], explain: "Without jitter, a fleet that failed against one outage retries at the same instant — a synchronized thundering herd that re-breaks the recovering dependency.", tags: ["background-jobs-queues"] },
+          { id: "g9q9", type: "boolean", prompt: "It's fine to embed the full dataset in a job payload since it was just loaded.", options: ["True", "False"], answer: [1], explain: "False — fat payloads bloat the queue, go stale while waiting, and make replays act on old data. Lean jobs carry IDs; the worker fetches fresh state so a replay does the current, correct thing.", tags: ["background-jobs-queues"] },
+        ],
+      },
+      {
+        title: "CI/CD: The Gate & The Rollback",
+        desc: "Deploys that undo themselves.",
+        questions: [
+          { id: "g9q10", type: "single", prompt: "Ordering CI steps cheapest-first matters because…", options: ["tradition", "a fast, frequent failure (a type error) shouldn't wait behind a slow check (E2E)", "billing", "the cache requires it"], answer: [1], explain: "The chain stops at the first failure. Catching common failures in 20 seconds instead of 12 minutes keeps developers in context — and keeps the gate trusted.", tags: ["cicd-observability"] },
+          { id: "g9q11", type: "single", prompt: "The difference between a deploy and a release is…", options: ["there is none", "a deploy puts code on servers; a release makes users get it — flags split the two so rollback is a flip, not a redeploy", "a release is a deploy to staging", "a deploy is manual"], answer: [1], explain: "Ship dark, then reveal gradually. When ship and show are separate levers, a misbehaving release rolls back in seconds by flipping the flag.", tags: ["cicd-observability"] },
+          { id: "g9q12", type: "boolean", prompt: "A flaky CI step should be re-run 'just in case' until it passes.", options: ["True", "False"], answer: [1], explain: "False — re-running erodes the gate's authority until a real failure gets waved through. Fix or quarantine the flake the same day; a gate people distrust catches nothing.", tags: ["cicd-observability"] },
+        ],
+      },
+      {
+        title: "Observability: Symptoms, Not Causes",
+        desc: "Pages, dashboards, and the blameless postmortem.",
+        questions: [
+          { id: "g9q13", type: "single", prompt: "A good pager alert fires on…", options: ["any metric leaving its historical range", "a symptom the user can feel — error rate, latency, queue age — not a cause like CPU", "every error log line", "memory above 80%"], answer: [1], explain: "Pages are scarce credibility; spend them on user pain. Causes belong on dashboards. A page should mean 'a human must act now' — and only that.", tags: ["cicd-observability"] },
+          { id: "g9q14", type: "single", prompt: "Which question do traces (not metrics or logs) uniquely answer?", options: ["is the system healthy overall?", "what happened at 03:14:22?", "why was THIS ONE request slow, across every service it touched?", "how many requests per second?"], answer: [2], explain: "Metrics trend, logs narrate, but only a trace follows a single request's full journey across boundaries — the tool for tail-latency and one-user mysteries.", tags: ["cicd-observability"] },
+          { id: "g9q15", type: "single", prompt: "The four golden signals are…", options: ["CPU, memory, disk, network", "latency, traffic, errors, saturation", "uptime, throughput, cost, headcount", "p50, p95, p99, max"], answer: [1], explain: "Latency (as percentiles — averages hide the tail), traffic, errors, and saturation map directly to what users feel and what should be alerted.", tags: ["cicd-observability"] },
+        ],
+      },
+    ],
+  },
 ];
 export const getBattle = (id: string): BossBattle | undefined => BATTLES.find((b) => b.id === id);
 
@@ -1043,6 +1101,29 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "hasMore for free", back: "A page shorter than LIMIT means the list ended — no total count needed for the common case.", lesson: "pagination-keyset" },
     ],
   },
+  {
+    id: "production-eng", title: "Production Engineering", blurb: "Volume IX — tests that earn their keep, the at-least-once laws, and the machinery that ships and watches you.",
+    cards: [
+      { front: "The pyramid is…", back: "…economics, not religion. Many cheap fast units, fewer second-scale integrations, a handful of minute-scale E2E for the journeys that must never break.", lesson: "testing-that-matters" },
+      { front: "Behavior vs implementation test", back: "Behavior asserts the promised outcome through the public surface — refactor-proof. Implementation asserts internals (spies, whole-tree snapshots) — breaks on refactors, catches little.", lesson: "testing-that-matters" },
+      { front: "The earn-its-keep filter", back: "Every test must name the incident it prevents. A test whose failure reads 'snapshot changed' is a liability, not a guard.", lesson: "testing-that-matters" },
+      { front: "The RLS matrix test", back: "User B cannot read/write user A's rows, run as real roles against a real test DB, with A's positive controls included. The highest-value integration test in a multi-user app.", lesson: "testing-that-matters" },
+      { front: "Mock the edges, never the subject", back: "Clock, foreign networks, randomness — yes. The very behavior under test — never. A test that can't go red on a broken impl is a ritual.", lesson: "testing-that-matters" },
+      { front: "At-least-once", back: "A queue guarantees delivery at least once, never exactly once. A crash after work but before ack triggers redelivery — so every job must be idempotent.", lesson: "background-jobs-queues" },
+      { front: "The idempotency guard", back: "Check isDone(key) BEFORE the side effect; mark done AFTER success. The crash window between the two is where duplicates are born — the guard makes it harmless.", lesson: "background-jobs-queues" },
+      { front: "Lean job payloads", back: "IDs and scalars, never whole objects. The worker re-reads fresh state, so a replay an hour later does the current, correct thing. Jobs are pointers, not snapshots.", lesson: "background-jobs-queues" },
+      { front: "Backoff + jitter", back: "Retry delays double (1s, 2s, 4s…) with a cap, plus randomness so a fleet that failed together doesn't retry in lockstep and recreate the spike.", lesson: "background-jobs-queues" },
+      { front: "Transient vs permanent failure", back: "Retry transient (network blip, 429/503, lock timeout). DLQ permanent on attempt 1 (404, validation, auth) — it will fail identically every time.", lesson: "background-jobs-queues" },
+      { front: "The dead-letter queue", back: "The manager's drawer: terminal failures held, alerted on, and replayable by hand. A DLQ item means a human decision is required — it pages.", lesson: "background-jobs-queues" },
+      { front: "CI is a chain of exit codes", back: "Each step returns 0 or non-zero; the chain stops at the first failure. Cheapest, most-failing checks first, from a frozen lockfile, on every push.", lesson: "cicd-observability" },
+      { front: "Deploy vs release", back: "Deploy = code on servers; release = users get it. Feature flags split the two: ship dark, reveal 1%→100%, roll back by flipping — seconds, not a redeploy.", lesson: "cicd-observability" },
+      { front: "Logs vs metrics vs traces", back: "Logs narrate events in order; metrics trend health (latency/errors/saturation); traces follow ONE request across services. Alert on metrics, diagnose with logs+traces.", lesson: "cicd-observability" },
+      { front: "Symptom vs cause alerting", back: "Page on what the user feels (error rate, latency, queue age); dashboard the causes (CPU, memory). Noise erodes the pager's authority faster than any outage.", lesson: "cicd-observability" },
+      { front: "The four golden signals", back: "Latency (p50/p99 — averages hide the tail), traffic, errors, saturation. The minimum instrumentation for every service.", lesson: "cicd-observability" },
+      { front: "Blameless postmortem", back: "Timeline + impact + stacked root causes + system-changing action items. 'Be more careful' is not an action item. The system is on trial, never the person.", lesson: "cicd-observability" },
+      { front: "Expand-migrate-contract", back: "Add the column (deploy) → write to both + backfill (release) → drop the old column later. Each step reversible, none require downtime.", lesson: "cicd-observability" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -1227,6 +1308,18 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Keyset pagination", def: "Resuming from the last row's sort values (a cursor) instead of skipping N rows with OFFSET.", domain: "Full-Stack", lesson: "pagination-keyset" },
   { term: "Tiebreaker", def: "A unique column in the sort making the order total, so page boundaries don't move between queries.", domain: "Full-Stack", lesson: "pagination-keyset" },
   { term: "Opaque cursor", def: "An encoded bookmark the client can only hand back; no arithmetic, no skipping, no positional assumptions.", domain: "Full-Stack", lesson: "pagination-keyset" },
+  { term: "Test pyramid", def: "The cost-ordered portfolio: many fast unit tests, fewer integration tests, a few end-to-end surveys.", domain: "Testing", lesson: "testing-that-matters" },
+  { term: "Behavior test", def: "Asserts the promised outcome through the public surface; survives refactors.", domain: "Testing", lesson: "testing-that-matters" },
+  { term: "Boundary test", def: "Guards a contract across a seam: RLS matrix, validation rules, API status codes.", domain: "Testing", lesson: "testing-that-matters" },
+  { term: "Test database", def: "A real DB reset per run: migrations up, typed fixtures in, torn down after. Never shared.", domain: "Testing", lesson: "testing-that-matters" },
+  { term: "Queue", def: "A durable holding rail that decouples instant acknowledgment from slow completion.", domain: "Queues", lesson: "background-jobs-queues" },
+  { term: "At-least-once delivery", def: "A queue's guarantee: a job may be delivered more than once, never exactly once.", domain: "Queues", lesson: "background-jobs-queues" },
+  { term: "Idempotency (job)", def: "Running a job twice yields the same result as once; keyed on the job's identity.", domain: "Queues", lesson: "background-jobs-queues" },
+  { term: "Dead-letter queue", def: "Holding area for terminal failures; alerted on and replayable by hand.", domain: "Queues", lesson: "background-jobs-queues" },
+  { term: "CI gate", def: "The ordered chain of exit-code checks (typecheck, lint, test, build) that must pass before merge.", domain: "CI/CD", lesson: "cicd-observability" },
+  { term: "Feature flag", def: "A switch separating deploy (code on servers) from release (users get it); enables instant rollback.", domain: "CI/CD", lesson: "cicd-observability" },
+  { term: "Golden signals", def: "The four core service metrics: latency, traffic, errors, saturation.", domain: "Observability", lesson: "cicd-observability" },
+  { term: "Blameless postmortem", def: "Incident review focused on system causes and prevention, never individual blame.", domain: "Observability", lesson: "cicd-observability" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -1285,6 +1378,9 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "load-more-dup-gaps", symptom: "Infinite scroll / 'load more' repeats some rows and never shows others — only on busy accounts or data with many same-timestamp rows.", layer: "Pagination ordering stability", causes: ["The sort lacks a unique tiebreaker, so equal values are ordered arbitrarily per query and page boundaries shift", "OFFSET-based paging while new rows are inserted, sliding the window"], diagnose: ["Seed rows with identical sort values and paginate; watch rows reorder between requests", "Check the ORDER BY for a unique column and the cursor for both values"], fix: "Make the order total: ORDER BY <sort> DESC, id DESC; include id in the cursor and the composite index; prefer keyset over OFFSET for living lists.", prevent: "Definition of done for any paginated query: unique tiebreaker in the ORDER BY, the cursor, and the index.", related: "pagination-keyset" },
   { id: "secret-in-bundle", symptom: "A server-only secret (service key, DB URL with password) is found in the shipped client JavaScript, or an env var 'disappears' (undefined) in a client component.", layer: "Execution boundary / env vars", causes: ["A server-only value imported (directly or transitively) into a 'use client' module", "Expecting a non-NEXT_PUBLIC_ var to be readable client-side — bundlers only inline NEXT_PUBLIC_ values"], diagnose: ["Build and grep the emitted JS for the secret's prefix", "Trace the import chain from the client component back to the module that reads process.env"], fix: "Move the privileged operation to a Server Action or Route Handler; the client calls it by name and receives only the result. Mark server modules with the server-only package so cross-border imports fail the build.", prevent: "server-only on every secret-touching module; bundle-grep for key prefixes on each deploy; review rule: 'use client' files may only construct the publishable Supabase client.", related: "server-client-boundary" },
   { id: "stale-after-revalidate", symptom: "After a mutation the database is correct but pages still show old values — for some routes, some users, 'until you refresh a few times'.", layer: "Next.js caches / invalidation", causes: ["The mutation revalidated only one route while the data is also rendered by other routes or a shared layout", "A data-cache entry was fetched without a tag, so revalidateTag can't reach it", "The stale copy lives in a Client Component's useState, which server revalidation never touches"], diagnose: ["Query the DB directly to confirm the write succeeded (it's a copy problem, not a write)", "List every place the changed data renders; check each against the mutation's revalidate calls"], fix: "Declare the mutation's full dirty set: revalidatePath for each affected route and revalidateTag for tagged fetches; for client-held state, refetch after the action or subscribe via Realtime.", prevent: "Every Server Action documents its dirty set (routes + tags) next to the write; shared layout data is always tag-fetched.", related: "nextjs-data-mutations" },
+  { id: "suite-cries-wolf", symptom: "CI fails on most PRs with snapshot mismatches or spy-count assertions after innocent refactors; the 'fix' is regenerating snapshots nobody reads; run time keeps growing until people skip local runs.", layer: "Test design / suite health", causes: ["Tests assert implementation (snapshots of structure, spy call counts) rather than promised behavior", "Whole-tree snapshots couple tests to markup, so any refactor churns them"], diagnose: ["Bucket recent failures: behavior failures vs snapshot/spy churn — the ratio is the diagnosis", "For each churning test, ask 'would this have caught a real regression?'"], fix: "Delete implementation tests; replace each with a behavior assertion through the public surface (named after the incident it prevents). Keep snapshots only for small, stable, intentional output.", prevent: "Review rule: reject tests whose failure message would be 'snapshot changed'; every test must name the incident it guards.", related: "testing-that-matters" },
+  { id: "job-duplicate-effect", symptom: "A side effect (email, charge, export) happens twice for one user action, ~seconds-to-minutes apart, with no second request in the API logs.", layer: "Queue delivery / idempotency", causes: ["The worker performed the side effect before marking the job done, then crashed/timed out and the queue redelivered", "No idempotency key guard before the side effect"], diagnose: ["Compare the two events' timestamps to the queue's redelivery/visibility timeout — a match means redelivery", "Check the worker for a done-check before the side effect"], fix: "Guard on the idempotency key before the side effect; mark done after success. For external effects, also use provider dedupe (message-id, payment intent id).", prevent: "Every job type documents its idempotency story in review: the key, where done is recorded, and what makes a rerun a no-op.", related: "background-jobs-queues" },
+  { id: "page-on-cause-no-symptom", symptom: "On-call gets paged at odd hours for a moving number (CPU, memory) with no user impact; real incidents later get dismissed as noise.", layer: "Alerting strategy", causes: ["Alerts fire on causes (a metric leaving range) instead of symptoms (user-affecting error rate/latency)", "No alert exists for the actual user-facing symptom"], diagnose: ["Classify each alert: does it fire only when a user could feel it?", "Check whether the real incident's symptom (error rate, queue age) has an alert at all"], fix: "Repoint pages to symptoms (error rate, latency, queue backlog age); demote cause-metrics to dashboards; add the missing symptom alerts and test them in staging.", prevent: "Every alert's title answers 'what is the user feeling?'; review alert signal-vs-noise in postmortems.", related: "cicd-observability" },
 ];
 
 /* ————— batch queue ————— */
@@ -1315,5 +1411,6 @@ export const BATCHES: Batch[] = [
   { id: "B-20", title: "Supabase · Foundations & RLS", scope: "V6·M1–M2", status: "shipped", summary: "The platform as Postgres wearing an API coat: three roles + two keys with the service-key-in-bundle debugging lab, the typed-client translation, migrations + generated types; Auth/Storage/Realtime as rooms in one building with the profiles pattern and the trigger-drift debugging lab; RLS as the house rules — USING vs WITH CHECK, default deny, policy composition, the missing-WITH-CHECK exploit lab, admin-via-table; and the four-cell authorization matrix with the over-denial type-mismatch lab. 4 lessons · 23 quiz questions · 3 debugging labs · Supabase Gauntlet (gauntlet-m6, 15 Q / 4 fronts) closes Volume VI." },
   { id: "B-21", title: "Next.js · App Router Foundations", scope: "V7·M1–M2", status: "shipped", summary: "The App Router map (filesystem routes, layouts, loading/error roles, streaming), Server vs Client Components as an execution-boundary decision, the two Supabase clients and the one direction secrets travel, hydration and the mismatch fix, the three server doors, and the caching model (data cache / full-route cache / client state) with dirty-set revalidation — 3 lessons · 18 quiz questions · 3 debugging labs · 2 outdated-pattern pairs · Next.js Gauntlet gauntlet-m7 (15 Q) closing Volume VII." },
   { id: "B-22", title: "Full-Stack Applications · Authenticated CRUD + Search/Filter/Pagination", scope: "V8·M1–M2", status: "shipped", summary: "The five-gate anatomy of every feature (validate → authenticate → authorize → write → reconcile) with RLS as the authoritative check, optimistic UI with repayment, states and resilience (double-submit idempotency, freshness guards, soft delete), the URL as the single query state for search/filter/sort/page, and keyset pagination with cursors and tiebreakers — 4 lessons · 24 quiz questions · 3 debugging labs · 2 outdated-pattern pairs · Full-Stack Gauntlet gauntlet-m8 (15 Q) closing Volume VIII. (Absorbed the earlier 'Next.js Mutations' scope, which landed inside B-21.)" },
-  { id: "B-23", title: "Production Engineering · Testing, Queues & Observability", scope: "V9·M1–M3", status: "next", summary: "Testing that matters (unit/integration/E2E, RLS and validation tests that earn their keep), background jobs and queues (producers, consumers, retries, idempotency, dead-letters), and CI/CD + observability (pipelines, deploys, logs, alerts) — closing with a Production Gauntlet." },
+  { id: "B-23", title: "Production Engineering · Testing, Queues & Observability", scope: "V9·M1–M3", status: "shipped", summary: "Testing that matters (pyramid as economics, behavior over implementation, RLS matrix and validation boundary tests, the wolf-crying-suite lab), background jobs and queues (at-least-once law, idempotency guards, backoff+jitter, transient-vs-permanent, dead-letters, the double-email lab), and CI/CD + observability (exit-code chain, deploy-vs-release, golden signals, symptom-vs-cause alerting, the 3am-page lab, blameless postmortems) — 18 quiz questions, 3 debugging labs, Production Gauntlet closing Volume IX." },
+  { id: "B-24", title: "Architecture · Pragmatic Foundations", scope: "V10·M1", status: "next", summary: "Stepping back from code to decisions: modularity and boundaries, SOLID applied pragmatically, data-access boundaries, architecture decision records (ADRs), and distributed-system fundamentals (consistency, idempotency, tradeoffs) — knowing when NOT to build." },
 ];

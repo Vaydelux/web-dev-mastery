@@ -154,14 +154,24 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - **Volumes VII and VIII complete.** Next.js and Full-Stack applications phases certified by `gauntlet-m7` and `gauntlet-m8`.
 
 ### Running totals after batch 22
-- 74 lessons implemented · 8 gauntlets · 23 flashcard sets / 310 cards · 180 glossary terms · 56 troubleshooting entries.
+- 72 lessons · 8 gauntlets · 21 flashcard sets / 310 cards · 179 glossary terms · 54 troubleshooting entries (superseded by the verified re-count after Batch 23).
 - Search index, queue, sidebar, and all reference surfaces regenerate from the data model.
 
+### Batch 23 — Volume IX · Production Engineering (M1–M3) — implemented
+- `testing-that-matters` (pyramid as economics, behavior over implementation, the earn-its-keep filter, RLS matrix and validation boundary tests, mock-the-edges-never-the-subject, test-DB lifecycle, the wolf-crying-suite lab), `background-jobs-queues` (at-least-once law, lean payloads, idempotency guards, backoff+jitter, transient-vs-permanent, dead-letters, transactional outbox, the double-email lab), `cicd-observability` (exit-code gate, deploy-vs-release + feature flags, logs/metrics/traces, four golden signals, symptom-vs-cause alerting, expand-migrate-contract, blameless postmortems, the 3am-page lab).
+- 18 quiz questions, 3 debugging labs; Production Gauntlet `gauntlet-m9` (15 Q / 4 fronts / pass ≥70%) closes Volume IX.
+- `production-eng` flashcard set (18 cards), 12 glossary terms, 3 troubleshooting entries.
+- **Volume IX complete: all 3 modules.** Production Engineering certified by `gauntlet-m9`.
+
+### Running totals after batch 23 (verified)
+- 75 lessons implemented · 9 gauntlets · 22 flashcard sets / 328 cards · 191 glossary terms · 57 troubleshooting entries.
+- Earlier running-totals figures drifted; this pass re-counted the data model directly and corrected the manifest.
+
 ## Recommended next batch
-**Batch 23 — Production Engineering (Volume IX):** testing that matters (unit, integration, and the
-RLS/validation tests that earn their keep), background jobs & queues (producers, consumers, retries,
-idempotency, dead-letters), and CI/CD + observability (pipelines, deploys, logs, alerts) — closing with a
-Production Gauntlet. Full scope on the generation queue. Then STOP and request review (bounded generation
+**Batch 24 — Architecture · Pragmatic Foundations (Volume X):** stepping back from code to decisions —
+modularity and boundaries, SOLID applied pragmatically, data-access boundaries, architecture decision records
+(ADRs), and distributed-system fundamentals (consistency, idempotency, tradeoffs). Knowing when NOT to build is
+the Mastery-level skill. Full scope on the generation queue. Then STOP and request review (bounded generation
 contract).
 
 ## Unresolved questions

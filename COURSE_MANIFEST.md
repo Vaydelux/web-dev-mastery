@@ -122,6 +122,15 @@
 | `pagination-keyset` | Pagination at Scale: From OFFSET to Cursors | Full-Stack | 50 | search-filter-url | implemented |
 | `gauntlet-m8` | Checkpoint · Full-Stack Gauntlet (15 Q, pass ≥70%) | Full-Stack | 25 | all of Volume VIII | implemented |
 
+## Volume IX — Production Engineering (Production level)
+
+| ID | Title | Level | Min | Prereqs | Status |
+|---|---|---|---|---|---|
+| `testing-that-matters` | Testing That Matters: Pyramids, Boundaries, and the Tests That Earn Their Keep | Production | 60 | pagination-keyset | implemented |
+| `background-jobs-queues` | Background Jobs & Queues: Work That Outlives the Request | Production | 60 | testing-that-matters | implemented |
+| `cicd-observability` | CI/CD & Observability: The Machinery That Ships You | Production | 55 | background-jobs-queues | implemented |
+| `gauntlet-m9` | Checkpoint · Production Gauntlet (15 Q, pass ≥70%) | Production | 25 | all of Volume IX | implemented |
+
 ## Volumes VI–XI (module-scoped; lessons authored per batch)
 
 | Volume | Phase | Modules | Status |
@@ -132,17 +141,17 @@
 | VI — Supabase | Supabase Phase | 4 lessons implemented (Foundations, Auth/Storage/Realtime, RLS, RLS Testing) · Supabase Gauntlet passed-ready | ✅ complete |
 | VII — Next.js | Next.js Phase | 3 lessons implemented (App Router, Boundary/Secrets, Data/Caching) · Next.js Gauntlet passed-ready | ✅ complete |
 | VIII — Full-Stack Applications | Full-Stack Phase | 4 lessons implemented (Auth CRUD, Resilience, Search/Filter, Keyset Pagination) · Full-Stack Gauntlet passed-ready | ✅ complete |
-| IX — Production Engineering | Production Engineering Phase | 3 (Testing, Queues, CI/CD & Observability) | next · B-23 |
-| X — Architecture | Architecture Phase | 1 (Pragmatic Architecture) | planned |
+| IX — Production Engineering | Production Engineering Phase | 3 lessons implemented (Testing, Queues, CI/CD & Observability) · Production Gauntlet passed-ready | ✅ complete |
+| X — Architecture | Architecture Phase | 1 (Pragmatic Architecture) | next · B-24 |
 | XI — Capstones & Mastery | Capstone & Mastery Phase | 1 (Capstone Build) | planned |
 
 ## Cross-cutting assets
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | 23 sets / 310 cards: …sql-postgres (28), supabase-rls (19), nextjs-foundations (18), fullstack-apps (21) | implemented |
-| Glossary | 180 terms, domain-tagged, lesson-linked (incl. 12 Next.js, 14 Full-Stack) | implemented |
-| Troubleshooting index | 56 symptom-based entries (incl. 3 Next.js, 4 Full-Stack) | implemented |
+| Flashcard sets | 22 sets / 328 cards: …sql-postgres (28), supabase-rls (19), nextjs-foundations (18), fullstack-apps (21), production-eng (18) | implemented |
+| Glossary | 191 terms, domain-tagged, lesson-linked (incl. 12 Production) | implemented |
+| Troubleshooting index | 57 symptom-based entries (incl. 3 Production) | implemented |
 | A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |
