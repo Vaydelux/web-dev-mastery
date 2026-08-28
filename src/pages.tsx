@@ -25,17 +25,18 @@ function Terminal() {
   const authored = orderedContent();
   const done = authored.filter((l) => prog.lessons[l.id]?.done).length;
   const next = authored.find((l) => !prog.lessons[l.id]?.done);
+  const owed = !next ? BATTLE_REFS.find((b) => !(prog.battles[b.id]?.passed)) : undefined;
   const pct = authored.length ? Math.round((done / authored.length) * 100) : 0;
   const bar = "█".repeat(Math.round(pct / 10)) + "░".repeat(10 - Math.round(pct / 10));
   const lines = useMemo(() => [
     { text: "$ zm status --course full-stack", cls: "text-[#8ce9bb]" },
-    { text: `volumes        ${COURSE.length} mapped · ${courseStats().modules} modules`, cls: "text-[#a8bcad]" },
-    { text: `authored       ${authored.length} lessons · ${BATTLE_REFS.length} boss battle · ${FLASHCARD_SETS.reduce((n, s) => n + s.cards.length, 0)} flashcards`, cls: "text-[#a8bcad]" },
+    { text: `volumes        ${COURSE.length} authored · ${courseStats().modules} modules · all phases shipped`, cls: "text-[#a8bcad]" },
+    { text: `authored       ${authored.length} lessons · ${BATTLE_REFS.length} gauntlets · ${FLASHCARD_SETS.reduce((n, s) => n + s.cards.length, 0)} flashcards`, cls: "text-[#a8bcad]" },
     { text: `progress       ${bar} ${pct}%`, cls: pct > 0 ? "text-[#3fd68f]" : "text-[#a8bcad]" },
-    { text: next ? `next           → ${next.title}` : "next           → all authored lessons complete — manifest queues more", cls: "text-[#e3c58a]" },
+    { text: next ? `next           → ${next.title}` : owed ? `next           → ${owed.title.replace("Checkpoint · ", "")} owed` : "next           → certified · open /completion", cls: "text-[#e3c58a]" },
     { text: "$ zm philosophy --loop", cls: "text-[#8ce9bb]" },
     { text: "learn → practice → break → debug → quiz → ship", cls: "text-[#d6e3d9]" },
-  ], [authored.length, done, next, pct, bar]);
+  ], [authored.length, done, next, owed, pct, bar]);
   const [reveal, setReveal] = useState(reduced ? lines.length : 0);
   useEffect(() => {
     if (reduced) { setReveal(lines.length); return; }
@@ -91,10 +92,10 @@ function ContinueCard() {
         )}
         {!next && owedBattle && (
           <Link to={`/battle/${owedBattle.id}`} className="group inline-flex items-center gap-2 rounded-lg border border-err/50 bg-errsoft px-5 py-3 font-mono text-[13px] font-semibold text-err transition-all hover:-translate-y-0.5">
-            <Icons.sword size={15} /> take the {{ "gauntlet-m1": "Foundation", "gauntlet-m2": "Builder", "gauntlet-m3": "React", "gauntlet-m4": "Web Architecture", "gauntlet-m5": "PostgreSQL", "gauntlet-m6": "Supabase", "gauntlet-m7": "Next.js", "gauntlet-m8": "Full-Stack", "gauntlet-m9": "Production", "gauntlet-m10": "Architecture" }[owedBattle.id] ?? ""} gauntlet
+            <Icons.sword size={15} /> take the {{ "gauntlet-m1": "Foundation", "gauntlet-m2": "Builder", "gauntlet-m3": "React", "gauntlet-m4": "Web Architecture", "gauntlet-m5": "PostgreSQL", "gauntlet-m6": "Supabase", "gauntlet-m7": "Next.js", "gauntlet-m8": "Full-Stack", "gauntlet-m9": "Production", "gauntlet-m10": "Architecture", "gauntlet-m11": "Mastery" }[owedBattle.id] ?? ""} gauntlet
           </Link>
         )}
-        {!next && !owedBattle && <Link to="/queue" className="link-acc inline-flex items-center gap-1.5 font-mono text-[12.5px] font-semibold"><Icons.clock size={14} /> generation queue →</Link>}
+        {!next && !owedBattle && <Link to="/completion" className="inline-flex items-center gap-1.5 rounded-lg border border-acc/50 bg-accsoft px-5 py-3 font-mono text-[12.5px] font-semibold text-accink transition-all hover:-translate-y-0.5"><Icons.check size={14} /> course completion →</Link>}
       </div>
     </div>
   );
@@ -673,6 +674,133 @@ export function TroubleshootingPage() {
   );
 }
 
+/* ============================ COMPLETION ============================ */
+export function CompletionPage() {
+  const { prog } = useProgress();
+  const authored = orderedContent();
+  const doneLessons = authored.filter((l) => prog.lessons[l.id]?.done);
+  const firstMissing = authored.find((l) => !prog.lessons[l.id]?.done);
+  const battlesPassed = BATTLE_REFS.filter((b) => prog.battles[b.id]?.passed);
+  const firstOwedBattle = BATTLE_REFS.find((b) => !prog.battles[b.id]?.passed);
+  const certified = !firstMissing && !firstOwedBattle && authored.length > 0;
+  const knownCards = FLASHCARD_SETS.reduce((n, s) => n + (prog.cards[s.id] ?? []).filter((k) => Number(k) < s.cards.length).length, 0);
+  const totalCards = FLASHCARD_SETS.reduce((n, s) => n + s.cards.length, 0);
+  const today = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+
+  return (
+    <RefShell kicker="final ledger" title="Course completion" sub="Computed live from your progress in this browser — not a participation ribbon. Certification here means every authored lesson is done and every gauntlet is passed at ≥ 70%.">
+      {/* ————— the certificate or the ledger ————— */}
+      {certified ? (
+        <Reveal>
+          <div className="relative mb-10 overflow-hidden rounded-xl border-2 border-acc/60 bg-surface shadow-hard">
+            <div className="pointer-events-none absolute inset-3 rounded-lg border border-acc/30" />
+            <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full border-[10px] border-accsoft" />
+            <div className="relative px-6 py-10 text-center sm:px-12 sm:py-14">
+              <p className="eyebrow mb-4">zero to mastery · all eleven gauntlets passed</p>
+              <h2 className="mx-auto max-w-2xl font-display text-[1.9rem] font-bold leading-tight tracking-tight text-ink sm:text-[2.5rem]">
+                Full-Stack Web Development, certified in this browser
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl text-[14.5px] leading-[1.8] text-soft">
+                {authored.length} lessons · {BATTLE_REFS.length} cumulative gauntlets · {knownCards}/{totalCards} flashcards in long-term rotation.
+                The certificate is the habit, not the page: you can now scope, build, secure, ship, and maintain a production system — and learn the next one fast.
+              </p>
+              <div className="mx-auto mt-7 flex max-w-md items-center justify-between gap-4 border-t border-line pt-5 font-mono text-[11.5px] text-faint">
+                <span>candidate: you</span>
+                <span className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-acc text-acc"><Icons.check size={22} /></span>
+                <span>{today}</span>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      ) : (
+        <div className="card-hard mb-10 border-amber/50 p-6 sm:p-8">
+          <p className="eyebrow mb-2" style={{ color: "var(--amber)" }}>// not yet certified — here's the honest ledger</p>
+          <p className="max-w-2xl text-[14.5px] leading-[1.8] text-soft">
+            Certification requires <strong className="font-semibold text-ink">every authored lesson marked complete</strong> and <strong className="font-semibold text-ink">all {BATTLE_REFS.length} gauntlets passed at ≥ 70%</strong>. You're close — the gap is enumerable, which means it's finishable.
+          </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-lg border border-line bg-paper p-4">
+              <p className="mb-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-faint">lessons</p>
+              <p className="font-display text-2xl font-bold text-ink">{doneLessons.length}<span className="text-base text-faint"> / {authored.length}</span></p>
+              {firstMissing ? (
+                <Link to={`/lesson/${firstMissing.id}`} className="mt-2 inline-flex items-center gap-1.5 font-mono text-[12px] font-semibold text-acc hover:text-accink">
+                  resume → {firstMissing.title} <Icons.arrow size={13} />
+                </Link>
+              ) : <p className="mt-2 font-mono text-[12px] font-semibold text-acc">all lessons complete ✓</p>}
+            </div>
+            <div className="rounded-lg border border-line bg-paper p-4">
+              <p className="mb-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-faint">gauntlets</p>
+              <p className="font-display text-2xl font-bold text-ink">{battlesPassed.length}<span className="text-base text-faint"> / {BATTLE_REFS.length}</span></p>
+              {firstOwedBattle ? (
+                <Link to={`/battle/${firstOwedBattle.id}`} className="mt-2 inline-flex items-center gap-1.5 font-mono text-[12px] font-semibold text-err hover:text-accink">
+                  <Icons.sword size={13} /> owed → {firstOwedBattle.title.replace("Checkpoint · ", "")}
+                </Link>
+              ) : <p className="mt-2 font-mono text-[12px] font-semibold text-acc">all gauntlets passed ✓</p>}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ————— the volume ledger ————— */}
+      <SectionTitle kicker="per-volume proof" title="The eleven volumes, as you stand" sub="Each row is a phase; each phase closes with a cumulative gauntlet. This is the receipt trail from Foundation to Mastery." />
+      <div className="card mb-10 divide-y divide-line overflow-hidden">
+        {COURSE.map((vol) => {
+          const volLessons = authored.filter((l) => l.volume === vol.id);
+          const volDone = volLessons.filter((l) => prog.lessons[l.id]?.done).length;
+          const pct = volLessons.length ? (volDone / volLessons.length) * 100 : 0;
+          const battle = BATTLE_REFS.find((b) => b.volumeId === vol.id);
+          const passed = battle ? !!prog.battles[battle.id]?.passed : false;
+          return (
+            <Link key={vol.id} to={`/volume/${vol.id}`} className="group flex items-center gap-4 px-4 py-3.5 transition-colors hover:bg-accsoft/20 sm:px-5">
+              <span className="flex h-9 w-10 shrink-0 items-center justify-center rounded-md border border-line font-mono text-[12px] font-bold text-soft">{vol.numeral}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[14px] font-semibold text-ink group-hover:text-accink">{vol.title}</span>
+                <span className="block font-mono text-[10.5px] uppercase tracking-wider text-faint">{vol.phase}</span>
+              </span>
+              <span className="hidden font-mono text-[12px] text-faint sm:block">{volDone}/{volLessons.length || "—"}</span>
+              <span className="hidden sm:block"><ProgressRing pct={pct} size={40} stroke={4} /></span>
+              {battle && (
+                <span className={`shrink-0 rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider ${passed ? "border-acc/50 bg-accsoft text-accink" : "border-line text-faint"}`}>
+                  {passed ? "gauntlet ✓" : "gauntlet owed"}
+                </span>
+              )}
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* ————— after the certificate ————— */}
+      <SectionTitle kicker="mastery is a direction" title="What you do with it" sub="The course ends; the loop doesn't. Three moves that keep the certificate honest a year from now." />
+      <div className="space-y-4">
+        {[
+          { n: "01", title: "Build the second and third capstones", body: "One app proves you followed a recipe; two or three prove you can choose the recipe. Pick domains that scare you a little — the gaps you skipped (payments, realtime, heavy data) are the curriculum now. Re-run the Production Readiness Scorecard on each; it's the difference between 'built' and 'shippable'.", to: "/lesson/capstone-applications", cta: "capstone guide" },
+          { n: "02", title: "Keep the learning loop running", body: "Skim the release notes of what you depend on, build tiny things when a concept matters, and write down what you learn. Ten focused minutes a day beats a heroic weekend a quarter. The foundations you finished are exactly why the next framework is a weekend, not a crisis.", to: "/lesson/mastery-practices", cta: "the craftsman's habits" },
+          { n: "03", title: "Teach, review, and give back", body: "Explanation is the final compression of understanding: answer questions in communities, review pull requests, mentor one person one step behind you. Every review you give re-runs your own security, architecture, and tradeoff drills — on someone else's stakes.", to: "/ref/a11y", cta: "the checklists you now own" },
+        ].map((s, i) => (
+          <Reveal key={s.n} delay={Math.min(i * 70, 200)}>
+            <div className="card-hard flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:p-6">
+              <span className="font-mono text-[26px] font-bold leading-none text-acc/70">{s.n}</span>
+              <div className="min-w-0 flex-1">
+                <h3 className="mb-1.5 font-display text-[16.5px] font-bold text-ink">{s.title}</h3>
+                <p className="text-[13.5px] leading-[1.75] text-soft">{s.body}</p>
+              </div>
+              <Link to={s.to} className="inline-flex shrink-0 items-center gap-1.5 self-start rounded-lg border border-line px-3.5 py-2 font-mono text-[11.5px] font-semibold text-soft transition-colors hover:border-acc hover:text-accink sm:self-center">
+                {s.cta} <Icons.arrow size={13} />
+              </Link>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+
+      <p className="card mt-10 border-l-4 border-acc p-5 text-[13.5px] leading-[1.8] text-soft">
+        <strong className="font-semibold text-ink">One honest footnote:</strong> progress lives in this browser's storage — the certificate above is yours, not the platform's.
+        The real proof was always meant to be public: the capstones in your GitHub, the Scorecards you can defend, the incidents you can narrate.
+        If you ever reset this browser, the lessons will be here waiting. <Link to="/" className="link-acc font-semibold">Back to the roadmap →</Link>
+      </p>
+    </RefShell>
+  );
+}
+
 /* ============================ A11Y CHECKLIST ============================ */
 const A11Y_GROUPS: { title: string; icon: keyof typeof Icons; lesson: string; items: string[] }[] = [
   { title: "Semantic structure", icon: "layers", lesson: "html-as-structure", items: ["Exactly one <h1>; heading levels never skip", "Landmarks present: header, nav, main, footer", "Navigation lives in <nav>, content in <main>", "Lists use <ul>/<ol>, tables reserved for data"] },
@@ -868,6 +996,7 @@ const LOG = [
   { batch: "Batch 22 · Volume VIII — Full-Stack Applications (M1–M2)", date: "2026-02", items: ["auth-crud-anatomy: the five-gate anatomy (validate → authenticate → authorize → write → reconcile), RLS zero-rows refusals, Result-returning actions, optimistic UI with rollback, and the 'save button sometimes does nothing' debugging lab", "crud-states-resilience: the five-state matrix, double-submit idempotency keys, freshness guards vs last-write-wins, soft delete + undo, Realtime over polling, and the 'click once, two records' debugging lab", "search-filter-url: the URL as the single query state, searchParams validation and allow-list sort, the page-reset invariant, results UX (counts, Empty ≠ No Results, announcements), and the 'page 3 after filter' debugging lab", "pagination-keyset: OFFSET's cliff vs cursor bookmarks, tiebreakers and total order, opaque cursors, composite indexes, and the 'load more repeats and skips rows' debugging lab", "Full-Stack Gauntlet gauntlet-m8 (15 Q / 4 fronts: Five Gates · Resilience · URL State · Pagination at Scale) spans both modules and closes Volume VIII", "24 quiz questions · 3 debugging labs · 2 outdated-pattern pairs (fetch-dance; polling) · 21 flashcards · 14 glossary terms · 4 troubleshooting entries · 74 lessons implemented", "Volume VIII complete: both modules. Full-Stack applications phase certified by gauntlet-m8. Production Engineering (Volume IX) queued as B-23."] },
   { batch: "Batch 23 · Volume IX — Production Engineering (M1–M3)", date: "2026-02", items: ["testing-that-matters: the pyramid as economics, behavior vs implementation tests, the earn-its-keep filter, RLS matrix and validation boundary tests, mock-the-edges-never-the-subject, test-DB lifecycle, and the 'suite that cried wolf' debugging lab", "background-jobs-queues: producers/consumers, the at-least-once law, lean payloads, idempotency guards, backoff+jitter, transient-vs-permanent, dead-letters, the transactional outbox, and the 'welcome emails twice' debugging lab", "cicd-observability: the exit-code gate, deploy-vs-release with feature flags, logs/metrics/traces, the four golden signals, symptom-vs-cause alerting, expand-migrate-contract, blameless postmortems, and the '3 a.m. page that wasn't an incident' debugging lab", "Production Gauntlet gauntlet-m9 (15 Q / 4 fronts: Tests · Queues · CI/CD · Observability) spans all three modules and closes Volume IX", "18 quiz questions · 3 debugging labs · 18 flashcards · 12 glossary terms · 3 troubleshooting entries · 75 lessons implemented (figure corrected to verified count)", "Volume IX complete: all three modules. Production Engineering phase certified by gauntlet-m9. Architecture (Volume X) queued as B-24."] },
   { batch: "Batch 24 · Volume X — Architecture: Boundaries, Tradeoffs & Distributed Systems (M1–M2)", date: "2026-02", items: ["architecture-boundaries: architecture as boundaries + crossing rules, cohesion (group by rate-of-change), the dependency rule (arrows point at policy), ports/adapters and the seam test, vertical slices vs technology layers, the 'feature that touches everything' debugging lab, and the three-tier→vertical-slices outdated pair", "decisions-records: the tradeoff vocabulary and finishing 'it depends', one-way vs two-way doors, the ADR anatomy (context/decision/consequences/status/trigger-to-reopen), YAGNI + last-responsible-moment, the Rule of Three, the 'microservices we didn't need' (distributed monolith) debugging lab, and the 47-page-doc→ADR outdated pair", "consistency-tradeoffs: replication lag and correct-but-behind copies, strong vs eventual vs read-your-writes (owed per reader), the payment-succeeded-but-order-failed debugging lab (read-your-writes + idempotency), sagas and compensation, and ACID-is-local", "scaling-availability: availability as emergent + error budgets (availabilities multiply), the 'one of each' SPOF audit, graceful degradation by design, timeouts/retries/circuit breakers, the 'cache stampede at 9 a.m.' debugging lab, the scaling order (index→cache→queue→replica→distribute), and the premature-microservices outdated pair", "Architecture Gauntlet gauntlet-m10 (15 Q / 4 fronts: Boundaries & Cohesion · Tradeoffs & Decisions · Consistency · Scaling/Availability/Synthesis) spans both modules and closes Volume X", "24 quiz questions · 4 debugging labs · 4 outdated-pattern pairs · 2 ASCII diagrams · 23 flashcards · 18 glossary terms · 4 troubleshooting entries · 79 lessons implemented", "Volume X complete: both modules. Architecture phase certified by gauntlet-m10. Only Volume XI (Capstones & Mastery) remains — queued as B-25."] },
+  { batch: "Batch 25 · Volume XI — Capstones & Mastery (M1) + HARDENING PASS", date: "2026-02", items: ["capstone-applications: scope with one user / one pain / one promise, the dependency-driven lifecycle order, the Production Readiness Scorecard (authorization matrix, clean bundles, rehearsed restore, golden signals), the stranger standard, depth-over-breadth, and the 'works on my machine' debugging lab", "mastery-practices: debugging unfamiliar code (reproduce → enter at the boundary → trace one path), the user-A-vs-user-B security review, READMEs a stranger can act on, finishing 'it depends', evaluating libraries by removal cost, reading release notes, Chesterton's Fence, and the sustainable learning loop", "Mastery Gauntlet gauntlet-m11 (15 Q / 4 fronts: Ship It · The Craftsman · Judgment · The Arc) — the final cumulative assessment across all eleven volumes", "HARDENING PASS fixes: added the missing mastery-capstone flashcard set (14 cards); fixed the ContinueCard label map (gauntlet-m11 was absent → 'take the  gauntlet' bug); corrected B-25 queue status to shipped; built the promised Course Completion reference (/completion — live certificate/ledger with per-volume proof table, wired into sidebar, search, routes, and ContinueCard's certified state); refreshed the Terminal status line for the course-complete state", "Verified totals (grep-counted): 80 lessons · 11 gauntlets · 24 flashcard sets / 365 cards · 209 glossary terms · 61 troubleshooting entries · all 29 queue batches shipped", "COURSE COMPLETE: all eleven volumes implemented and gauntlet-certified. The zero-to-mastery arc is fully authored; future work is maintenance and gap-discovery, not curriculum."] },
 ];
 
 export function StatusPage() {
@@ -888,8 +1017,8 @@ export function StatusPage() {
         ))}
       </div>
       <div className="card mt-8 border-l-4 border-acc p-5">
-        <p className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accink">Recommended next batch</p>
-        <p className="text-[14.5px] leading-[1.75] text-soft"><strong className="font-semibold text-ink">Batch 25 — Capstones & Mastery (Volume XI):</strong> the final volume — independent, portfolio-grade <strong className="font-semibold text-ink">capstone applications</strong>, debugging unfamiliar code, security review, architectural reasoning, reading release notes and evaluating libraries, documentation, and the habits of continuous learning. Closes with a Mastery Gauntlet and the Course Completion reference — the end of the zero-to-mastery arc. Full scope on the <Link to="/queue" className="link-acc font-semibold">generation queue</Link> — it is the ordering authority.</p>
+        <p className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accink">Course state: complete</p>
+        <p className="text-[14.5px] leading-[1.75] text-soft">All eleven volumes are authored and each is closed by a cumulative gauntlet — the <strong className="font-semibold text-ink">Mastery Gauntlet</strong> certified the final arc. There are no further generation batches; the queue is empty by design. If you're caught up, visit the <Link to="/completion" className="link-acc font-semibold">Course Completion ledger</Link> to see exactly what certification requires, or run a <Link to="/ref/manifest" className="link-acc font-semibold">gap-discovery pass</Link> against the manifest.</p>
       </div>
     </RefShell>
   );

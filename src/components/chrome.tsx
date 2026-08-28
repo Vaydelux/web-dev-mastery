@@ -26,6 +26,7 @@ export function buildIndex(): Hit[] {
     ["Version Matrix", "/ref/versions", "react next supabase versions"],
     ["Generation Log", "/ref/status", "history gaps"],
     ["Course Manifest", "/ref/manifest", "inventory status"],
+    ["Course Completion", "/completion", "certificate ledger gauntlets certified"],
   ];
   for (const [title, to, kw] of refs) hits.push({ kind: "reference", title, sub: to === "/" ? "home" : to, to, kw: `${title} ${kw}` });
   return hits;
@@ -88,6 +89,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
     { to: "/ref/versions", label: "Version Matrix", icon: "refresh" },
     { to: "/ref/status", label: "Generation Log", icon: "terminal" },
     { to: "/ref/manifest", label: "Course Manifest", icon: "map" },
+    { to: "/completion", label: "Course Completion", icon: "flag" },
   ] as const;
 
   return (

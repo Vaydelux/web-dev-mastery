@@ -175,13 +175,21 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - **Volume X complete: both modules.** Architecture phase certified by `gauntlet-m10`. Only Volume XI (Capstones & Mastery) remains.
 - Coverage ledger: the Scaling/Availability required topic is now fully taught (was previously flagged as a gap); closes that ledger item.
 
+### Batch 25 — Volume XI · Capstones & Mastery (M1) — implemented (HARDENING PASS)
+- `capstone-applications` (scope with one user/one pain/one promise, lifecycle order, Production Readiness Scorecard, the stranger standard, 'works on my machine' lab) and `mastery-practices` (debugging unfamiliar code, user-A-vs-user-B security review, stranger-actionable docs, finishing 'it depends', libraries by removal cost, release notes, the learning loop).
+- Mastery Gauntlet `gauntlet-m11` (15 Q / 4 fronts: Ship It · The Craftsman · Judgment · The Arc) closes the course.
+- **Hardening-pass fixes:** the `mastery-capstone` flashcard set was missing from the previous session (added, 14 cards); the ContinueCard gauntlet label map lacked `gauntlet-m11` (fixed); B-25 queue status corrected to shipped; the promised Course Completion reference was built (`/completion` — live certificate/ledger, wired into sidebar, search, routes, and ContinueCard's certified state); Terminal status line updated for the course-complete state.
+- Running totals (verified by grep): **80 lessons · 11 gauntlets · 24 flashcard sets / 365 cards · 209 glossary terms · 61 troubleshooting entries · all 29 queue batches shipped.**
+- **COURSE COMPLETE: all eleven volumes implemented and gauntlet-certified.** Volume XI detail table added to the manifest; all summary rows ✅.
+
+## Course state: complete
+No further generation batches are required — the zero-to-mastery arc is fully authored. Future work is
+maintenance, not curriculum: version-matrix re-verification as ecosystems move, gap-discovery reviews on
+request, and corrections surfaced by learners. The bounded-generation contract is satisfied; the queue is
+empty by design.
+
 ## Recommended next batch
-**Batch 25 — Capstones & Mastery (Volume XI):** the final volume — independent, portfolio-grade capstone
-applications (with the Production Readiness Scorecard), debugging unfamiliar code, security review,
-architectural reasoning, reading release notes and evaluating libraries, documentation, and the habits of
-continuous learning. Closes with a Mastery Gauntlet (`gauntlet-m11`) and the Course Completion reference —
-the end of the zero-to-mastery arc. Full scope on the generation queue. Then STOP and request review
-(bounded generation contract).
+None — course complete. (If asked to "continue", run a Gap Discovery Pass instead of inventing a batch.)
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?
