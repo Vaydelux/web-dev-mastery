@@ -30,6 +30,7 @@ import { m25 } from "./lessons25";
 import { m26 } from "./lessons26";
 import { m27 } from "./lessons27";
 import { m28 } from "./lessons28";
+import { m29 } from "./lessons29";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -102,7 +103,7 @@ export const COURSE: VolumeDef[] = [
     mod("v10m2", 2, "Distributed Systems Fundamentals", "Consistency across machines, and the architecture of staying up.", "implemented", [m28[2], m28[3]]),
   ]),
   v(11, "XI", "Capstones & Mastery", "Capstone & Mastery Phase", "Independent, portfolio-grade applications and architectural reasoning.", [
-    mod("v11m1", 1, "Capstone Build", "Plan, build, deploy, and defend a production app.", "planned", []),
+    mod("v11m1", 1, "Capstones & Mastery", "Independent, portfolio-grade applications and the craftsman's habits that outlive any framework.", "implemented", m29),
   ]),
 ];
 
@@ -157,6 +158,7 @@ export const BATTLE_REFS: BattleRef[] = [
   { id: "gauntlet-m8", title: "Checkpoint · Full-Stack Gauntlet", volumeId: 8, afterModule: "v8m2", blurb: "A cumulative fight across all of Volume VIII — the five-gate anatomy of features, states and resilience under pressure, the URL as query state, and pagination at scale — pass at 70% to close the Full-Stack applications phase." },
   { id: "gauntlet-m9", title: "Checkpoint · Production Gauntlet", volumeId: 9, afterModule: "v9m3", blurb: "A cumulative fight across all of Volume IX — tests that earn their keep, the at-least-once laws of queues, and the gates, deploys, and dashboards of production — pass at 70% to close the Production Engineering phase." },
   { id: "gauntlet-m10", title: "Checkpoint · Architecture Gauntlet", volumeId: 10, afterModule: "v10m2", blurb: "A cumulative fight across all of Volume X — boundaries that age, tradeoffs and ADRs, consistency across machines, and the architecture of staying up — pass at 70% to close the Architecture phase." },
+  { id: "gauntlet-m11", title: "Checkpoint · Mastery Gauntlet", volumeId: 11, afterModule: "v11m1", blurb: "The final cumulative assessment across all eleven volumes — judgment, not recall. Scoping and shipping a capstone, debugging unfamiliar code, security review, tradeoff reasoning, and the habits that keep you current — pass at 70% to complete Full-Stack Web Development: Zero to Mastery." },
 ];
 
 export const BATTLES: BossBattle[] = [
@@ -739,6 +741,77 @@ export const BATTLES: BossBattle[] = [
             explain: "Scaling amplifies what you have, including inefficiency. Measure, then spend the cheap fix (index/query) before cache, queue, replica, or distribution. The answer is usually step 2, not step 6.", tags: ["scaling-availability"] },
           { id: "g10q15", type: "single", prompt: "At 9 a.m. a cache entry expires and 200 concurrent users each trigger the same expensive query, spiking the DB. The durable fix is…", options: ["a bigger database", "coordinated rebuild: jittered TTLs and/or stale-while-revalidate so ONE caller rebuilds while others are served the (briefly stale) value", "a longer TTL with no other change", "disabling the cache"], answer: [1],
             explain: "This is a cache stampede: TTL expiry with no coordination turns one miss into N queries. Jitter spreads expiry; stale-while-revalidate removes the cliff. A longer TTL alone just delays the same spike.", tags: ["scaling-availability"] },
+        ],
+      },
+    ],
+  },
+  {
+    id: "gauntlet-m11",
+    title: "Mastery Gauntlet",
+    subtitle: "Volume XI cumulative · 15 questions · pass ≥ 70%",
+    passPct: 70,
+    intro: [
+      "This is the final assessment of Full-Stack Web Development: Zero to Mastery. Unlike the volume gauntlets, which tested a phase, this one tests *judgment across the whole arc* — can you scope, build, secure, ship, and maintain a system, and can you keep learning once the course ends?",
+      "The questions draw on all eleven volumes, but the skill being examined is synthesis: choosing the right tool, the right boundary, the right tradeoff, and the right next step — not recalling a fact. Read each scenario fully; the obviously-clever answer is often the wrong one.",
+    ],
+    rules: [
+      "15 questions across four fronts; you need 70% to pass and complete the course.",
+      "Every wrong answer links back to the lesson that teaches it — remediate, then retake.",
+      "When two answers seem defensible, choose the one a seasoned engineer would defend in a design review.",
+    ],
+    sections: [
+      {
+        title: "Ship It",
+        desc: "Scoping, lifecycle, and production readiness.",
+        questions: [
+          { id: "g11q1", type: "single", prompt: "You're starting your capstone. The strongest first move is…", options: ["pick the most impressive-sounding idea", "write a one-line scope: one user, one pain, one promise — then cut features that don't serve it", "start coding the fun part immediately", "copy a popular product's feature list"], answer: [1],
+            explain: "Depth and completion beat breadth. A small, complete, hardened app you actually launched demonstrates more mastery than an ambitious one abandoned at 60%. Scope with one user, one pain, one promise.", tags: ["capstone-applications"] },
+          { id: "g11q2", type: "single", prompt: "Your capstone 'works on your machine'. The honest definition of 'done' is…", options: ["it runs without errors for me", "the Production Readiness Scorecard is fully checked with evidence — including adversarial tests and a rehearsed restore", "I've stopped finding bugs for a day", "it's deployed somewhere"], answer: [1],
+            explain: "Done is a verified set of gates, not a feeling. Test as an adversarial stranger with messy data on a slow connection, and prove each gate — especially the restore you rehearsed, not just the backup you took.", tags: ["capstone-applications"] },
+          { id: "g11q3", type: "single", prompt: "The lifecycle puts the data model and migrations before auth and CRUD because…", options: ["it's tradition", "each stage unlocks the next: RLS and CRUD are meaningless before the schema and its constraints exist", "databases are the hardest part", "it doesn't matter — any order works"], answer: [1],
+            explain: "The order is dependency-driven. Authorization policies reference tables; CRUD needs columns; validation needs constraints. Pour the foundation before the roof — skipping ahead produces rework.", tags: ["capstone-applications"] },
+          { id: "g11q4", type: "multi", prompt: "Select ALL gates that belong on the launch Scorecard.", options: ["user-A-vs-user-B authorization matrix passing in CI", "secrets absent from client bundles and logs", "a database restore rehearsed on a fresh instance", "the four golden signals instrumented and alerting"], answer: [0, 1, 2, 3],
+            explain: "All four are launch gates: authorization proven adversarially, a clean bundle, a recoverable backup, and observability wired. Each turns a hope ('it should be fine') into evidence.", tags: ["capstone-applications", "cicd-observability"] },
+        ],
+      },
+      {
+        title: "The Craftsman",
+        desc: "Debugging, security review, and documentation.",
+        questions: [
+          { id: "g11q5", type: "single", prompt: "You inherit an unfamiliar codebase with a production bug. Your first action is…", options: ["refactor the ugliest module", "reproduce the bug locally, then enter at the boundary and trace one request path", "rewrite the affected file from scratch", "read every file before touching anything"], answer: [1],
+            explain: "A reproducible bug is a flashlight. Reproduce, enter where the symptom crosses into the system, and trace one path using types and names as signposts. The Volume-I debugging discipline works in any codebase.", tags: ["mastery-practices"] },
+          { id: "g11q6", type: "single", prompt: "You're reviewing a teammate's code for security. The highest-value thing to check is…", options: ["code style consistency", "every route and query for ownership checks — the user-A-vs-user-B test, not just 'is logged in'", "variable naming", "comment density"], answer: [1],
+            explain: "Broken access control is the most common and most damaging flaw. 'Is logged in' is authentication; the question is authorization — does THIS user own THAT row? Walk the trust boundaries.", tags: ["mastery-practices", "auth-crud-anatomy"] },
+          { id: "g11q7", type: "single", prompt: "A stranger must be able to run your project. Your README most needs…", options: ["a wall of badges", "exact, fresh-tested RUN and TEST commands, plus what/why and where things live", "a complete feature roadmap", "your personal bio"], answer: [1],
+            explain: "Documentation earns its keep when a stranger can ACT on it. Reproducible run/test instructions, tested in a clean room, are the core — everything else is secondary.", tags: ["mastery-practices"] },
+          { id: "g11q8", type: "boolean", prompt: "When fixing a bug in unfamiliar code, you should also clean up the surrounding style in the same PR.", options: ["True", "False"], answer: [1],
+            explain: "False — fix narrowly, refactor separately. Mixing them makes regressions unattributable, and 'ugly' code may be load-bearing (Chesterton's Fence). Understand before you improve.", tags: ["mastery-practices"] },
+        ],
+      },
+      {
+        title: "Judgment",
+        desc: "Tradeoffs, libraries, and knowing when NOT to build.",
+        questions: [
+          { id: "g11q9", type: "single", prompt: "'It depends' becomes a defensible architectural decision when you…", options: ["say it with confidence", "name the tradeoff axis, the value in this context, the choice, and the cost you accept", "defer to whoever is most senior", "pick the newest technology"], answer: [1],
+            explain: "Finishing the sentence — 'it depends on X; here X is Y; so we choose Z and accept W' — turns an opinion into a reasoned, reviewable decision. That's the mastery move.", tags: ["mastery-practices", "decisions-records"] },
+          { id: "g11q10", type: "single", prompt: "A new library promises to simplify your code. The most important skeptical question is…", options: ["does it have a fancy logo", "what does it cost (bundle, maintenance, lock-in), who maintains it, and can I remove it in a day", "how many GitHub stars it has", "whether a famous engineer tweeted about it"], answer: [1],
+            explain: "Adoption is easy; removal is the true cost. Evaluate cost, maintenance health, and lock-in — and choose as if you'll rip it out in a year. Stars and hype are not maintenance.", tags: ["mastery-practices"] },
+          { id: "g11q11", type: "single", prompt: "Your app is small and healthy. A blog says you should move to microservices. You should…", options: ["do it — microservices are best practice", "not yet: distribute only when a concrete, measured problem (independent scaling, team boundaries) demands it — premature distribution adds coupling and failure modes", "rewrite everything first", "ask the blog author to decide"], answer: [1],
+            explain: "Most 'distributed' systems at small scale are distributed monoliths: all the coupling, all the network failure modes, none of the benefit. Distribute when a real problem demands it, not because it's fashionable.", tags: ["scaling-availability", "decisions-records"] },
+          { id: "g11q12", type: "single", prompt: "A feature could be built custom or adopted as a dependency. The Rule of Three says…", options: ["always build custom", "tolerate duplication until you've seen the need three times, then extract — abstracting too early encodes the wrong assumptions", "always adopt a dependency", "flip a coin"], answer: [1],
+            explain: "Premature abstraction is as costly as duplication. Wait until you've seen the pattern three times — then you know its real shape and can abstract correctly.", tags: ["decisions-records"] },
+        ],
+      },
+      {
+        title: "The Arc",
+        desc: "Synthesis across all eleven volumes.",
+        questions: [
+          { id: "g11q13", type: "single", prompt: "A user reports: 'I edited my profile, but the header still shows my old name everywhere.' Drawing on the whole course, the MOST likely cause is…", options: ["the database is broken", "a cache (or client state) wasn't invalidated after the write — the mutation didn't declare its dirty set", "the user's browser is corrupted", "React is re-rendering too slowly"], answer: [1],
+            explain: "This is the stale-data family from Volumes VII–IX: the write succeeded, but a rendered copy (another route, a shared layout, or client state) was never told to refresh. Revalidate the dirty set — path, tag, or refetch.", tags: ["nextjs-data-mutations", "caching-fundamentals"] },
+          { id: "g11q14", type: "single", prompt: "Which statement best captures the security through-line of the entire course?", options: ["hide your secrets well", "validate input and enforce authorization at every trust boundary — never trust the client, and let the database be the final gate", "use the most popular auth library", "only allow admins to do anything"], answer: [1],
+            explain: "From Volume IV to the capstone: trust boundaries are the spine. Validate at every entry, authorize at every query (RLS as the final gate), keep secrets server-side, and test adversarially.", tags: ["web-security-fundamentals", "rls-first-principles"] },
+          { id: "g11q15", type: "single", prompt: "The course ends. The single habit that most determines whether your skills stay current is…", options: ["memorizing every new framework", "a sustainable loop — skim what you depend on, build tiny things when it matters, write down what you learn — built on foundations that let you learn the next thing fast", "reading every tutorial", "waiting until your job requires it"], answer: [1],
+            explain: "Mastery is a direction, not a destination. The foundations (HTTP, event loop, relational model, trust boundary) are why a framework change is a weekend, not a crisis. Keep the loop running — ten focused minutes a day.", tags: ["mastery-practices"] },
         ],
       },
     ],
