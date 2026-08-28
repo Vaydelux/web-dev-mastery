@@ -65,6 +65,11 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - 12 quiz questions, 2 debugging labs; `react-state-rendering` flashcard set (13 cards); 9 glossary terms; 2 troubleshooting entries.
 - Running totals: 13 flashcard sets / 133 cards, 69 glossary terms, 21 troubleshooting entries, 40 lessons implemented.
 
+### Batch 14 — Volume III · Effects Discipline & Data (M3) — implemented
+- `effects-discipline` (concierge model, deps-as-contract, cleanup, infinite-loop + fresh-identity dep traps, misuse catalog, StrictMode), `data-fetching` (server-state laws, request union, race-condition lab with AbortController, cache-manager horizon).
+- 12 quiz questions, 2 debugging labs; `react-effects-data` flashcard set (14 cards); 7 glossary terms; 3 troubleshooting entries.
+- Running totals: 14 flashcard sets / 147 cards, 76 glossary terms, 24 troubleshooting entries, 42 lessons implemented.
+
 ## Known gaps (classified)
 - ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
 - ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11 (Builder Gauntlet `gauntlet-m2` spans V2 M1–M3). A combined Volumes III–V Full-Stack assessment remains pending.
@@ -77,10 +82,10 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Flashcard scheduling is user-driven (Leitner-lite); consider SM-2 as sets grow.
 
 ## Recommended next batch
-**Batch 14 — React · Effects Discipline & Data (V3·M3):** author `effects-discipline` (effects as
-synchronization, the dependency array as a contract, cleanup) and `data-fetching` (server state in practice,
-race conditions, the loading/error fork). Full scope on the generation queue. Then STOP and request review
-(bounded generation contract).
+**Batch 15 — React · Forms & Controlled Inputs (V3·M4):** author `controlled-forms` (value + onChange
+ownership, the single-source-of-truth form, the uncontrolled escape hatch) and `forms-validation-ux`
+(validate on blur/submit, accessible error wiring, the submit pipeline). Full scope on the generation queue.
+Then STOP and request review (bounded generation contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?

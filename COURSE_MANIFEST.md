@@ -56,7 +56,8 @@
 | `state-render-model` | State, Events, and the Render Cycle | Builder | 60 | jsx-props-composition | implemented |
 | `state-classification` | The Eight Kinds of State (and Where Each Lives) | Builder | 55 | state-render-model | implemented |
 | `how-react-renders` | How React Renders: Render, Commit, and What Triggers Each | Builder | 50 | state-classification | implemented |
-| V3·M3 | Effects Discipline & Data (2 lessons scoped) | Builder | — | — | planned (next · B-14) |
+| `effects-discipline` | Effects Are Synchronization, Not Lifecycle | Builder | 60 | how-react-renders | implemented |
+| `data-fetching` | Server State: Fetching, Races, and the Loading/Error Fork | Builder | 55 | effects-discipline | implemented |
 | V3·M4 | Forms & Controlled Inputs (2 lessons scoped) | Builder | — | — | planned |
 | V3·M5 | Component Architecture & Testing (2 lessons scoped) | Builder | — | — | planned |
 | V3·M6 | Performance & Profiling (2 lessons scoped) | Builder | — | — | planned |
@@ -79,9 +80,9 @@
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | 13 sets / 133 cards: …error-handling, tooling, react-mental-models (15), react-state-rendering (13) | implemented |
-| Glossary | 69 terms, domain-tagged, lesson-linked | implemented |
-| Troubleshooting index | 21 symptom-based entries | implemented |
+| Flashcard sets | 14 sets / 147 cards: …tooling, react-mental-models (15), react-state-rendering (13), react-effects-data (14) | implemented |
+| Glossary | 76 terms, domain-tagged, lesson-linked | implemented |
+| Troubleshooting index | 24 symptom-based entries | implemented |
 | A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |

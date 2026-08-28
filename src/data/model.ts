@@ -14,6 +14,7 @@ import { m9 } from "./lessons9";
 import { m10 } from "./lessons10";
 import { m11 } from "./lessons11";
 import { m12 } from "./lessons12";
+import { m13 } from "./lessons13";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -46,10 +47,7 @@ export const COURSE: VolumeDef[] = [
   v(3, "III", "React", "React Phase", "Component thinking: state, rendering, effects discipline, forms, architecture, testing, and performance.", [
     mod("v3m1", 1, "React Mental Models", "UI as a function of state; JSX, props, composition, and the render cycle.", "implemented", m11),
     mod("v3m2", 2, "State & the Rendering Model", "The state-classification doctrine and how React decides what to re-render.", "implemented", m12),
-    mod("v3m3", 3, "Effects Discipline & Data", "Effects as synchronization, dependency honesty, and the bridge to server state.", "planned", [
-      p("effects-discipline", "Effects Are Synchronization, Not Lifecycle", 3, 3, 1, 60, "What effects are for, the dependency array as a contract, and cleanup.", ["how-react-renders"], ["useEffect"]),
-      p("data-fetching", "Server State: Fetching, Caching, and the Loading/Error Fork", 3, 3, 2, 55, "Why server state isn't client state, race conditions, and the fetch-once discipline.", ["effects-discipline"], ["server state"]),
-    ]),
+    mod("v3m3", 3, "Effects Discipline & Data", "Effects as synchronization, dependency honesty, and the bridge to server state.", "implemented", m13),
     mod("v3m4", 4, "Forms & Controlled Inputs", "Forms as controlled state: validation, UX, and accessible error surfacing.", "planned", [
       p("controlled-forms", "Controlled Inputs and the Single Source of Truth", 3, 4, 1, 50, "Value + onChange ownership, form events, and why uncontrolled has a place.", ["data-fetching"], ["forms"]),
       p("forms-validation-ux", "Validation UX: Errors That Help, Not Accuse", 3, 4, 2, 50, "Validate on blur/submit, accessible error wiring, and the submit pipeline.", ["controlled-forms"], ["validation"]),
@@ -469,6 +467,25 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "The optimization order", back: "Profile ('Why did this render?') → restructure state → stabilize identities → memo last, targeted. Never memoize speculatively.", lesson: "how-react-renders" },
     ],
   },
+  {
+    id: "react-effects-data", title: "Effects & Server State", blurb: "Volume III · M3 — synchronization, cleanup, and the laws of fetched data.",
+    cards: [
+      { front: "What effects are for", back: "Synchronizing React's world with systems outside it (network, timers, subscriptions, foreign DOM APIs) — and unsynchronizing when done. Nothing inside React needs one.", lesson: "effects-discipline" },
+      { front: "The door with two handles", back: "The body opens the connection; the returned cleanup closes it. Cleanup runs before every re-run and at unmount — one handle is a bug.", lesson: "effects-discipline" },
+      { front: "Dependency array = contract", back: "Lists every reactive value the effect READS; identity change triggers cleanup + re-run. It's not a perf knob — lying to it creates stale effects.", lesson: "effects-discipline" },
+      { front: "Trap 1: self-feeding effect", back: "The effect writes the very state it depends on → every run triggers the next run → infinite loop. Derive instead, or move the logic to an event.", lesson: "effects-discipline" },
+      { front: "Trap 2: fresh-identity deps", back: "Inline objects/arrays/arrows are born each render → deps 'change' every render → effect fires constantly. Depend on primitives or useMemo on honest deps.", lesson: "effects-discipline" },
+      { front: "The three misuses", back: "Effect as event handler (toasts belong in handlers), as derived-state syncer (derive in render), and as 'on mount' ritual (say what you're connecting to — and clean up).", lesson: "effects-discipline" },
+      { front: "StrictMode double-run", back: "Dev-only body→cleanup→body that smoke-tests your cleanup. Breakage is a real missing-cleanup bug — fix the effect, never remove StrictMode.", lesson: "effects-discipline" },
+      { front: "Laws of server state", back: "It can go stale without your knowledge, duplicates across components, fails in transit, and is superseded by in-flight races. A copy of someone else's truth.", lesson: "data-fetching" },
+      { front: "The request union", back: "{ idle } | { loading } | { error, message } | { success, data } — a discriminated union so impossible states (loading + stale error + stale data) can't exist.", lesson: "data-fetching" },
+      { front: "The race condition", back: "Out-of-order responses: last-to-ARRIVE isn't last-to-ASK. Only slow networks expose it — localhost never does.", lesson: "data-fetching" },
+      { front: "The race fix", back: "AbortController in the effect; cleanup aborts the superseded flight. Ignore AbortError — it's your own cancellation, not a failure.", lesson: "data-fetching" },
+      { front: "Post-mutation staleness", back: "After a write, your stored copy is stale BY DEFINITION — the source changed and the snapshot didn't. Refetch or reconcile deliberately.", lesson: "data-fetching" },
+      { front: "Cache managers", back: "TanStack Query/SWR are cache managers for server state — dedup, staleness windows, invalidation, retry — not fetch wrappers. Learn the raw machinery first.", lesson: "data-fetching" },
+      { front: "Fetched = foreign", back: "Responses cross a trust boundary: parse → validate → trust, never render raw server text as markup, keep error details out of user-facing copy.", lesson: "data-fetching" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -542,6 +559,13 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Commit phase", def: "The single uninterrupted sweep that diffs and patches the real DOM.", domain: "React", lesson: "how-react-renders" },
   { term: "memo", def: "Bails out of a child render when props are referentially unchanged.", domain: "React", lesson: "how-react-renders" },
   { term: "Referential identity", def: "Whether two values are the same reference — what memo and effect deps compare.", domain: "React", lesson: "how-react-renders" },
+  { term: "Effect", def: "A synchronization between React and an outside system, with mandatory cleanup.", domain: "React", lesson: "effects-discipline" },
+  { term: "Cleanup function", def: "The function an effect returns to undo exactly what its body did — run before each re-run and at unmount.", domain: "React", lesson: "effects-discipline" },
+  { term: "Dependency array", def: "The contract of reactive values an effect reads; identity change restarts the synchronization.", domain: "React", lesson: "effects-discipline" },
+  { term: "Server state", def: "A cached copy of the server's truth — subject to staleness, duplication, and transport failure.", domain: "React", lesson: "data-fetching" },
+  { term: "Race condition", def: "Out-of-order responses where the last arrival, not the last request, writes state.", domain: "React", lesson: "data-fetching" },
+  { term: "AbortController", def: "The cancellation handle whose signal a fetch obeys; aborting in cleanup kills superseded flights.", domain: "React", lesson: "data-fetching" },
+  { term: "Request union", def: "idle/loading/error/success modeled as a discriminated union — every request moment has a face.", domain: "React", lesson: "data-fetching" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -567,6 +591,9 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "key-warning", symptom: "Console warns 'Each child in a list should have a unique key' — or list rows show the wrong checked/input state after deleting or reordering.", layer: "React reconciliation", causes: ["No key on list items, or key={index} on a list that reorders/deletes/holds per-item state"], diagnose: ["Inspect the map(): what is each item's identity across renders?", "Delete or reorder an item; watch per-item state (checkboxes, inputs) stick to positions"], fix: "Key on a stable, unique, data-derived id (t.id). Index keys only for append-only, stateless, never-reordered lists.", prevent: "Every data type gets an id at creation (crypto.randomUUID()); key on it from day one.", related: "jsx-props-composition" },
   { id: "stale-total", symptom: "A total/count/flag is 'wrong, but only sometimes' — usually after editing one of its inputs.", layer: "React state classification", causes: ["A derivable value stored in useState and synced by an effect with an incomplete dependency list", "Two components each storing a copy that drifts"], diagnose: ["Ask: can this value be computed from other visible state? If yes, find its stored copy.", "Check the syncing effect's dependency array against the value's real inputs"], fix: "Delete the stored copy (and the sync effect); derive the value during render. One source, correct by construction.", prevent: "At every useState ask 'source or computable?'; lint against derived-state-in-useState patterns.", related: "state-classification" },
   { id: "memo-noop", symptom: "A memoized component still re-renders every parent render; the Profiler shows 'props changed'.", layer: "React rendering / identity", causes: ["Props created inline in JSX (fresh array/object/arrow-function identities each render)", "A dep of useMemo/useCallback is itself unstable"], diagnose: ["Profiler → 'Why did this render?' → which props changed", "Inspect each prop expression passed to the child for inline literals"], fix: "Stabilize identities with useMemo/useCallback (honest deps) — or better, restructure so the parent stops re-rendering (move state down).", prevent: "Profile before memoizing; remember memo compares by reference, not contents.", related: "how-react-renders" },
+  { id: "effect-every-render", symptom: "An effect fires after every render — the network tab shows constant identical requests, or a console log inside the effect scrolls endlessly.", layer: "React effects / dep identity", causes: ["A dependency created during render (object/array/inline arrow) gets a fresh identity every render", "The dependency array is omitted entirely (runs after every render by design)"], diagnose: ["Log inside the effect and count fires per single user action", "List the effect's deps and ask: which one is born fresh each render?"], fix: "Depend on the primitives the value carries, or memoize it on honest deps; add the array if it was omitted. Never silence the exhaustive-deps lint to stop re-runs.", prevent: "Treat react-hooks/exhaustive-deps as an error; audit every dep's identity story when writing the effect.", related: "effects-discipline" },
+  { id: "infinite-effect-loop", symptom: "The component renders continuously with no user input; the CPU spins; sometimes 'Maximum update depth exceeded'.", layer: "React effects / state cycle", causes: ["The effect writes state that is also in its dependency array — every run triggers the next", "An object written to state that a dep compares by identity"], diagnose: ["Profiler: the component renders with no events at all", "Check whether any setState target appears (directly or via a derivative) in the same effect's deps"], fix: "Break the cycle: derive the value in render instead of storing it, or move the write to an event handler. An effect should synchronize outward, not feed itself.", prevent: "Rule: an effect must never write state it (or its deps) reads. Lint plus code review for effects that call set* on their own inputs.", related: "effects-discipline" },
+  { id: "stale-search-results", symptom: "Search/list results occasionally show the PREVIOUS query — never on localhost, regularly on slow connections.", layer: "Async / effect lifecycle", causes: ["An older, slower response resolving after a newer one and overwriting state", "No cancellation (abort) or staleness check tied to the current query"], diagnose: ["Throttle DevTools to Slow 3G, type two queries quickly, watch the Network order vs. the rendered result", "Check whether the fetch effect's cleanup aborts the in-flight request"], fix: "AbortController in the effect; cleanup aborts on query change/unmount; ignore AbortError in the catch.", prevent: "Make abort-on-cleanup the fetch template, not an optimization; test by resolving two requests out of order.", related: "data-fetching" },
 ];
 
 /* ————— batch queue ————— */
@@ -586,8 +613,8 @@ export const BATCHES: Batch[] = [
   { id: "B-11", title: "Volume II · Tooling: Lint, Format, Build", scope: "V2·M3", status: "shipped", summary: "ESLint + Prettier as team agreements (the whitespace-merge-conflict lab), the build pipeline (transform→bundle→minify, tree-shaking, source maps, the 'works in dev, breaks in prod' lab), and CI as a chain of exit codes (the 'passes locally, fails in CI' lab) — 18 quiz questions, 3 debugging labs. Closes Volume II with the 13-question Builder Gauntlet." },
   { id: "B-12", title: "React Mental Models", scope: "V3·M1", status: "shipped", summary: "Why React exists (Then-vs-Now from the Volume I manual-DOM app, reconciliation traced), JSX's three embedding rules + keys-as-identity with the wrong-checkbox debugging lab, and state/events/render cycle with the undercount + silent-no-op labs — 16 quiz questions, 2 debugging labs. Volume III opens with 6 scoped modules (Mental Models, State & Rendering, Effects & Data, Forms, Architecture & Testing, Performance)." },
   { id: "B-13", title: "React · State & the Rendering Model", scope: "V3·M2", status: "shipped", summary: "The state-classification doctrine (eight kinds of state with the three-question filing test, server-vs-client laws, derive-don't-store debugging lab) and the two-phase render-commit model (three triggers, the memo identity trap debugging lab, measure-first discipline) — 12 quiz questions, 2 debugging labs." },
-  { id: "B-14", title: "React · Effects Discipline & Data", scope: "V3·M3", status: "next", summary: "Effects as synchronization with dependency honesty, cleanup, and server-state fetching with race-condition discipline." },
-  { id: "B-15", title: "React · Forms & Controlled Inputs", scope: "V3·M4", status: "queued", summary: "Controlled components, the single-source-of-truth form, and accessible validation UX." },
+  { id: "B-14", title: "React · Effects Discipline & Data", scope: "V3·M3", status: "shipped", summary: "Effects as synchronization (the concierge model, deps-as-contract, cleanup as the second handle), the infinite-loop and fresh-identity dep traps with the 'fires every render' debugging lab, the three misuse catalog, and StrictMode as smoke alarm; then server state under its laws — the 4-state request union, the out-of-order race-condition debugging lab with AbortController cleanup, and the cache-manager horizon — 12 quiz questions, 2 debugging labs." },
+  { id: "B-15", title: "React · Forms & Controlled Inputs", scope: "V3·M4", status: "next", summary: "Controlled components, the single-source-of-truth form, and accessible validation UX that helps instead of accuses." },
   { id: "B-16", title: "React · Component Architecture & Testing", scope: "V3·M5", status: "queued", summary: "Colocation, context boundaries, compound components, and Testing Library behavior tests." },
   { id: "B-17", title: "React · Performance, Profiling & Gauntlet", scope: "V3·M6", status: "queued", summary: "Rendering performance, the profiler loop, virtualization — closing Volume III with a React Gauntlet." },
   { id: "B-18", title: "Web Architecture", scope: "Volume IV", status: "queued", summary: "REST, AuthN/AuthZ, caching & security — the browser/server boundary made rigorous." },
