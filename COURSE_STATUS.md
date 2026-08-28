@@ -55,6 +55,16 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Running totals: 11 flashcard sets / 105 cards, 54 glossary terms, 16 troubleshooting entries.
 - **Volume II complete: all 3 modules, 9 lessons.** Builder level certified by the Builder Gauntlet.
 
+### Batch 12 — Volume III · React Mental Models (M1) — implemented
+- `react-why` (Then-vs-Now from the Volume I manual-DOM app), `jsx-props-composition`, `state-render-model`.
+- 16 quiz questions, 2 debugging labs; `react-mental-models` flashcard set (15 cards); 6 glossary terms; 3 troubleshooting entries.
+- **Volume III opens the Full-Stack level, scoped to 6 modules.**
+
+### Batch 13 — Volume III · State & the Rendering Model (M2) — implemented
+- `state-classification` (eight kinds of state, three-question filing test, stale-total lab), `how-react-renders` (render/commit phases, three triggers, memo identity-trap lab).
+- 12 quiz questions, 2 debugging labs; `react-state-rendering` flashcard set (13 cards); 9 glossary terms; 2 troubleshooting entries.
+- Running totals: 13 flashcard sets / 133 cards, 69 glossary terms, 21 troubleshooting entries, 40 lessons implemented.
+
 ## Known gaps (classified)
 - ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
 - ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11 (Builder Gauntlet `gauntlet-m2` spans V2 M1–M3). A combined Volumes III–V Full-Stack assessment remains pending.
@@ -67,11 +77,10 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Flashcard scheduling is user-driven (Leitner-lite); consider SM-2 as sets grow.
 
 ## Recommended next batch
-**Batch 12 — React (Volume III):** open the Full-Stack track with `v3m1` React Mental Models (UI as a
-function of state, JSX, props, composition), then `v3m2` State & the Rendering Model (state-classification
-doctrine, how React renders), then `v3m3` Effects & Data (effect discipline, data fetching). Close Volume III
-with a React Gauntlet. Full scope on the generation queue. Then STOP and request review (bounded generation
-contract).
+**Batch 14 — React · Effects Discipline & Data (V3·M3):** author `effects-discipline` (effects as
+synchronization, the dependency array as a contract, cleanup) and `data-fetching` (server state in practice,
+race conditions, the loading/error fork). Full scope on the generation queue. Then STOP and request review
+(bounded generation contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?

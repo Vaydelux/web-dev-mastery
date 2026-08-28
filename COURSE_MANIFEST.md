@@ -47,11 +47,25 @@
 | `ci-gate` | CI: The Gate That Fails Loudly | Builder | 45 | build-pipeline | implemented |
 | `gauntlet-m2` | Checkpoint · Builder Gauntlet (13 Q, pass ≥70%) | Builder | 25 | all of Volume II | implemented |
 
-## Volumes III–XI (module-scoped; lessons authored per batch)
+## Volume III — React (Full-Stack level)
+
+| ID | Title | Level | Min | Prereqs | Status |
+|---|---|---|---|---|---|
+| `react-why` | Why React Exists: The End of Manual DOM Updates | Builder | 45 | ci-gate | implemented |
+| `jsx-props-composition` | JSX, Props, and the Discipline of Composition | Builder | 55 | react-why | implemented |
+| `state-render-model` | State, Events, and the Render Cycle | Builder | 60 | jsx-props-composition | implemented |
+| `state-classification` | The Eight Kinds of State (and Where Each Lives) | Builder | 55 | state-render-model | implemented |
+| `how-react-renders` | How React Renders: Render, Commit, and What Triggers Each | Builder | 50 | state-classification | implemented |
+| V3·M3 | Effects Discipline & Data (2 lessons scoped) | Builder | — | — | planned (next · B-14) |
+| V3·M4 | Forms & Controlled Inputs (2 lessons scoped) | Builder | — | — | planned |
+| V3·M5 | Component Architecture & Testing (2 lessons scoped) | Builder | — | — | planned |
+| V3·M6 | Performance & Profiling (2 lessons scoped) | Builder | — | — | planned |
+
+## Volumes IV–XI (module-scoped; lessons authored per batch)
 
 | Volume | Phase | Modules | Status |
 |---|---|---|---|
-| III — React | React Phase | 3 (Mental Models, State/Rendering, Effects/Data) | planned |
+| III — React | React Phase | 6 (Mental Models ✅, State/Rendering ✅, Effects/Data, Forms, Architecture/Testing, Performance) | in progress |
 | IV — Web Architecture | Web Architecture Phase | 3 (REST, AuthN/AuthZ, Caching/Security) | planned |
 | V — PostgreSQL | Database Phase | 3 (Modeling, SQL, Performance) | planned |
 | VI — Supabase | Supabase Phase | 2 (Foundations, RLS) | planned |
@@ -65,9 +79,9 @@
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | 11 sets / 105 cards: web-basics, render-pipeline, js-values, terminal-tooling, git-workflow, semantic-a11y, css-layout, ts-foundations, modular-js, error-handling, tooling | implemented |
-| Glossary | 54 terms, domain-tagged, lesson-linked | implemented |
-| Troubleshooting index | 16 symptom-based entries | implemented |
+| Flashcard sets | 13 sets / 133 cards: …error-handling, tooling, react-mental-models (15), react-state-rendering (13) | implemented |
+| Glossary | 69 terms, domain-tagged, lesson-linked | implemented |
+| Troubleshooting index | 21 symptom-based entries | implemented |
 | A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |

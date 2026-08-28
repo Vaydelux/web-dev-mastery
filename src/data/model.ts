@@ -13,6 +13,7 @@ import { m8 } from "./lessons8";
 import { m9 } from "./lessons9";
 import { m10 } from "./lessons10";
 import { m11 } from "./lessons11";
+import { m12 } from "./lessons12";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -44,10 +45,7 @@ export const COURSE: VolumeDef[] = [
   ]),
   v(3, "III", "React", "React Phase", "Component thinking: state, rendering, effects discipline, forms, architecture, testing, and performance.", [
     mod("v3m1", 1, "React Mental Models", "UI as a function of state; JSX, props, composition, and the render cycle.", "implemented", m11),
-    mod("v3m2", 2, "State & the Rendering Model", "The state-classification doctrine and how React decides what to re-render.", "planned", [
-      p("state-classification", "The Eight Kinds of State (and Where Each Lives)", 3, 2, 1, 55, "Local, derived, form, URL, server, session, global, persistent — classified before any library.", ["state-render-model"], ["state management"]),
-      p("how-react-renders", "How React Renders: Render, Commit, and What Triggers Each", 3, 2, 2, 50, "The two-phase model, parent re-renders, and memo used only when measured.", ["state-classification"], ["rendering"]),
-    ]),
+    mod("v3m2", 2, "State & the Rendering Model", "The state-classification doctrine and how React decides what to re-render.", "implemented", m12),
     mod("v3m3", 3, "Effects Discipline & Data", "Effects as synchronization, dependency honesty, and the bridge to server state.", "planned", [
       p("effects-discipline", "Effects Are Synchronization, Not Lifecycle", 3, 3, 1, 60, "What effects are for, the dependency array as a contract, and cleanup.", ["how-react-renders"], ["useEffect"]),
       p("data-fetching", "Server State: Fetching, Caching, and the Loading/Error Fork", 3, 3, 2, 55, "Why server state isn't client state, race conditions, and the fetch-once discipline.", ["effects-discipline"], ["server state"]),
@@ -433,6 +431,44 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "Why a slow gate fails", back: "People stop waiting and bypass it, so red loses meaning. Speed and trust are the same property.", lesson: "ci-gate" },
     ],
   },
+  {
+    id: "react-mental-models", title: "React Mental Models", blurb: "Volume III · M1 — describe don't update, props as contracts, state as remembered input.",
+    cards: [
+      { front: "UI = f(state)", back: "The screen is a pure OUTPUT of data. You change the input (state); React re-derives the picture. Describe, never poke.", lesson: "react-why" },
+      { front: "The manual-DOM failure mode", back: "Two sources of truth — data and its mirrors in the DOM — synchronized by hand. Every forgotten mirror is a stale-UI bug.", lesson: "react-why" },
+      { front: "Reconciliation", back: "React diffs this render's description against the last one and patches only what changed. Same type → keep; type change → rebuild that subtree.", lesson: "react-why" },
+      { front: "Virtual DOM", back: "Not a second DOM — just this render's plain description objects, used for the diff.", lesson: "react-why" },
+      { front: "What React does NOT own", back: "fetch, localStorage, routing, timers. React owns rendering + state plumbing; the browser APIs are still yours.", lesson: "react-why" },
+      { front: "Derive, don't store", back: "If a value is computable from existing state, compute it during render. Derived values cannot drift from their source.", lesson: "react-why" },
+      { front: "JSX's three rules", back: "{expression} anywhere a value goes; conditionals as && or ternary (if is a statement); lists as .map().", lesson: "jsx-props-composition" },
+      { front: "key = identity", back: "Stable, unique, data-derived ID so reconciliation matches items across renders by identity, not position. Never the index for stateful/reorderable lists.", lesson: "jsx-props-composition" },
+      { front: "Data down, events up", back: "Props flow down and are read-only. To change anything, a child calls a callback prop (onX) and the parent updates its state.", lesson: "jsx-props-composition" },
+      { front: "children", back: "The prop holding everything between a component's tags — composition (flexible boxes) beats configuration (boolean swamps).", lesson: "jsx-props-composition" },
+      { front: "State, precisely", back: "Data React remembers across renders whose change triggers a re-render. Memory + trigger. Plain variables die each render.", lesson: "state-render-model" },
+      { front: "setState is a request", back: "It queues an update; the current handler keeps reading this render's snapshot. Batching gives one consistent render per event.", lesson: "state-render-model" },
+      { front: "The undercount bug", back: "setX(x + 1) three times → +1, because all three read the same snapshot. Fix: updater form setX(prev => prev + 1) chains through the queue.", lesson: "state-render-model" },
+      { front: "The silent no-op", back: "Mutating state then setItems(items) passes the SAME reference — React's comparison finds nothing, nothing renders. Produce new values (map/filter/spread).", lesson: "state-render-model" },
+      { front: "State vs useRef", back: "A rendering question, not mutability: state changes re-render; ref changes are invisible to rendering (DOM nodes, timers, last-values).", lesson: "state-render-model" },
+    ],
+  },
+  {
+    id: "react-state-rendering", title: "State & the Rendering Model", blurb: "Volume III · M2 — the eight kinds of state and the two-phase render model.",
+    cards: [
+      { front: "The three-question filing test", back: "Q1 origin (API → server state)? Q2 computable (→ derive, don't store)? Q3 survive/share (→ persistent sink / URL)? Run in order; server-ness wins.", lesson: "state-classification" },
+      { front: "Server state's real nature", back: "A CACHE of the server's truth with staleness laws: loading, error, refetch, invalidate. useState alone inherits none of them.", lesson: "state-classification" },
+      { front: "The eight kinds", back: "Local UI · derived · form · URL · server · session/auth · global client · persistent. Most 'state management' pain is misfiled state.", lesson: "state-classification" },
+      { front: "URL state buys", back: "Shareability, bookmarks, back/forward correctness, reload survival — and it's an accessibility win, not just a nicety.", lesson: "state-classification" },
+      { front: "The escalation ladder", back: "local useState → lift to common parent → context (app-wide, rare-change) → a library only when a KIND demands it. Pay only the rung you need.", lesson: "state-classification" },
+      { front: "Stored derived state", back: "The #1 drift bug: a computable value copied into useState and synced by effects. Fix: compute during render; it's correct by construction.", lesson: "state-classification" },
+      { front: "Render phase", back: "Building descriptions: pure, interruptible, discardable; zero DOM touched. Cheap — re-renders are normal, not failure.", lesson: "how-react-renders" },
+      { front: "Commit phase", back: "The single uninterrupted sweep: diff + minimal DOM patch. The only part users feel.", lesson: "how-react-renders" },
+      { front: "The three re-render triggers", back: "Own state changed · parent re-rendered · subscribed context changed. The complete list — 'props would differ' is NOT one.", lesson: "how-react-renders" },
+      { front: "Why parent re-renders are fine", back: "The child pays its function body, but an identical description is discarded by the diff → zero DOM work.", lesson: "how-react-renders" },
+      { front: "The memo identity trap", back: "memo compares props by REFERENCE. Inline {}/[]/arrows are fresh identities every render → memo never bails. Stabilize with useMemo/useCallback.", lesson: "how-react-renders" },
+      { front: "useMemo/useCallback really", back: "Identity stabilizers — they preserve the same reference across renders; they make nothing 'faster'.", lesson: "how-react-renders" },
+      { front: "The optimization order", back: "Profile ('Why did this render?') → restructure state → stabilize identities → memo last, targeted. Never memoize speculatively.", lesson: "how-react-renders" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -492,6 +528,20 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Exit code", def: "A process's numeric result: 0 = success, non-zero = failure; the primitive CI chains on.", domain: "Tooling", lesson: "ci-gate" },
   { term: "CI gate", def: "The checks that must pass before merging; green is proven, not assumed.", domain: "Tooling", lesson: "ci-gate" },
   { term: "Frozen lockfile", def: "Installing exactly the locked dependency versions, failing on drift.", domain: "Tooling", lesson: "ci-gate" },
+  { term: "Reconciliation", def: "React diffing two render descriptions and patching the real DOM minimally.", domain: "React", lesson: "react-why" },
+  { term: "JSX", def: "Expression language producing description objects; hosts {expressions}, &&/ternary, and .map().", domain: "React", lesson: "jsx-props-composition" },
+  { term: "Props", def: "Typed, read-only inputs flowing down from parent to child; events flow back up via callback props.", domain: "React", lesson: "jsx-props-composition" },
+  { term: "key", def: "A stable, unique, data-derived identity for list items across renders.", domain: "React", lesson: "jsx-props-composition" },
+  { term: "State (React)", def: "Data remembered across renders whose change requests a re-render — memory plus a trigger.", domain: "React", lesson: "state-render-model" },
+  { term: "Updater form", def: "setState(prev => next): computes from the latest queued value instead of this render's snapshot.", domain: "React", lesson: "state-render-model" },
+  { term: "Server state", def: "Fetched data treated as a cache of the server's truth, with staleness/refetch/invalidation laws.", domain: "React", lesson: "state-classification" },
+  { term: "URL state", def: "View state serialized into the address bar: shareable, bookmarkable, history-aware.", domain: "React", lesson: "state-classification" },
+  { term: "Derived state", def: "Values computed from other state during render — stored nowhere, so they cannot drift.", domain: "React", lesson: "state-classification" },
+  { term: "Lifting state up", def: "Moving shared state to the nearest common parent so siblings share one source.", domain: "React", lesson: "state-classification" },
+  { term: "Render phase", def: "Building fresh descriptions: pure, interruptible, discardable; no DOM touched.", domain: "React", lesson: "how-react-renders" },
+  { term: "Commit phase", def: "The single uninterrupted sweep that diffs and patches the real DOM.", domain: "React", lesson: "how-react-renders" },
+  { term: "memo", def: "Bails out of a child render when props are referentially unchanged.", domain: "React", lesson: "how-react-renders" },
+  { term: "Referential identity", def: "Whether two values are the same reference — what memo and effect deps compare.", domain: "React", lesson: "how-react-renders" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -512,6 +562,11 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "editor-format-war", symptom: "Files reformat on every save, or ESLint and your editor keep undoing each other's formatting.", layer: "Lint/format config", causes: ["ESLint formatting rules (indent/quotes/semi) enabled alongside Prettier", "Two different formatters configured", "Format-on-save off for some teammates, on for others"], diagnose: ["Check whether eslint-config-prettier is the LAST ESLint config entry", "Confirm one shared .prettierrc is committed and format-on-save is on for everyone"], fix: "Add eslint-config-prettier last to silence ESLint's formatting rules; commit one Prettier config; enable format-on-save team-wide.", prevent: "Prettier owns all appearance; the linter never formats. One owner per concern.", related: "lint-format" },
   { id: "works-in-dev-breaks-in-prod", symptom: "A feature works under the dev server but throws after pnpm build; the stack trace is minified (one-letter names).", layer: "Build pipeline", causes: ["A side effect made tree-shaking keep/drop the wrong module", "Code depending on a dev-only global or un-minified behavior", "Debugging the dev build while the prod build is what fails"], diagnose: ["Serve the real dist/ output locally and reproduce", "Load source maps (or an un-minified prod build) to read the trace"], fix: "Fix the root cause in source (declare side effects correctly, stop depending on dev-only globals), rebuild, and re-test dist/.", prevent: "Smoke-test the production build before deploy; ship source maps so prod traces are readable.", related: "build-pipeline" },
   { id: "passes-locally-fails-ci", symptom: "A branch is green locally but the CI pipeline is red.", layer: "CI / environment", causes: ["An undeclared dependency installed globally on your machine (phantom dependency)", "An uncommitted file that exists only locally", "A test sensitive to timezone/locale or a case-sensitive file path"], diagnose: ["Fresh-clone the repo, run pnpm install --frozen-lockfile, then the failing command", "Compare your local environment (globals, files, OS case-sensitivity) with CI's"], fix: "Commit missing files, declare every imported dependency, and make tests environment-independent.", prevent: "Develop with the clean-room habit; commit the lockfile; write tests that don't care about timezone or filesystem case.", related: "ci-gate" },
+  { id: "click-no-update", symptom: "A button handler runs (you can log in it) but the screen doesn't change.", layer: "React state updates", causes: ["State was mutated in place, then the same reference was passed to the setter", "The changed value isn't state at all — it's a prop, a ref, or a plain variable"], diagnose: ["Log value === prevValue right before the setter — if true, you mutated", "Ask: does this value live in useState in THIS component?"], fix: "Produce a NEW value: map/filter/spread for collections, { ...obj, field } for objects, the updater form for counters.", prevent: "Treat state as read-only; lint with no-mutating-array-methods on state and always return new references.", related: "state-render-model" },
+  { id: "counter-plus-one", symptom: "A handler calls setCount(count + 1) several times, but the counter only advances by one.", layer: "React update queue", causes: ["Every call reads the same render's snapshot (count) and queues the same next value"], diagnose: ["Log count on each line of the handler — identical values", "Check whether the next value is computed from the old one"], fix: "Use the updater form: setCount(c => c + 1) — each call chains from the latest queued value.", prevent: "Rule: 'computed from old → updater form.' Applies to any batched handler, retry loops, and rapid clicks.", related: "state-render-model" },
+  { id: "key-warning", symptom: "Console warns 'Each child in a list should have a unique key' — or list rows show the wrong checked/input state after deleting or reordering.", layer: "React reconciliation", causes: ["No key on list items, or key={index} on a list that reorders/deletes/holds per-item state"], diagnose: ["Inspect the map(): what is each item's identity across renders?", "Delete or reorder an item; watch per-item state (checkboxes, inputs) stick to positions"], fix: "Key on a stable, unique, data-derived id (t.id). Index keys only for append-only, stateless, never-reordered lists.", prevent: "Every data type gets an id at creation (crypto.randomUUID()); key on it from day one.", related: "jsx-props-composition" },
+  { id: "stale-total", symptom: "A total/count/flag is 'wrong, but only sometimes' — usually after editing one of its inputs.", layer: "React state classification", causes: ["A derivable value stored in useState and synced by an effect with an incomplete dependency list", "Two components each storing a copy that drifts"], diagnose: ["Ask: can this value be computed from other visible state? If yes, find its stored copy.", "Check the syncing effect's dependency array against the value's real inputs"], fix: "Delete the stored copy (and the sync effect); derive the value during render. One source, correct by construction.", prevent: "At every useState ask 'source or computable?'; lint against derived-state-in-useState patterns.", related: "state-classification" },
+  { id: "memo-noop", symptom: "A memoized component still re-renders every parent render; the Profiler shows 'props changed'.", layer: "React rendering / identity", causes: ["Props created inline in JSX (fresh array/object/arrow-function identities each render)", "A dep of useMemo/useCallback is itself unstable"], diagnose: ["Profiler → 'Why did this render?' → which props changed", "Inspect each prop expression passed to the child for inline literals"], fix: "Stabilize identities with useMemo/useCallback (honest deps) — or better, restructure so the parent stops re-rendering (move state down).", prevent: "Profile before memoizing; remember memo compares by reference, not contents.", related: "how-react-renders" },
 ];
 
 /* ————— batch queue ————— */
@@ -530,8 +585,8 @@ export const BATCHES: Batch[] = [
   { id: "B-10", title: "Volume II · Error Handling That Scales", scope: "V2·M2", status: "shipped", summary: "The bug-vs-failure taxonomy, throwing with intent (cause chains, domain classes), stack traces read bottom-up, the Result pattern as typed failures with exhaustiveness, and async escape hatches (orphaned promises, allSettled, global alarms, retry policy) — 18 quiz questions, 3 debugging labs." },
   { id: "B-11", title: "Volume II · Tooling: Lint, Format, Build", scope: "V2·M3", status: "shipped", summary: "ESLint + Prettier as team agreements (the whitespace-merge-conflict lab), the build pipeline (transform→bundle→minify, tree-shaking, source maps, the 'works in dev, breaks in prod' lab), and CI as a chain of exit codes (the 'passes locally, fails in CI' lab) — 18 quiz questions, 3 debugging labs. Closes Volume II with the 13-question Builder Gauntlet." },
   { id: "B-12", title: "React Mental Models", scope: "V3·M1", status: "shipped", summary: "Why React exists (Then-vs-Now from the Volume I manual-DOM app, reconciliation traced), JSX's three embedding rules + keys-as-identity with the wrong-checkbox debugging lab, and state/events/render cycle with the undercount + silent-no-op labs — 16 quiz questions, 2 debugging labs. Volume III opens with 6 scoped modules (Mental Models, State & Rendering, Effects & Data, Forms, Architecture & Testing, Performance)." },
-  { id: "B-13", title: "React · State & the Rendering Model", scope: "V3·M2", status: "next", summary: "The state-classification doctrine (local/derived/form/URL/server/session/global/persistent) and the two-phase render-commit model with memo discipline." },
-  { id: "B-14", title: "React · Effects Discipline & Data", scope: "V3·M3", status: "queued", summary: "Effects as synchronization with dependency honesty, cleanup, and server-state fetching with race-condition discipline." },
+  { id: "B-13", title: "React · State & the Rendering Model", scope: "V3·M2", status: "shipped", summary: "The state-classification doctrine (eight kinds of state with the three-question filing test, server-vs-client laws, derive-don't-store debugging lab) and the two-phase render-commit model (three triggers, the memo identity trap debugging lab, measure-first discipline) — 12 quiz questions, 2 debugging labs." },
+  { id: "B-14", title: "React · Effects Discipline & Data", scope: "V3·M3", status: "next", summary: "Effects as synchronization with dependency honesty, cleanup, and server-state fetching with race-condition discipline." },
   { id: "B-15", title: "React · Forms & Controlled Inputs", scope: "V3·M4", status: "queued", summary: "Controlled components, the single-source-of-truth form, and accessible validation UX." },
   { id: "B-16", title: "React · Component Architecture & Testing", scope: "V3·M5", status: "queued", summary: "Colocation, context boundaries, compound components, and Testing Library behavior tests." },
   { id: "B-17", title: "React · Performance, Profiling & Gauntlet", scope: "V3·M6", status: "queued", summary: "Rendering performance, the profiler loop, virtualization — closing Volume III with a React Gauntlet." },
