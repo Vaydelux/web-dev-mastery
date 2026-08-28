@@ -94,6 +94,12 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Pending demonstration: none for React itself; the Full-Stack assessment combining Volumes III–V remains queued.
 - No misordering found; no content needed to move. Proceed to Volume IV — Web Architecture.
 
+### Batch 18 — Volume IV · Web Architecture: Contracts & Identity (M1–M2) — implemented
+- `rest-api-design` (three vocabularies, idempotency, status-code facts, URL-state pagination, PUT-clobbers-PATCH lab), `api-contracts-versioning` (client-memory test, additive rules, versioning, deprecation, breaking-change lab), `auth-models` (AuthN/AuthZ order, salted-slow hashing, opaque sessions, IDOR user-A-vs-user-B lab), `sessions-tokens` (HttpOnly/Secure/SameSite, XSS-token-theft lab, CSRF, JWT costs, rotating-refresh design).
+- 24 quiz questions, 4 debugging labs, 2 outdated-pattern pairs; `web-architecture` flashcard set (19 cards); 16 glossary terms; 4 troubleshooting entries.
+- Running totals: 18 flashcard sets / 210 cards, 113 glossary terms, 37 troubleshooting entries, 52 lessons implemented.
+- Volume IV opens the Full-Stack level; M3 (Caching & Security) + the Web Architecture Gauntlet (`gauntlet-m4`) are scoped for B-18b.
+
 ## Known gaps (classified)
 - ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
 - ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11 (Builder Gauntlet `gauntlet-m2` spans V2 M1–M3). A combined Volumes III–V Full-Stack assessment remains pending.
@@ -106,11 +112,11 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Flashcard scheduling is user-driven (Leitner-lite); consider SM-2 as sets grow.
 
 ## Recommended next batch
-**Batch 18 — Web Architecture (Volume IV):** author `rest-api-design` (resources, verbs, contracts that age
-well), `http-cache-negotiation` (cache headers, ETags, conditional requests), then Module 2 `authn-vs-authz`
-(cookies/sessions/tokens, the 401-vs-403 split) and Module 3 security fundamentals (XSS, CSRF, trust
-boundaries); close Volume IV with a Web Architecture gauntlet. Full scope on the generation queue. Then STOP
-and request review (bounded generation contract).
+**Batch 18b — Web Architecture · Caching & Security + Gauntlet (V4·M3):** author `caching-fundamentals`
+(HTTP cache headers, ETags/conditional requests, CDN edges, stale-while-revalidate, invalidation debugging
+labs) and `web-security-fundamentals` (validation at trust boundaries, output encoding, secret hygiene,
+dependency risk); close Volume IV with the Web Architecture Gauntlet (`gauntlet-m4`, spans M1–M3). Full scope
+on the generation queue. Then STOP and request review (bounded generation contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?

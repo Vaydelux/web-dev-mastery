@@ -18,6 +18,8 @@ import { m13 } from "./lessons13";
 import { m14 } from "./lessons14";
 import { m15 } from "./lessons15";
 import { m16 } from "./lessons16";
+import { m17 } from "./lessons17";
+import { m18 } from "./lessons18";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -56,9 +58,12 @@ export const COURSE: VolumeDef[] = [
     mod("v3m6", 6, "Performance & Profiling", "Measure first: renders, memo, lists, and the profiling loop that closes Volume III.", "implemented", m16),
   ]),
   v(4, "IV", "Web Architecture", "Web Architecture Phase", "HTTP in production depth: REST, cookies/sessions, authN vs authZ, caching, and security fundamentals.", [
-    mod("v4m1", 1, "REST & API Design", "Resources, verbs, and contracts that age well.", "planned", []),
-    mod("v4m2", 2, "Authentication & Authorization", "Cookies, sessions, JWTs, and the authN/authZ split.", "planned", []),
-    mod("v4m3", 3, "Caching & Security Fundamentals", "Cache headers, XSS, CSRF, and the trust-boundary mindset.", "planned", []),
+    mod("v4m1", 1, "REST & API Design", "Resources, verbs, and contracts that age well.", "implemented", m17),
+    mod("v4m2", 2, "Authentication & Authorization", "Cookies, sessions, JWTs, and the authN/authZ split.", "implemented", m18),
+    mod("v4m3", 3, "Caching & Security Fundamentals", "Cache headers, XSS, CSRF, and the trust-boundary mindset.", "planned", [
+      p("caching-fundamentals", "Caching: What May Be Remembered, by Whom, for How Long", 4, 3, 1, 50, "HTTP cache headers, CDN edges, stale-while-revalidate, and the invalidation incidents that teach the rules.", ["sessions-tokens"], ["caching"]),
+      p("web-security-fundamentals", "Security Fundamentals: The Trust-Boundary Mindset", 4, 3, 2, 55, "Input validation at boundaries, output encoding, secret hygiene, dependency risk, and the review checklist that closes Volume IV.", ["caching-fundamentals"], ["security"]),
+    ]),
   ]),
   v(5, "V", "PostgreSQL", "Database Phase", "Relational modeling, SQL, transactions, indexes, and EXPLAIN.", [
     mod("v5m1", 1, "Relational Modeling", "Tables, keys, normalization, and ERDs.", "planned", []),
@@ -596,6 +601,30 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "Never profile the dev build", back: "StrictMode double-renders, no minification, dev checks — a simulation. Throttle a production build 4×, THEN trust the numbers.", lesson: "profiling-production" },
     ],
   },
+  {
+    id: "web-architecture", title: "Web Architecture: Contracts & Identity", blurb: "Volume IV · M1–M2 — REST grammar, contract discipline, and the two questions of access.",
+    cards: [
+      { front: "REST's three vocabularies", back: "URLs name THINGS (stable nouns), methods name ACTIONS (with idempotency), status codes name OUTCOMES. Uniformity is the payoff at scale.", lesson: "rest-api-design" },
+      { front: "PUT vs PATCH", back: "PUT REPLACES the resource with the body; PATCH MERGES a partial. Partial editors use PATCH or they clobber sibling fields.", lesson: "rest-api-design" },
+      { front: "Idempotent methods", back: "GET/PUT/DELETE — repeating changes nothing after the first success. POST creates anew each call; retry policies live on this distinction.", lesson: "rest-api-design" },
+      { front: "201 vs 200 vs 204", back: "Created (+Location) vs OK vs No Content. 'It worked' is three different facts for caches, retries, and log readers.", lesson: "rest-api-design" },
+      { front: "Filters live in the URL", back: "Query params are URL state: shareable, bookmarkable, back-button-able, cacheable. Bodies are for payloads the resource needs.", lesson: "rest-api-design" },
+      { front: "The client-memory test", back: "'Would a client compiled against the OLD API malfunction?' If yes — breaking. Clients remember shapes, names, codes, semantics.", lesson: "api-contracts-versioning" },
+      { front: "Additive-safe changes", back: "New optional fields, new endpoints, new optional params with old defaults. Renames, retypes, and new requirements are breaks.", lesson: "api-contracts-versioning" },
+      { front: "Semantics breaks are silent", back: "Changing what a verb DOES (PUT→merge) with identical URLs breaks nothing visibly — data just goes wrong. Behavior changes need versions too.", lesson: "api-contracts-versioning" },
+      { front: "Deprecation is a process", back: "Announce (months ahead) → measure (you can't sunset what you can't count) → migrate → sunset with 410 Gone.", lesson: "api-contracts-versioning" },
+      { front: "AuthN vs AuthZ", back: "WHO are you — once per session, failure is 401. MAY YOU — every request, failure is 403. Login proves identity, never permission.", lesson: "auth-models" },
+      { front: "Password storage", back: "Hashed, salted, SLOW (argon2/bcrypt): one-way, unrecoverable, expensive to attack. Not encryption — even you can't read it back.", lesson: "auth-models" },
+      { front: "The opaque session id", back: "A random receipt with no decodable data; meaning lives only server-side. Theft survivable, revocation instant (delete the row).", lesson: "auth-models" },
+      { front: "IDOR", back: "Insecure Direct Object Reference: trusted ids without ownership predicates. Test by replaying as user B with A's id. The UI never counts as enforcement.", lesson: "auth-models" },
+      { front: "Where ownership lives", back: "In the query: WHERE id = ? AND user_id = caller — or a policy layer over every query. Reviewed in every diff; never in the view layer.", lesson: "auth-models" },
+      { front: "The three cookie flags", back: "HttpOnly: scripts can't read it (XSS theft). Secure: HTTPS only (eavesdroppers). SameSite: withheld cross-site (CSRF). Three thieves, three walls.", lesson: "sessions-tokens" },
+      { front: "XSS vs CSRF", back: "XSS steals the credential from INSIDE your page (script runs as you). CSRF FORGES requests using your auto-attached cookie from outside.", lesson: "sessions-tokens" },
+      { front: "Why not JWT-in-localStorage", back: "Any script in the page reads it — and some script you don't control WILL run (XSS). HttpOnly cookies put the receipt behind a wall scripts can't cross.", lesson: "sessions-tokens" },
+      { front: "JWT's irreducible cost", back: "No instant revocation — valid until exp, even after logout/ban. Short access tokens + server-stored rotating refresh tokens reconcile scale with cancellation.", lesson: "sessions-tokens" },
+      { front: "Refresh rotation reuse", back: "Each refresh token is single-use; presenting one twice means two parties hold it — fail loudly and revoke the family. Reuse is a theft alarm.", lesson: "sessions-tokens" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -697,6 +726,22 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Flame graph", def: "Boxes = component renders; width = time, depth = tree depth.", domain: "React", lesson: "profiling-production" },
   { term: "Long task", def: "Synchronous main-thread work >~50ms that blocks paint and input; invisible to React's Profiler.", domain: "React", lesson: "profiling-production" },
   { term: "Core Web Vitals", def: "LCP (loading), INP (interaction), CLS (stability) — the users' performance numbers.", domain: "React", lesson: "profiling-production" },
+  { term: "Resource", def: "A thing named by a URL — the stable noun in a REST API.", domain: "Web Architecture", lesson: "rest-api-design" },
+  { term: "Idempotency", def: "Repeating a request changes nothing beyond the first success (GET/PUT/DELETE) — the property retries depend on.", domain: "Web Architecture", lesson: "rest-api-design" },
+  { term: "API contract", def: "The promise to clients: shapes, names, status codes, and semantics — everything a compiled client remembers.", domain: "Web Architecture", lesson: "api-contracts-versioning" },
+  { term: "Breaking change", def: "Any API change that malfunctions a client remembering the old contract; needs a version or an additive path.", domain: "Web Architecture", lesson: "api-contracts-versioning" },
+  { term: "Deprecation", def: "Announce → measure → migrate → sunset (410 Gone): retiring an API as a process, not a delete key.", domain: "Web Architecture", lesson: "api-contracts-versioning" },
+  { term: "Authentication", def: "Establishing WHO — once per session; failure is 401 Unauthorized.", domain: "Web Architecture", lesson: "auth-models" },
+  { term: "Authorization", def: "Enforcing MAY-YOU on every request — failure is 403 Forbidden.", domain: "Web Architecture", lesson: "auth-models" },
+  { term: "Password hash", def: "One-way, salted, slow (argon2/bcrypt) — verification without recoverability.", domain: "Web Architecture", lesson: "auth-models" },
+  { term: "Session id", def: "An opaque, random, server-stored receipt; unforgeable alone, revocable instantly.", domain: "Web Architecture", lesson: "auth-models" },
+  { term: "IDOR", def: "Insecure Direct Object Reference: trusting URL ids without ownership predicates.", domain: "Security", lesson: "auth-models" },
+  { term: "SameSite", def: "Cookie flag withholding it from cross-site requests — transport-level CSRF defense.", domain: "Security", lesson: "sessions-tokens" },
+  { term: "HttpOnly", def: "Cookie flag barring page scripts — the wall against XSS credential theft.", domain: "Security", lesson: "sessions-tokens" },
+  { term: "XSS", def: "Foreign script executing inside your page; steals whatever scripts can read.", domain: "Security", lesson: "sessions-tokens" },
+  { term: "CSRF", def: "Forged cross-site requests riding the browser's auto-attached cookies.", domain: "Security", lesson: "sessions-tokens" },
+  { term: "JWT", def: "Signed, self-describing token: scalable and stateless, readable payload, valid-until-expiry — no instant revocation.", domain: "Security", lesson: "sessions-tokens" },
+  { term: "Refresh rotation", def: "Single-use, server-stored refresh tokens; reuse is treated as theft and revokes the family.", domain: "Security", lesson: "sessions-tokens" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -734,6 +779,9 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "list-jank-on-type", symptom: "A search box above a large list lags several keystrokes behind; typing feels heavy.", layer: "React list identity / render cost", causes: ["Rows keyed by index while the list filters on every keystroke", "Fresh inline callbacks per row defeating any memo", "All rows re-render per character and the update chain crosses the frame budget"], diagnose: ["Profiler: record one keystroke; count rendered rows vs the frame budget", "Check keys, the derived list's identity, and row callback identity"], fix: "Identity first — data keys, a memoized filtered list, one stable row handler — then memo(Row); virtualize only at thousands of rows.", prevent: "For lists over ~100 rows, write the identity story before the styling; measure before reaching for virtualization.", related: "rendering-performance" },
   { id: "memo-no-effect", symptom: "memo() was added 'for performance' but the profiler still shows the component rendering every parent render.", layer: "React memo / identity", causes: ["A prop (inline object/array/arrow, or children) gets a fresh identity each render, so the shallow compare always fails", "The real cost isn't rendering — it's commit/paint, which memo cannot touch"], diagnose: ["Profiler → 'Why did this render?' — which props changed, and are their references new each time?", "Compare React render times vs total frame time — is the heavy rung below React?"], fix: "Stabilize identities (useMemo/useCallback with honest deps) or move state down so the parent stops re-rendering; if commit/paint is the cost, reduce DOM work instead.", prevent: "memo is step four, not step one: measure → restructure → stabilize → memo. Memoized components with inline props are a comparison you always lose.", related: "rendering-performance" },
   { id: "slow-open-stutter", symptom: "Opening a modal/screen freezes the UI for a beat; the React Profiler shows tiny render times.", layer: "Main-thread long task", causes: ["Eager synchronous work at mount (building/sorting large collections during render or in a useMemo)", "Heavy layout work forced by the first paint of complex markup"], diagnose: ["Record the click in the browser Performance tab (not the React Profiler)", "Find the >50ms block on the main thread; expand its call stack"], fix: "Defer the work: render the shell instantly and build data lazily/paginated, in an idle callback, or in a worker; simplify first-paint markup.", prevent: "Treat any synchronous block over ~50ms as a defect; profile in the browser tab whenever React's numbers look innocent but users disagree.", related: "profiling-production" },
+  { id: "update-erases-fields", symptom: "Saving one field of a record silently wipes its sibling fields (description, tags, dates vanish after an edit).", layer: "API contract (PUT/PATCH)", causes: ["Client PUTs a partial body while the server implements PUT as full replacement", "A form holding a partial view of the resource used the wrong verb"], diagnose: ["Log the method + body the client sends on save", "Read the server's verb semantics: does PUT replace or merge here?"], fix: "Use PATCH for partial updates (or PUT with the full resource). One method, one meaning, documented in the contract.", prevent: "Forms default to PATCH; editors holding whole resources use PUT. Review diffs for verb/shape mismatches.", related: "rest-api-design" },
+  { id: "idor-leak", symptom: "An authenticated user can read or mutate another user's records by changing an id in the URL or request.", layer: "Authorization / data access", causes: ["The handler checks authentication (WHO) but never ownership (MAY-YOU)", "Ownership 'enforced' only by the UI filtering what it renders"], diagnose: ["Log in as user B; replay the request with A's resource id; observe the response", "Read the handler: find the missing ownership predicate"], fix: "Add the predicate at data access: WHERE id = ? AND user_id = caller (or a policy layer). Return 403/404; add a permanent user-A-vs-user-B regression test.", prevent: "Every by-id handler shows its permission predicate in review; write the cross-user test before merge. Supabase RLS (Volume VI) automates this at the DB layer.", related: "auth-models" },
+  { id: "token-theft-xss", symptom: "Session tokens appear exfiltrated or sessions hijacked; logs show valid tokens used from new devices/IPs shortly after users viewed user-generated content.", layer: "Client credential storage / injection", causes: ["Session credential stored where page scripts can read it (localStorage / readable cookie)", "Unsanitized user content rendered as HTML, letting foreign script run"], diagnose: ["Reproduce: render a probe payload (<img onerror=...>) in the suspect surface; watch for the outbound request", "Audit where the credential is stored and which scripts can read it"], fix: "Render user text safely (escape by default; sanitize any rich content). Move session credentials to an HttpOnly, Secure, SameSite cookie. Shorten token lifetimes and rotate refresh tokens.", prevent: "Treat all user-supplied text as hostile at render time; keep credentials out of script reach; assume XSS will occur and design tokens to die quickly.", related: "sessions-tokens" },
 ];
 
 /* ————— batch queue ————— */
@@ -757,6 +805,7 @@ export const BATCHES: Batch[] = [
   { id: "B-15", title: "React · Forms & Controlled Inputs", scope: "V3·M4", status: "shipped", summary: "The controlled-component loop (value down, intent up, one owner always — including the 'uncontrolled to controlled' ownership-flip debugging lab), whole forms as one object/reducer with cross-field rules and derive-don't-store discipline; then validation as conversation — pure validate(), the touched/submitted revelation gate, aria-invalid + describedby + live-region wiring, and the full five-step submit pipeline with the 'button that does nothing' silent-exit debugging lab — 12 quiz questions, 2 debugging labs." },
   { id: "B-16", title: "React · Component Architecture & Testing", scope: "V3·M5", status: "shipped", summary: "The three questions that place state (who/how far/how fast), props vs lift vs context with the PA-system model, the 'everything re-renders when I type' context debugging lab, compound components with baked-in ARIA roles, custom hooks as contract-bearing logic packages (render-props/HOC outdated pair); then behavior-first testing — the query hierarchy, user-event act loops, brittle-test anatomy with the '40 tests break on a rename' debugging lab, boundary mocking + findBy async flows — 12 quiz questions, 2 debugging labs." },
   { id: "B-17", title: "React · Performance, Profiling & Gauntlet", scope: "V3·M6", status: "shipped", summary: "The cost ladder (render → diff → commit → paint) with the 16.6ms frame budget as judge, memo as a measured last resort and the identity rules that make it win, the 'list that janks while you type' debugging lab, virtualization as the scale answer; then the five-step profiling loop, the three profiler verdicts, the 'modal that stutters on open' long-task debugging lab, and Core Web Vitals — 12 quiz questions, 2 debugging labs. Closes Volume III with the 15-question React Gauntlet." },
-  { id: "B-18", title: "Web Architecture", scope: "Volume IV", status: "next", summary: "REST & API contracts that age well, authentication vs authorization (cookies, sessions, tokens), caching & security fundamentals (XSS, CSRF, trust boundaries) — the browser/server boundary made rigorous. Flesh out V4's three modules with full lessons and a Web Architecture gauntlet." },
+  { id: "B-18", title: "Web Architecture · Contracts & Identity", scope: "V4·M1–M2", status: "shipped", summary: "REST as three vocabularies (nouns/verbs/outcomes) with the PUT-vs-PATCH clobbering debugging lab and URL-state pagination; API contracts with the client-memory test, additive rules, versioning strategies, and the 'mobile app broke but the web is fine' breaking-change debugging lab; AuthN-vs-AuthZ with salted-slow hashing, opaque sessions, and the IDOR user-A-vs-user-B debugging lab; cookies/tokens with HttpOnly/Secure/SameSite, the XSS-token-theft and CSRF threat models, and the short-access/rotating-refresh design — 24 quiz questions, 4 debugging labs, 2 outdated-pattern pairs." },
+  { id: "B-18b", title: "Web Architecture · Caching & Security + Gauntlet", scope: "V4·M3", status: "next", summary: "HTTP caching as a trust-boundary problem (cache headers, stale-while-revalidate, invalidation debugging labs), security fundamentals (validation at boundaries, output encoding, secret hygiene), and the Web Architecture Gauntlet closing Volume IV." },
   { id: "B-19", title: "PostgreSQL", scope: "Volume V", status: "queued", summary: "Modeling, SQL, and performance — relational data done properly." },
 ];
