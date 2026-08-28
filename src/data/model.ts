@@ -16,6 +16,7 @@ import { m11 } from "./lessons11";
 import { m12 } from "./lessons12";
 import { m13 } from "./lessons13";
 import { m14 } from "./lessons14";
+import { m15 } from "./lessons15";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -50,10 +51,7 @@ export const COURSE: VolumeDef[] = [
     mod("v3m2", 2, "State & the Rendering Model", "The state-classification doctrine and how React decides what to re-render.", "implemented", m12),
     mod("v3m3", 3, "Effects Discipline & Data", "Effects as synchronization, dependency honesty, and the bridge to server state.", "implemented", m13),
     mod("v3m4", 4, "Forms & Controlled Inputs", "Forms as controlled state: validation, UX, and accessible error surfacing.", "implemented", m14),
-    mod("v3m5", 5, "Component Architecture & Testing", "Patterns that scale: composition, colocation, context boundaries, and meaningful tests.", "planned", [
-      p("component-patterns", "Component Patterns: Colocation, Context, and When to Reach for Each", 3, 5, 1, 55, "Prop drilling vs context, compound components, and the colocation principle.", ["forms-validation-ux"], ["architecture"]),
-      p("testing-react", "Testing React: Behavior, Not Implementation", 3, 5, 2, 55, "Testing Library queries, user events, and the tests that earn their keep.", ["component-patterns"], ["testing"]),
-    ]),
+    mod("v3m5", 5, "Component Architecture & Testing", "Patterns that scale: composition, colocation, context boundaries, and meaningful tests.", "implemented", m15),
     mod("v3m6", 6, "Performance & Profiling", "Measure first: renders, memo, lists, and the profiling loop that closes Volume III.", "planned", [
       p("rendering-performance", "Rendering Performance: Memo, Lists, and the Cost of a Render", 3, 6, 1, 55, "When re-renders are fine, when they aren't, and memo as a last resort.", ["testing-react"], ["performance"]),
       p("profiling-production", "Profiling: From Feeling Slow to Proving Why", 3, 6, 2, 50, "The DevTools profiler loop, virtualization, and the measurement habit.", ["rendering-performance"], ["profiling"]),
@@ -503,6 +501,27 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "noValidate", back: "Switches off the browser's built-in bubbles so your timed, accessible conversation runs instead of all-or-nothing native popups.", lesson: "forms-validation-ux" },
     ],
   },
+  {
+    id: "react-architecture", title: "Component Architecture & Testing", blurb: "Volume III · M5 — where things live, and how to prove they still work.",
+    cards: [
+      { front: "Colocation", back: "Things that change together live together — state, logic, styles, tests near their consumer. Change becomes cheap; deletion leaves no orphans.", lesson: "component-patterns" },
+      { front: "The three placement questions", back: "Who needs it? (me/child/sibling/everyone) How far does it travel? How often does it change? The answers pick props, lift, context, or local.", lesson: "component-patterns" },
+      { front: "Context's job qualifications", back: "Wide (many readers) + deep (far from source) + slow-changing (theme, session, locale). Keystrokes, cursors, and timers fail the test.", lesson: "component-patterns" },
+      { front: "Context's re-render rule", back: "ANY change to the value re-renders EVERY consumer — no field-level subscriptions. Split fast data from stable dispatch.", lesson: "component-patterns" },
+      { front: "The provider-value trap", back: "An inline { a, b } value is a fresh identity every render, waking all consumers. Memoize it on honest deps.", lesson: "component-patterns" },
+      { front: "Compound components", back: "Children describe themselves; the parent quietly carries shared state via context. API of intent, not configuration.", lesson: "component-patterns" },
+      { front: "Custom hooks", back: "Named (useX), contract-bearing packages of hook logic. Behavior per caller — NOT shared storage (the #1 misconception).", lesson: "component-patterns" },
+      { front: "Provider boundaries", back: "Where a provider sits is an architecture line: below can read it, above can't. The hook throws outside — the type system enforces the boundary.", lesson: "component-patterns" },
+      { front: "The testing sentence", back: "'The more your tests resemble the way your software is used, the more confidence they give you.' Behavior over implementation.", lesson: "testing-react" },
+      { front: "Query hierarchy", back: "getByRole → getByLabelText → getByText → getByTestId (last resort). Each step down moves away from the user — and toward brittleness.", lesson: "testing-react" },
+      { front: "Arrange / Act / Assert", back: "Render the scenario; act with user-event's real interaction sequences; assert what a user can perceive. Never call handlers directly.", lesson: "testing-react" },
+      { front: "get vs query vs find", back: "getBy throws when absent (assert presence), queryBy returns null (assert absence), findBy waits until present or timeout (async).", lesson: "testing-react" },
+      { front: "Mock boundaries, not internals", back: "Replace fetch/timers/browser APIs for determinism; leave your own logic real or you're testing a fantasy version of your code.", lesson: "testing-react" },
+      { front: "Red tests after a pure refactor", back: "The TESTS are the debt — they were coupled to implementation. Fix them in the same PR; don't revert the refactor.", lesson: "testing-react" },
+      { front: "Earn-its-keep filter", back: "Test money paths, branchy logic, and shipped-bug scars. Skip presentational markup trivia. Coverage % is vanity.", lesson: "testing-react" },
+      { front: "Snapshots as strategy", back: "Fast to write, fail as diff-noise walls reviewers approve blindly. State the contract in English with behavior assertions instead.", lesson: "testing-react" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -590,6 +609,13 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Validation timing", def: "The three clocks: while-typing (counters), on-blur (field verdicts), at-submit (system verdict).", domain: "React", lesson: "forms-validation-ux" },
   { term: "Touched map", def: "Per-field flags set on blur, gating when computed errors are revealed.", domain: "React", lesson: "forms-validation-ux" },
   { term: "Submit pipeline", def: "preventDefault → submitted → validate fork → focus/announce → pending → Result.", domain: "React", lesson: "forms-validation-ux" },
+  { term: "Prop drilling", def: "Threading props through intermediate layers that never use them.", domain: "React", lesson: "component-patterns" },
+  { term: "Context", def: "A value published at a provider, readable by any descendant via useContext — wide+deep+slow only.", domain: "React", lesson: "component-patterns" },
+  { term: "Compound component", def: "Self-describing children sharing state quietly held by the parent (Tabs/Trigger/Panel).", domain: "React", lesson: "component-patterns" },
+  { term: "Custom hook", def: "A useX function packaging hook-based logic with a contract; per-caller state, not shared storage.", domain: "React", lesson: "component-patterns" },
+  { term: "Behavior test", def: "Asserts the observable contract through user-shaped actions; survives internal refactors.", domain: "React", lesson: "testing-react" },
+  { term: "Query hierarchy", def: "Role → label → text → test-id; each step down moves further from the user.", domain: "React", lesson: "testing-react" },
+  { term: "findBy*", def: "An async Testing Library query that polls until the element appears or times out.", domain: "React", lesson: "testing-react" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -621,6 +647,9 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "uncontrolled-flip", symptom: "Console warns 'A component is changing an uncontrolled input to be controlled'; the field clears itself while typing or the cursor jumps to the end.", layer: "React form ownership", causes: ["value={maybeUndefined} — some render passes undefined (or omits checked), flipping the field to DOM ownership", "Mixing defaultValue and value on one input"], fix: "Guarantee the value's type every render: value={x ?? \"\"}, checked={!!x}; initialize forms with real empties.", prevent: "A controlled input's value is ALWAYS a string from the first render; audit every server-fed value prop.", related: "controlled-forms", diagnose: ["Reproduce by rendering with the loading/undefined state, typing, then letting data arrive", "Log the value prop per render — find the undefined"] },
   { id: "silent-failed-submit", symptom: "Pressing submit 'does nothing' — no error, no spinner, no navigation. The form is actually invalid.", layer: "React form validation UX", causes: ["The submit handler returns early on validation failure without setting submitted, focusing, or announcing", "Errors are gated behind blur-only touched flags and never revealed at submit"], diagnose: ["Submit an intentionally invalid form; watch for any rendered feedback", "Trace every exit path of handleSubmit — which ones render nothing?"], fix: "On invalid: setSubmitted(true) to reveal all, focus the first failing field, and announce a live-region summary.", prevent: "Review rule: every early return in a submit handler must point at what the user sees. Silent exits are the failure mode.", related: "forms-validation-ux" },
   { id: "error-on-first-keystroke", symptom: "Fields yell 'Invalid email' after the first character; users start ignoring all errors.", layer: "React validation timing", causes: ["Errors are DISPLAYED on every onChange from the first keystroke, not just computed", "No touched/submitted gate between computation and revelation"], diagnose: ["Type one character into a fresh field; note when the error appears", "Check whether display is gated by blur (touched) or submit"], fix: "Compute always (pure validate), reveal per-field only after blur and everything at submit. Live display is for counters, not verdicts.", prevent: "Treat mid-word values as unfinished thoughts; the touched gate is the difference between a tutor and a heckler.", related: "forms-validation-ux" },
+  { id: "context-rerender-storm", symptom: "The whole tree re-renders on every keystroke or tick after a value was moved into context; the Profiler shows components lighting up that never read the value.", layer: "React context identity/subscription", causes: ["The provider value is built inline — a fresh object identity every provider render", "A fast-changing field shares a context with stable dispatchers, so every consumer wakes on every tick"], diagnose: ["Profiler → 'Why did this render?' on a consumer that only dispatches", "Check the provider's value expression for inline object/array literals"], fix: "Memoize the provider value; SPLIT fast-changing data from stable dispatch into separate contexts; keep high-churn state out of context entirely.", prevent: "Apply the wide+deep+slow qualification before publishing anything; lint against inline provider values.", related: "component-patterns" },
+  { id: "usecontext-undefined", symptom: "Cannot read properties of undefined (reading 'user') inside a component that calls useContext(MyContext) — or the hook silently returns undefined.", layer: "React context boundaries", causes: ["The consumer renders ABOVE (or outside) the provider", "The context's default is undefined and no boundary check exists"], diagnose: ["Print the component tree: is the consumer a descendant of the provider?", "Check createContext's default value"], fix: "Move the provider above the consumer; wrap the context in a hook that THROWS with a clear message outside its provider.", prevent: "Ship every context as provider+hook in one module, with the hook enforcing the boundary at runtime.", related: "component-patterns" },
+  { id: "tests-break-on-refactor", symptom: "Renaming a class, extracting a child, or swapping a wrapper div turns dozens of tests red although the app behaves identically.", layer: "Test style / coupling", causes: ["Tests query by class names, DOM structure (querySelector), or component internals/props", "Snapshot suites diffing whole markup trees"], diagnose: ["Read the failures: do they assert structure or observable output?", "Refactor one component's markup; count tests that die with zero behavior change"], fix: "Rewrite queries through the user's vocabulary (getByRole/Label/Text), assert observable output, ban container.querySelector via lint.", prevent: "PR rule: a pure refactor breaking tests means the tests are debt — fix them in the same PR. testing-library + no-node-access lint enforce the style.", related: "testing-react" },
 ];
 
 /* ————— batch queue ————— */
@@ -642,8 +671,8 @@ export const BATCHES: Batch[] = [
   { id: "B-13", title: "React · State & the Rendering Model", scope: "V3·M2", status: "shipped", summary: "The state-classification doctrine (eight kinds of state with the three-question filing test, server-vs-client laws, derive-don't-store debugging lab) and the two-phase render-commit model (three triggers, the memo identity trap debugging lab, measure-first discipline) — 12 quiz questions, 2 debugging labs." },
   { id: "B-14", title: "React · Effects Discipline & Data", scope: "V3·M3", status: "shipped", summary: "Effects as synchronization (the concierge model, deps-as-contract, cleanup as the second handle), the infinite-loop and fresh-identity dep traps with the 'fires every render' debugging lab, the three misuse catalog, and StrictMode as smoke alarm; then server state under its laws — the 4-state request union, the out-of-order race-condition debugging lab with AbortController cleanup, and the cache-manager horizon — 12 quiz questions, 2 debugging labs." },
   { id: "B-15", title: "React · Forms & Controlled Inputs", scope: "V3·M4", status: "shipped", summary: "The controlled-component loop (value down, intent up, one owner always — including the 'uncontrolled to controlled' ownership-flip debugging lab), whole forms as one object/reducer with cross-field rules and derive-don't-store discipline; then validation as conversation — pure validate(), the touched/submitted revelation gate, aria-invalid + describedby + live-region wiring, and the full five-step submit pipeline with the 'button that does nothing' silent-exit debugging lab — 12 quiz questions, 2 debugging labs." },
-  { id: "B-16", title: "React · Component Architecture & Testing", scope: "V3·M5", status: "next", summary: "Colocation, context boundaries, compound components, and Testing Library behavior tests." },
-  { id: "B-17", title: "React · Performance, Profiling & Gauntlet", scope: "V3·M6", status: "queued", summary: "Rendering performance, the profiler loop, virtualization — closing Volume III with a React Gauntlet." },
+  { id: "B-16", title: "React · Component Architecture & Testing", scope: "V3·M5", status: "shipped", summary: "The three questions that place state (who/how far/how fast), props vs lift vs context with the PA-system model, the 'everything re-renders when I type' context debugging lab, compound components with baked-in ARIA roles, custom hooks as contract-bearing logic packages (render-props/HOC outdated pair); then behavior-first testing — the query hierarchy, user-event act loops, brittle-test anatomy with the '40 tests break on a rename' debugging lab, boundary mocking + findBy async flows — 12 quiz questions, 2 debugging labs." },
+  { id: "B-17", title: "React · Performance, Profiling & Gauntlet", scope: "V3·M6", status: "next", summary: "What a render costs, memo measured not guessed, lists at scale, the profiler loop — closing Volume III with a React Gauntlet spanning all six modules." },
   { id: "B-18", title: "Web Architecture", scope: "Volume IV", status: "queued", summary: "REST, AuthN/AuthZ, caching & security — the browser/server boundary made rigorous." },
   { id: "B-19", title: "PostgreSQL", scope: "Volume V", status: "queued", summary: "Modeling, SQL, and performance — relational data done properly." },
 ];

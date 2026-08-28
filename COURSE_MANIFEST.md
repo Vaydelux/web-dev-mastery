@@ -60,8 +60,9 @@
 | `data-fetching` | Server State: Fetching, Races, and the Loading/Error Fork | Builder | 55 | effects-discipline | implemented |
 | `controlled-forms` | Controlled Components: One Owner for Every Keystroke | Builder | 55 | data-fetching | implemented |
 | `forms-validation-ux` | Validation UX: Errors That Help, Not Accuse | Builder | 55 | controlled-forms | implemented |
-| V3·M5 | Component Architecture & Testing (2 lessons scoped) | Builder | — | — | planned (next · B-16) |
-| V3·M6 | Performance & Profiling (2 lessons scoped) | Builder | — | — | planned |
+| `component-patterns` | Component Patterns: Colocation, Context, and When to Reach for Each | Builder | 55 | forms-validation-ux | implemented |
+| `testing-react` | Testing React: Behavior, Not Implementation | Builder | 55 | component-patterns | implemented |
+| V3·M6 | Performance & Profiling (2 lessons scoped) | Builder | — | — | planned (next · B-17) |
 
 ## Volumes IV–XI (module-scoped; lessons authored per batch)
 
@@ -81,9 +82,9 @@
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | 15 sets / 161 cards: …react-state-rendering (13), react-effects-data (14), react-forms (14) | implemented |
-| Glossary | 83 terms, domain-tagged, lesson-linked | implemented |
-| Troubleshooting index | 27 symptom-based entries | implemented |
+| Flashcard sets | 16 sets / 177 cards: …react-effects-data (14), react-forms (14), react-architecture (16) | implemented |
+| Glossary | 90 terms, domain-tagged, lesson-linked | implemented |
+| Troubleshooting index | 30 symptom-based entries | implemented |
 | A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |

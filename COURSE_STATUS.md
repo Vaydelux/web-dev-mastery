@@ -76,6 +76,11 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Running totals: 15 flashcard sets / 161 cards, 83 glossary terms, 27 troubleshooting entries, 44 lessons implemented.
 - Note: a prior session summary claimed this batch shipped without the lesson file persisting; this pass created `lessons14.ts` for real and verified the `data-fetching → controlled-forms` bridge before wiring.
 
+### Batch 16 — Volume III · Component Architecture & Testing (M5) — implemented
+- `component-patterns` (three placement questions, props/lift/context with the PA-system model, the context re-render-storm debugging lab, compound components + ARIA, custom hooks, render-props/HOC outdated pair), `testing-react` (query hierarchy, user-event act loops, the brittle-'40 tests break on a rename' debugging lab, boundary mocking, findBy, the earn-its-keep filter).
+- 12 quiz questions, 2 debugging labs; `react-architecture` flashcard set (16 cards); 7 glossary terms; 3 troubleshooting entries.
+- Running totals: 16 flashcard sets / 177 cards, 90 glossary terms, 30 troubleshooting entries, 46 lessons implemented.
+
 ## Known gaps (classified)
 - ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
 - ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11 (Builder Gauntlet `gauntlet-m2` spans V2 M1–M3). A combined Volumes III–V Full-Stack assessment remains pending.
@@ -88,10 +93,10 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Flashcard scheduling is user-driven (Leitner-lite); consider SM-2 as sets grow.
 
 ## Recommended next batch
-**Batch 16 — React · Component Architecture & Testing (V3·M5):** author `component-patterns` (colocation,
-prop drilling vs context, compound components, custom hooks as logic carriers) and `testing-react`
-(Testing Library behavior tests, queries by role, mocking boundaries, async testing). Full scope on the
-generation queue. Then STOP and request review (bounded generation contract).
+**Batch 17 — React · Performance, Profiling & Gauntlet (V3·M6):** author `rendering-performance` (what a
+render costs, memo measured not guessed, lists at scale) and `profiling-production` (the DevTools profiler
+loop, virtualization, the measurement habit); ship the React Gauntlet spanning all six Volume III modules.
+Full scope on the generation queue. Then STOP and request review (bounded generation contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?
