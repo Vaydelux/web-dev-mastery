@@ -131,6 +131,16 @@
 | `cicd-observability` | CI/CD & Observability: The Machinery That Ships You | Production | 55 | background-jobs-queues | implemented |
 | `gauntlet-m9` | Checkpoint · Production Gauntlet (15 Q, pass ≥70%) | Production | 25 | all of Volume IX | implemented |
 
+## Volume X — Architecture (Mastery level)
+
+| ID | Title | Level | Min | Prereqs | Status |
+|---|---|---|---|---|---|
+| `architecture-boundaries` | Boundaries: The Art of Drawing Lines That Age | Mastery | 60 | cicd-observability | implemented |
+| `decisions-records` | Tradeoffs: ADRs and the Vocabulary of 'It Depends' | Mastery | 55 | architecture-boundaries | implemented |
+| `consistency-tradeoffs` | Consistency: What 'The Same Data' Means to Two Machines | Mastery | 60 | decisions-records | implemented |
+| `scaling-availability` | Scaling & Availability: The Architecture of Staying Up | Mastery | 60 | consistency-tradeoffs | implemented |
+| `gauntlet-m10` | Checkpoint · Architecture Gauntlet (15 Q, pass ≥70%) | Mastery | 25 | all of Volume X | implemented |
+
 ## Volumes VI–XI (module-scoped; lessons authored per batch)
 
 | Volume | Phase | Modules | Status |
@@ -142,16 +152,16 @@
 | VII — Next.js | Next.js Phase | 3 lessons implemented (App Router, Boundary/Secrets, Data/Caching) · Next.js Gauntlet passed-ready | ✅ complete |
 | VIII — Full-Stack Applications | Full-Stack Phase | 4 lessons implemented (Auth CRUD, Resilience, Search/Filter, Keyset Pagination) · Full-Stack Gauntlet passed-ready | ✅ complete |
 | IX — Production Engineering | Production Engineering Phase | 3 lessons implemented (Testing, Queues, CI/CD & Observability) · Production Gauntlet passed-ready | ✅ complete |
-| X — Architecture | Architecture Phase | 1 (Pragmatic Architecture) | next · B-24 |
-| XI — Capstones & Mastery | Capstone & Mastery Phase | 1 (Capstone Build) | planned |
+| X — Architecture | Architecture Phase | 4 lessons implemented (Boundaries & Decisions, Distributed Systems) · Architecture Gauntlet passed-ready | ✅ complete |
+| XI — Capstones & Mastery | Capstone & Mastery Phase | Capstone applications + Mastery practices + Mastery Gauntlet | next · B-25 |
 
 ## Cross-cutting assets
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | 22 sets / 328 cards: …sql-postgres (28), supabase-rls (19), nextjs-foundations (18), fullstack-apps (21), production-eng (18) | implemented |
-| Glossary | 191 terms, domain-tagged, lesson-linked (incl. 12 Production) | implemented |
-| Troubleshooting index | 57 symptom-based entries (incl. 3 Production) | implemented |
+| Flashcard sets | 23 sets / 351 cards: …nextjs-foundations (18), fullstack-apps (21), production-eng (18), architecture-mastery (23) | implemented |
+| Glossary | 209 terms, domain-tagged, lesson-linked (incl. 18 Architecture/Distributed) | implemented |
+| Troubleshooting index | 61 symptom-based entries (incl. 4 Architecture/Distributed) | implemented |
 | A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |

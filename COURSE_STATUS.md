@@ -167,12 +167,21 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - 75 lessons implemented · 9 gauntlets · 22 flashcard sets / 328 cards · 191 glossary terms · 57 troubleshooting entries.
 - Earlier running-totals figures drifted; this pass re-counted the data model directly and corrected the manifest.
 
+### Batch 24 — Volume X · Architecture: Boundaries, Tradeoffs & Distributed Systems (M1–M2) — implemented
+- `architecture-boundaries` (boundaries + crossing rules, cohesion by rate-of-change, dependency rule, ports/adapters + seam test, vertical slices, the feature-touches-everything lab, three-tier→slices outdated pair), `decisions-records` (tradeoff vocabulary, one-way vs two-way doors, ADR anatomy, YAGNI + last-responsible-moment, Rule of Three, the distributed-monolith lab, 47-page-doc→ADR outdated pair), `consistency-tradeoffs` (replication lag, strong/eventual/read-your-writes, the payment-succeeded-order-failed lab, sagas + compensation, ACID-is-local), `scaling-availability` (error budgets + availabilities multiply, SPOF audit, graceful degradation, timeouts/retries/circuit breakers, the cache-stampede lab, scaling order, premature-microservices outdated pair).
+- Architecture Gauntlet `gauntlet-m10` (15 Q / 4 fronts / pass ≥70%) closes Volume X.
+- `architecture-mastery` flashcard set (23 cards), 18 glossary terms, 4 troubleshooting entries, 2 ASCII diagrams.
+- Running totals: 79 lessons · 10 gauntlets · 23 flashcard sets / 351 cards · 209 glossary terms · 61 troubleshooting entries.
+- **Volume X complete: both modules.** Architecture phase certified by `gauntlet-m10`. Only Volume XI (Capstones & Mastery) remains.
+- Coverage ledger: the Scaling/Availability required topic is now fully taught (was previously flagged as a gap); closes that ledger item.
+
 ## Recommended next batch
-**Batch 24 — Architecture · Pragmatic Foundations (Volume X):** stepping back from code to decisions —
-modularity and boundaries, SOLID applied pragmatically, data-access boundaries, architecture decision records
-(ADRs), and distributed-system fundamentals (consistency, idempotency, tradeoffs). Knowing when NOT to build is
-the Mastery-level skill. Full scope on the generation queue. Then STOP and request review (bounded generation
-contract).
+**Batch 25 — Capstones & Mastery (Volume XI):** the final volume — independent, portfolio-grade capstone
+applications (with the Production Readiness Scorecard), debugging unfamiliar code, security review,
+architectural reasoning, reading release notes and evaluating libraries, documentation, and the habits of
+continuous learning. Closes with a Mastery Gauntlet (`gauntlet-m11`) and the Course Completion reference —
+the end of the zero-to-mastery arc. Full scope on the generation queue. Then STOP and request review
+(bounded generation contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?

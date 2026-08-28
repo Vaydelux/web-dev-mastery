@@ -29,6 +29,7 @@ import { m24 } from "./lessons24";
 import { m25 } from "./lessons25";
 import { m26 } from "./lessons26";
 import { m27 } from "./lessons27";
+import { m28 } from "./lessons28";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -96,8 +97,9 @@ export const COURSE: VolumeDef[] = [
     mod("v9m2", 2, "Background Jobs & Queues", "Work that outlives the request: at-least-once, idempotency, retries, and dead letters.", "implemented", [m27[1]]),
     mod("v9m3", 3, "CI/CD & Observability", "The gate that ships you, deploys that undo themselves, and the eyes on production.", "implemented", [m27[2]]),
   ]),
-  v(10, "X", "Architecture", "Architecture Phase", "Modularity, tradeoffs, and distributed-system fundamentals.", [
-    mod("v10m1", 1, "Pragmatic Architecture", "SOLID, boundaries, and decision records.", "planned", []),
+  v(10, "X", "Architecture", "Architecture Phase", "Boundaries that age, tradeoffs you can defend, and the laws of data and uptime across many machines.", [
+    mod("v10m1", 1, "Boundaries & Decisions", "Lines that age, and the discipline of writing tradeoffs down.", "implemented", [m28[0], m28[1]]),
+    mod("v10m2", 2, "Distributed Systems Fundamentals", "Consistency across machines, and the architecture of staying up.", "implemented", [m28[2], m28[3]]),
   ]),
   v(11, "XI", "Capstones & Mastery", "Capstone & Mastery Phase", "Independent, portfolio-grade applications and architectural reasoning.", [
     mod("v11m1", 1, "Capstone Build", "Plan, build, deploy, and defend a production app.", "planned", []),
@@ -154,6 +156,7 @@ export const BATTLE_REFS: BattleRef[] = [
   { id: "gauntlet-m7", title: "Checkpoint · Next.js Gauntlet", volumeId: 7, afterModule: "v7m2", blurb: "A cumulative fight across all of Volume VII — the App Router map, Server vs Client decisions, the secrets boundary, hydration, and the caching map — pass at 70% to close the Next.js phase." },
   { id: "gauntlet-m8", title: "Checkpoint · Full-Stack Gauntlet", volumeId: 8, afterModule: "v8m2", blurb: "A cumulative fight across all of Volume VIII — the five-gate anatomy of features, states and resilience under pressure, the URL as query state, and pagination at scale — pass at 70% to close the Full-Stack applications phase." },
   { id: "gauntlet-m9", title: "Checkpoint · Production Gauntlet", volumeId: 9, afterModule: "v9m3", blurb: "A cumulative fight across all of Volume IX — tests that earn their keep, the at-least-once laws of queues, and the gates, deploys, and dashboards of production — pass at 70% to close the Production Engineering phase." },
+  { id: "gauntlet-m10", title: "Checkpoint · Architecture Gauntlet", volumeId: 10, afterModule: "v10m2", blurb: "A cumulative fight across all of Volume X — boundaries that age, tradeoffs and ADRs, consistency across machines, and the architecture of staying up — pass at 70% to close the Architecture phase." },
 ];
 
 export const BATTLES: BossBattle[] = [
@@ -669,6 +672,77 @@ export const BATTLES: BossBattle[] = [
       },
     ],
   },
+  {
+    id: "gauntlet-m10",
+    title: "Architecture Gauntlet",
+    subtitle: "Volume X cumulative · 15 questions · pass ≥ 70%",
+    passPct: 70,
+    intro: [
+      "Volume X taught you judgment: where to draw the lines (boundaries), how to write down the bets (ADRs), what 'the same data' means across machines (consistency), and how systems stay up (availability). This gauntlet asks you to synthesize — most questions are scenarios where several lessons apply at once, and the tempting answer is usually the one that buys complexity without evidence.",
+      "Read each scenario fully. The right answer is almost always the one you could defend in a review: measured, reversible where possible, and paying for only the complexity the present actually demands.",
+    ],
+    rules: [
+      "15 questions across four fronts; you need 70% to pass.",
+      "Every wrong answer links back to the lesson that teaches it — remediate, then retake.",
+      "When two answers seem defensible, choose the one that adds the least complexity for the same outcome.",
+    ],
+    sections: [
+      {
+        title: "Boundaries & Cohesion",
+        desc: "Where the lines go, and what crosses them.",
+        questions: [
+          { id: "g10q1", type: "single", prompt: "A 'small' feature routinely touches nine files across five technology-layer folders (route/service/repo/model/tests). The best remedy is…", options: ["add more tests to catch the spread", "relocate boundaries to co-locate the feature (vertical slice) so a typical change lives in one neighborhood", "merge the folders into one", "accept it — that's what layers cost"], answer: [1],
+            explain: "Features are vertical; layer-boundaries are horizontal, so every feature crosses every wall. Co-locating the feature reduces change-cost directly. Layers optimize for a different (usually wrong) axis.", tags: ["architecture-boundaries"] },
+          { id: "g10q2", type: "single", prompt: "The dependency rule says arrows should point…", options: ["outward, toward the database and UI", "inward, toward stable business policy — details depend on policy, never the reverse", "wherever imports are most convenient", "in cycles, to keep modules loosely aware of each other"], answer: [1],
+            explain: "Inward arrows keep the core ignorant of which DB/framework/transport it runs on, so those can change without touching policy. Reversed arrows leak infrastructure decisions into business rules.", tags: ["architecture-boundaries"] },
+          { id: "g10q3", type: "boolean", prompt: "A utils/ folder that half the codebase imports is a sign of a healthy shared core.", options: ["True", "False"], answer: [1],
+            explain: "False — a grab-bag has no promise, so nothing resists adding to it; it becomes the most-coupled module. Helpers belong to the feature that owns them; only promote to a named, promise-bound shared module when a second feature genuinely needs it.", tags: ["architecture-boundaries"] },
+          { id: "g10q4", type: "single", prompt: "You should apply dependency inversion (a port/interface) when…", options: ["every class needs an interface, for consistency", "a boundary genuinely churns (persistence, external APIs, the clock) and you need it swappable or testable", "the code feels too concrete", "a reviewer asks for it"], answer: [1],
+            explain: "Inversion has a cost — an extra indirection to maintain. Spend it where the detail will actually change or where you need a test double; inside a stable module, direct calls are simpler and fine.", tags: ["architecture-boundaries"] },
+        ],
+      },
+      {
+        title: "Tradeoffs & Decisions",
+        desc: "Doors, ADRs, and the courage to build less.",
+        questions: [
+          { id: "g10q5", type: "single", prompt: "A decision is a 'one-way door' when…", options: ["it can only be made by a senior engineer", "it's hard to reverse, so it deserves careful thought and a written record (ADR)", "it has exactly one correct answer", "it must be made before any code is written"], answer: [1],
+            explain: "Reversibility is the dial for effort. One-way doors (database choice, public API, service split) cost months to undo — earn them with an ADR. Two-way doors should be decided fast and simply.", tags: ["decisions-records"] },
+          { id: "g10q6", type: "single", prompt: "What makes 'it depends' an expert answer rather than a dodge?", options: ["saying it with confidence", "naming the variables it depends on and what you'd choose at each value", "following it with a guess anyway", "citing a famous engineer"], answer: [1],
+            explain: "Expertise is the finished sentence: 'it depends on read-volume and team size — below X we cache, above X we add a replica.' Naming the variables makes the tradeoff reviewable and falsifiable.", tags: ["decisions-records"] },
+          { id: "g10q7", type: "single", prompt: "A team of 3 splits into six services that share one database, deploy together, and call each other synchronously. This is…", options: ["proper microservices architecture", "a distributed monolith — all the cost of distribution, none of the independence; merge back to a modular monolith", "a necessary growth stage", "fine as long as traffic stays low"], answer: [1],
+            explain: "You pay network latency, partial failure, and distributed tracing, but keep the coupling (shared schema, lockstep deploys). Distribution should be earned by a measured, present benefit — not taken on speculatively.", tags: ["decisions-records"] },
+          { id: "g10q8", type: "multi", prompt: "Select ALL sections of a useful ADR.", options: ["Context (forces and constraints)", "Decision (one assertive sentence)", "Consequences (what we gain AND give up)", "A trigger/condition to reopen the decision"], answer: [0, 1, 2, 3],
+            explain: "Context, decision, consequences, plus a status and a trigger-to-reopen. The trigger keeps it from becoming stale dogma; consequences (including what you gave up) are the part future readers most need.", tags: ["decisions-records"] },
+        ],
+      },
+      {
+        title: "Consistency Across Machines",
+        desc: "Replicas, lag, and multi-service honesty.",
+        questions: [
+          { id: "g10q9", type: "single", prompt: "After a user updates their profile, they must see the change immediately, though other users may briefly see the old one. This promise is called…", options: ["strong consistency for everyone", "read-your-writes — owed to the actor, while others can be eventually consistent", "eventual consistency", "immediate consistency"], answer: [1],
+            explain: "Read-your-writes is the consistency users actually feel: the actor sees their own write now; strangers can lag. Consistency is owed per reader, not globally — that's what keeps most apps fast AND correct-feeling.", tags: ["consistency-tradeoffs"] },
+          { id: "g10q10", type: "single", prompt: "An intermittent 'sometimes shows the old value' bug that's worse under load most likely indicates…", options: ["a UI race condition", "a read-after-write hitting a lagging replica or stale cache — route the actor's read-after-write to the primary/source", "a bad network cable", "the ORM caching with nothing to be done"], answer: [1],
+            explain: "Failure-rate-tracks-lag is the replication-lag signature. The fix is routing (or immediate invalidation), not a sleep() — which only widens the window where the bug is hidden.", tags: ["consistency-tradeoffs"] },
+          { id: "g10q11", type: "single", prompt: "'Place order' spans order + inventory + payment services, and payment fails after inventory reserved. The saga's job is to…", options: ["retry payment forever until it succeeds", "run scripted compensation (release inventory, cancel order) with each step idempotent — accountable, not atomic", "roll back via a distributed database transaction", "ignore it; the user will retry"], answer: [1],
+            explain: "A saga isn't atomic — it's accountable: every partial state has a defined unwind, and idempotency keys make the unwind safe to re-run. There's no magic distributed-transaction button across services.", tags: ["consistency-tradeoffs"] },
+          { id: "g10q12", type: "boolean", prompt: "If your database is ACID, a checkout spanning payment, inventory, and notification services is automatically consistent.", options: ["True", "False"], answer: [1],
+            explain: "False — ACID is local to one database. Crossing a database/service/network boundary means you must design idempotency and compensation explicitly.", tags: ["consistency-tradeoffs"] },
+        ],
+      },
+      {
+        title: "Scaling, Availability & Synthesis",
+        desc: "Staying up, scaling in order, and putting it all together.",
+        questions: [
+          { id: "g10q13", type: "single", prompt: "Three components each at 99.9%, in series, yield roughly…", options: ["99.9%", "99.7% — availabilities multiply; each dependency spends your error budget", "100%", "33%"], answer: [1],
+            explain: "0.999³ ≈ 0.997. A synchronous dependency's downtime is your downtime minus your fallback. So you either harden parts or tolerate their failure — you can't out-average them.", tags: ["scaling-availability"] },
+          { id: "g10q14", type: "single", prompt: "A slow page runs an 800ms query on every load. The FIRST thing to try is…", options: ["add a second app server", "profile the query and add the missing index / fix the N+1 — scale in order, cheapest fix first", "add a microservice for this page", "rewrite the page in a faster framework"], answer: [1],
+            explain: "Scaling amplifies what you have, including inefficiency. Measure, then spend the cheap fix (index/query) before cache, queue, replica, or distribution. The answer is usually step 2, not step 6.", tags: ["scaling-availability"] },
+          { id: "g10q15", type: "single", prompt: "At 9 a.m. a cache entry expires and 200 concurrent users each trigger the same expensive query, spiking the DB. The durable fix is…", options: ["a bigger database", "coordinated rebuild: jittered TTLs and/or stale-while-revalidate so ONE caller rebuilds while others are served the (briefly stale) value", "a longer TTL with no other change", "disabling the cache"], answer: [1],
+            explain: "This is a cache stampede: TTL expiry with no coordination turns one miss into N queries. Jitter spreads expiry; stale-while-revalidate removes the cliff. A longer TTL alone just delays the same spike.", tags: ["scaling-availability"] },
+        ],
+      },
+    ],
+  },
 ];
 export const getBattle = (id: string): BossBattle | undefined => BATTLES.find((b) => b.id === id);
 
@@ -1124,6 +1198,34 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "Expand-migrate-contract", back: "Add the column (deploy) → write to both + backfill (release) → drop the old column later. Each step reversible, none require downtime.", lesson: "cicd-observability" },
     ],
   },
+  {
+    id: "architecture-mastery", title: "Architecture & Distributed Systems", blurb: "Volume X — lines that age, bets written down, and the laws of data and uptime across machines.",
+    cards: [
+      { front: "Architecture =", back: "boundaries + crossing rules. It's about how change propagates, not boxes and arrows. Quality is measured in how small the promises can stay.", lesson: "architecture-boundaries" },
+      { front: "Cohesion vs coupling", back: "Cohesion: things that change together live together. Coupling: how much a change in one place forces change elsewhere. Boundaries manage coupling by grouping cohesion.", lesson: "architecture-boundaries" },
+      { front: "Draw lines where…", back: "…change happens. Features and rate-of-change, not technology layers. A layer boundary guarantees every feature spreads across every layer.", lesson: "architecture-boundaries" },
+      { front: "The dependency rule", back: "Arrows point inward, toward stable business policy. Details (DB, framework, UI) depend on policy, never the reverse — so they can change without touching it.", lesson: "architecture-boundaries" },
+      { front: "The seam test", back: "Can you swap the detail (database, payment provider, clock) without touching the core? The port lives with the core; the adapter implements it.", lesson: "architecture-boundaries" },
+      { front: "Change-cost metric", back: "Count files touched per typical feature. If it's 'most of them, in most folders', your boundaries run perpendicular to your features.", lesson: "architecture-boundaries" },
+      { front: "One-way vs two-way door", back: "One-way (hard to reverse): think hard, write an ADR. Two-way (easy to reverse): decide fast, bias simple, move on. Match effort to reversibility.", lesson: "decisions-records" },
+      { front: "ADR anatomy", back: "Context + Decision (one sentence) + Consequences (gain AND give-up) + Status + trigger-to-reopen. Small, dated, supersede-able. The chain is the project's decision history.", lesson: "decisions-records" },
+      { front: "'It depends' — finished", back: "…on [named variables], and here's what I'd choose at each value. Naming the variables makes the tradeoff reviewable; an unfinished sentence is a dodge.", lesson: "decisions-records" },
+      { front: "YAGNI + last responsible moment", back: "Don't pay today's complexity for an imagined benefit; but don't defer an irreversible decision past the point where deferring costs more than deciding wrong.", lesson: "decisions-records" },
+      { front: "Rule of Three", back: "First impl is specific; second reveals the real pattern; third justifies the abstraction. Abstract from two real examples, not one guess.", lesson: "decisions-records" },
+      { front: "Distributed monolith", back: "Services that share a DB, deploy together, call each other synchronously — all distribution's cost, none of its independence. Merge back; keep modular boundaries in one process.", lesson: "decisions-records" },
+      { front: "Replication lag", back: "The window where a copy is correct-but-behind. Disagreement during lag is normal, not broken — your job is deciding which reads may tolerate it.", lesson: "consistency-tradeoffs" },
+      { front: "Read-your-writes", back: "The actor must see their own write immediately; strangers can be eventually consistent. Consistency is owed per reader, not globally.", lesson: "consistency-tradeoffs" },
+      { front: "Stale-after-write fix", back: "Route the actor's read-after-write to the primary/source (or return the written value). sleep() hides the bug; routing fixes it.", lesson: "consistency-tradeoffs" },
+      { front: "Saga", back: "A multi-service operation with scripted compensation. Accountable, not atomic: every partial state has a defined unwind, each step idempotent.", lesson: "consistency-tradeoffs" },
+      { front: "ACID is…", back: "…local to one database. Crossing a DB/service/network boundary means designing idempotency + compensation explicitly.", lesson: "consistency-tradeoffs" },
+      { front: "Availability multiplies", back: "99.9% × 99.9% × 99.9% ≈ 99.7%. Every synchronous dependency spends your error budget — harden parts or tolerate their failure.", lesson: "scaling-availability" },
+      { front: "The 'one of each' audit", back: "List every component with exactly one instance — each is a single point of failure. Know them and price them before production finds them for you.", lesson: "scaling-availability" },
+      { front: "Graceful degradation", back: "Rank features load-bearing vs sheddable, name a fallback for each, and test the shed path. Reduced-but-open, by design — not improvised at 3 a.m.", lesson: "scaling-availability" },
+      { front: "The scaling order", back: "measure → index/fix queries → cache → queue → replicate reads → distribute. Each step must name the bottleneck it removes; stop when it's gone.", lesson: "scaling-availability" },
+      { front: "Cache stampede", back: "TTL expiry + no coordination = N identical rebuilds. Fix with jittered TTLs and/or stale-while-revalidate so one caller rebuilds, others are served.", lesson: "scaling-availability" },
+      { front: "Modular monolith first", back: "Keep the boundaries (so you could split later) without the network (so you don't pay now). Distribute only with a measured, present, ADR-recorded reason.", lesson: "scaling-availability" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -1320,6 +1422,24 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Feature flag", def: "A switch separating deploy (code on servers) from release (users get it); enables instant rollback.", domain: "CI/CD", lesson: "cicd-observability" },
   { term: "Golden signals", def: "The four core service metrics: latency, traffic, errors, saturation.", domain: "Observability", lesson: "cicd-observability" },
   { term: "Blameless postmortem", def: "Incident review focused on system causes and prevention, never individual blame.", domain: "Observability", lesson: "cicd-observability" },
+  { term: "Boundary", def: "A line between parts plus the promise (public surface) governing what crosses it.", domain: "Architecture", lesson: "architecture-boundaries" },
+  { term: "Cohesion", def: "Grouping things that change together; one reason to change per module.", domain: "Architecture", lesson: "architecture-boundaries" },
+  { term: "Coupling", def: "How much a change in one place forces change elsewhere.", domain: "Architecture", lesson: "architecture-boundaries" },
+  { term: "Dependency rule", def: "Arrows point inward: details depend on stable policy, never the reverse.", domain: "Architecture", lesson: "architecture-boundaries" },
+  { term: "Vertical slice", def: "Co-locating a feature's route, logic, data access, and tests in one neighborhood.", domain: "Architecture", lesson: "architecture-boundaries" },
+  { term: "ADR", def: "Architecture Decision Record: context, decision, consequences, status — a dated, supersede-able bet.", domain: "Architecture", lesson: "decisions-records" },
+  { term: "One-way door", def: "A hard-to-reverse decision; earns careful thought and a written record.", domain: "Architecture", lesson: "decisions-records" },
+  { term: "YAGNI", def: "Don't pay today's complexity cost for an imagined future benefit.", domain: "Architecture", lesson: "decisions-records" },
+  { term: "Distributed monolith", def: "Services that share a DB and deploy together — distribution's costs without its benefits.", domain: "Architecture", lesson: "decisions-records" },
+  { term: "Replication lag", def: "The window where a copy is correct-but-behind the source; the source of stale reads.", domain: "Distributed Systems", lesson: "consistency-tradeoffs" },
+  { term: "Read-your-writes", def: "The actor sees their own writes immediately; owed per reader, not globally.", domain: "Distributed Systems", lesson: "consistency-tradeoffs" },
+  { term: "Eventual consistency", def: "Copies converge soon after writes stop; paid for in temporary staleness.", domain: "Distributed Systems", lesson: "consistency-tradeoffs" },
+  { term: "Saga", def: "A multi-step operation with scripted compensation; accountable, not atomic.", domain: "Distributed Systems", lesson: "consistency-tradeoffs" },
+  { term: "Error budget", def: "The allowed downtime implied by an availability target; a resource to spend and freeze on.", domain: "Distributed Systems", lesson: "scaling-availability" },
+  { term: "Single point of failure", def: "A component with no redundancy whose failure takes the system down.", domain: "Distributed Systems", lesson: "scaling-availability" },
+  { term: "Graceful degradation", def: "Reduced-but-functional service under strain, designed and tested in advance.", domain: "Distributed Systems", lesson: "scaling-availability" },
+  { term: "Circuit breaker", def: "Stops calling a repeatedly-failing dependency and serves a fallback; resets when it heals.", domain: "Distributed Systems", lesson: "scaling-availability" },
+  { term: "Cache stampede", def: "Many concurrent misses rebuilding one expired value; fixed by coordinated rebuild.", domain: "Distributed Systems", lesson: "scaling-availability" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -1381,6 +1501,10 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "suite-cries-wolf", symptom: "CI fails on most PRs with snapshot mismatches or spy-count assertions after innocent refactors; the 'fix' is regenerating snapshots nobody reads; run time keeps growing until people skip local runs.", layer: "Test design / suite health", causes: ["Tests assert implementation (snapshots of structure, spy call counts) rather than promised behavior", "Whole-tree snapshots couple tests to markup, so any refactor churns them"], diagnose: ["Bucket recent failures: behavior failures vs snapshot/spy churn — the ratio is the diagnosis", "For each churning test, ask 'would this have caught a real regression?'"], fix: "Delete implementation tests; replace each with a behavior assertion through the public surface (named after the incident it prevents). Keep snapshots only for small, stable, intentional output.", prevent: "Review rule: reject tests whose failure message would be 'snapshot changed'; every test must name the incident it guards.", related: "testing-that-matters" },
   { id: "job-duplicate-effect", symptom: "A side effect (email, charge, export) happens twice for one user action, ~seconds-to-minutes apart, with no second request in the API logs.", layer: "Queue delivery / idempotency", causes: ["The worker performed the side effect before marking the job done, then crashed/timed out and the queue redelivered", "No idempotency key guard before the side effect"], diagnose: ["Compare the two events' timestamps to the queue's redelivery/visibility timeout — a match means redelivery", "Check the worker for a done-check before the side effect"], fix: "Guard on the idempotency key before the side effect; mark done after success. For external effects, also use provider dedupe (message-id, payment intent id).", prevent: "Every job type documents its idempotency story in review: the key, where done is recorded, and what makes a rerun a no-op.", related: "background-jobs-queues" },
   { id: "page-on-cause-no-symptom", symptom: "On-call gets paged at odd hours for a moving number (CPU, memory) with no user impact; real incidents later get dismissed as noise.", layer: "Alerting strategy", causes: ["Alerts fire on causes (a metric leaving range) instead of symptoms (user-affecting error rate/latency)", "No alert exists for the actual user-facing symptom"], diagnose: ["Classify each alert: does it fire only when a user could feel it?", "Check whether the real incident's symptom (error rate, queue age) has an alert at all"], fix: "Repoint pages to symptoms (error rate, latency, queue backlog age); demote cause-metrics to dashboards; add the missing symptom alerts and test them in staging.", prevent: "Every alert's title answers 'what is the user feeling?'; review alert signal-vs-noise in postmortems.", related: "cicd-observability" },
+  { id: "feature-touches-everything", symptom: "Every 'small' feature requires editing many files across many folders (route + service + repo + model + tests); change-cost keeps rising and refactors feel dangerous.", layer: "Module boundaries / cohesion", causes: ["Boundaries are drawn by technology layer, perpendicular to features, so every feature crosses every wall", "Low cohesion: a feature's pieces are scattered, so nothing can change in one place"], diagnose: ["Count files touched by the last few features — the average is your architecture's price tag", "Check whether folders are organized by layer (controllers/services) rather than by feature"], fix: "Co-locate a feature (route + logic + data access + tests) into one neighborhood; keep the dependency rule so arrows point at policy; grow shared code only when a second feature needs it.", prevent: "When adding a capability, ask 'which neighborhood does this belong in?' before creating a new layer; review for vertical slices, not horizontal layers.", related: "architecture-boundaries" },
+  { id: "distributed-monolith-pain", symptom: "A multi-service system where every feature touches 2–3 services, requests cross several network hops, one bug takes days to trace, and services share one database and deploy together.", layer: "Service boundaries / premature distribution", causes: ["Services were split without a forcing reason (no independent scaling, team ownership, or blast-radius need)", "Synchronous calls + a shared schema keep the coupling, while the network adds latency and partial failure"], diagnose: ["Map which services share the database and which calls are synchronous — if 'all of them', they aren't independent", "Ask what benefit distribution buys that you're actually collecting now"], fix: "Merge the most-tightly-coupled services back into a modular monolith (boundaries inside one process); extract a service only with a measured, present, ADR-recorded reason.", prevent: "Default to a modular monolith; require an ADR naming the concrete benefit and cost before any service split.", related: "decisions-records" },
+  { id: "stale-read-after-write", symptom: "Intermittent 'sometimes shows the old value' right after a user's own write (profile, order status); worse under load; a sleep() before reading 'helps'.", layer: "Replication / read-after-write consistency", causes: ["The actor's read-after-write goes to a lagging replica or a stale cache within the replication/invalidation window", "No routing of post-write reads to the primary/source"], diagnose: ["Instrument write-time vs read-time and which connection (primary vs replica) each used — a match with the lag window confirms it", "Check whether the failure rate tracks replication lag"], fix: "Route the actor's read-after-write to the primary/source, or return the written value (optimistic), or pin the user's reads briefly after a write; invalidate caches immediately on write.", prevent: "For every write-then-read path, state which replica (if any) it may use; default the actor's read-after-write to the source. Treat sleep() as a smell, not a fix.", related: "consistency-tradeoffs" },
+  { id: "cache-stampede-spike", symptom: "A periodic latency spike (e.g. every day at a fixed time) aligned with a cache TTL expiry; traces show many identical expensive queries in a narrow window.", layer: "Caching / miss coordination", causes: ["A cache entry expires and N concurrent users each independently rebuild the same expensive value", "No jitter on TTLs and no single-flight/stale-while-revalidate on the miss path"], diagnose: ["Overlay the latency spike with cache-expiry times — alignment means stampede, not load", "Look for many identical expensive queries in a short window after expiry"], fix: "Add jitter to TTLs and serve stale-while-revalidate (or a lock/single-flight) so one caller rebuilds while others are served the briefly-stale value.", prevent: "For any cache fronting an expensive query, assume N concurrent misses and design the miss-path for one rebuild.", related: "scaling-availability" },
 ];
 
 /* ————— batch queue ————— */
@@ -1412,5 +1536,6 @@ export const BATCHES: Batch[] = [
   { id: "B-21", title: "Next.js · App Router Foundations", scope: "V7·M1–M2", status: "shipped", summary: "The App Router map (filesystem routes, layouts, loading/error roles, streaming), Server vs Client Components as an execution-boundary decision, the two Supabase clients and the one direction secrets travel, hydration and the mismatch fix, the three server doors, and the caching model (data cache / full-route cache / client state) with dirty-set revalidation — 3 lessons · 18 quiz questions · 3 debugging labs · 2 outdated-pattern pairs · Next.js Gauntlet gauntlet-m7 (15 Q) closing Volume VII." },
   { id: "B-22", title: "Full-Stack Applications · Authenticated CRUD + Search/Filter/Pagination", scope: "V8·M1–M2", status: "shipped", summary: "The five-gate anatomy of every feature (validate → authenticate → authorize → write → reconcile) with RLS as the authoritative check, optimistic UI with repayment, states and resilience (double-submit idempotency, freshness guards, soft delete), the URL as the single query state for search/filter/sort/page, and keyset pagination with cursors and tiebreakers — 4 lessons · 24 quiz questions · 3 debugging labs · 2 outdated-pattern pairs · Full-Stack Gauntlet gauntlet-m8 (15 Q) closing Volume VIII. (Absorbed the earlier 'Next.js Mutations' scope, which landed inside B-21.)" },
   { id: "B-23", title: "Production Engineering · Testing, Queues & Observability", scope: "V9·M1–M3", status: "shipped", summary: "Testing that matters (pyramid as economics, behavior over implementation, RLS matrix and validation boundary tests, the wolf-crying-suite lab), background jobs and queues (at-least-once law, idempotency guards, backoff+jitter, transient-vs-permanent, dead-letters, the double-email lab), and CI/CD + observability (exit-code chain, deploy-vs-release, golden signals, symptom-vs-cause alerting, the 3am-page lab, blameless postmortems) — 18 quiz questions, 3 debugging labs, Production Gauntlet closing Volume IX." },
-  { id: "B-24", title: "Architecture · Pragmatic Foundations", scope: "V10·M1", status: "next", summary: "Stepping back from code to decisions: modularity and boundaries, SOLID applied pragmatically, data-access boundaries, architecture decision records (ADRs), and distributed-system fundamentals (consistency, idempotency, tradeoffs) — knowing when NOT to build." },
+  { id: "B-24", title: "Architecture · Boundaries, Tradeoffs & Distributed Systems", scope: "V10·M1–M2", status: "shipped", summary: "Boundaries that age (cohesion, dependency rule, vertical slices, the feature-touches-everything lab, three-tier→slices outdated pair) and tradeoffs you can defend (ADRs, one-way doors, YAGNI, Rule of Three, the distributed-monolith lab, 47-page-doc→ADR outdated pair); then consistency across machines (replication lag, read-your-writes, the payment-succeeded-order-failed lab, sagas, ACID-is-local) and the architecture of staying up (error budgets, SPOF audit, graceful degradation, circuit breakers, the cache-stampede lab, scaling order, premature-microservices outdated pair) — 24 quiz questions, 4 debugging labs, Architecture Gauntlet closing Volume X." },
+  { id: "B-25", title: "Capstones & Mastery", scope: "Volume XI", status: "next", summary: "The Mastery volume: independent, portfolio-grade capstone applications; debugging unfamiliar code; security review; architectural reasoning; reading release notes and evaluating libraries; documentation; and the habits of continuous learning after the course ends — closing with a Mastery Gauntlet and the Course Completion reference." },
 ];
