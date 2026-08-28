@@ -121,6 +121,13 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Running totals: 20 flashcard sets / 252 cards, 141 glossary terms, 46 troubleshooting entries, 63 lessons implemented.
 - **Volume V complete: all 3 modules + tuning.** Database phase certified by `gauntlet-m5`. Full-Stack level now has two volumes certified.
 
+### Batch 20 — Volume VI · Supabase: Foundations & RLS (M1–M2) — implemented
+- `supabase-foundation` (platform = Postgres + API coat, three roles + two keys, typed-client translation, migrations + generated types, service-key-in-bundle lab), `supabase-auth-storage` (profiles pattern, sessions, Storage/Realtime as rooms, trigger-drift lab), `rls-first-principles` (USING/WITH CHECK, default deny, policy composition, owner exemption, missing-WITH-CHECK exploit lab, admin-via-table), `rls-testing-discipline` (four-cell matrix, over-grant vs over-denial, storage/realtime policies, type-mismatch over-denial lab).
+- 23 quiz questions, 3 debugging labs, 1 outdated-pattern pair; Supabase Gauntlet `gauntlet-m6` (15 Q / 4 fronts) closes Volume VI.
+- `supabase-rls` flashcard set (19 cards), 13 Supabase/RLS glossary terms, 3 troubleshooting entries.
+- Running totals: 21 flashcard sets / 271 cards, 154 glossary terms, 49 troubleshooting entries, 67 lessons implemented.
+- **Volume VI complete: both modules.** Supabase phase certified by `gauntlet-m6`. Full-Stack level now has three volumes certified.
+
 ## Known gaps (classified)
 - ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
 - ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11. Volumes III, IV, and V now each have cumulative gauntlets. A combined Volumes III–V cross-volume assessment remains pending (a candidate for a later review pass).
@@ -134,11 +141,12 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 
 ## Recommended next batch
 **Batch 20 — Supabase · Foundations & RLS (Volume VI):** open the Supabase phase. Author `v6m1` Supabase
-Foundations (the platform, browser/server clients, publishable vs privileged keys, Auth email + OAuth, Storage,
-Realtime, local-first workflows, generated types) and `v6m2` Row Level Security From First Principles (policies
-as the authorization boundary, the user-A-vs-user-B testing discipline carried from Volume IV, and why "never
-disable RLS to make it work"). Close Volume VI with a Supabase Gauntlet. Full scope on the generation queue.
-Then STOP and request review (bounded generation contract).
+**Batch 21 — Next.js · App Router Foundations (Volume VII):** open the Next.js phase. Author `v7m1`: the
+App Router mental model (file-system routing, layouts, Server vs Client Components as an execution-boundary
+decision), where Supabase's two clients and two keys live (server-only secrets never cross into bundles), and
+data fetching + caching/revalidation per the current stable version. Include the "hydration mismatch" and
+"secret in the client bundle" debugging labs, and the Outdated-Patterns lesson (Pages Router vs App Router).
+Full scope on the generation queue. Then STOP and request review (bounded generation contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?

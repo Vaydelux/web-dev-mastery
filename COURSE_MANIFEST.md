@@ -93,6 +93,16 @@
 | `query-tuning` | Query Tuning in the Wild: N+1, Pagination, and Pools | Full-Stack | 50 | explain-analyze | implemented |
 | `gauntlet-m5` | Checkpoint · PostgreSQL Gauntlet (15 Q, pass ≥70%) | Full-Stack | 25 | all of Volume V | implemented |
 
+## Volume VI — Supabase (Full-Stack level)
+
+| ID | Title | Level | Min | Prereqs | Status |
+|---|---|---|---|---|---|
+| `supabase-foundation` | Supabase Is Postgres Wearing an API Coat | Full-Stack | 50 | query-tuning | implemented |
+| `supabase-auth-storage` | Auth, Storage, and Realtime: Rooms in the Same Building | Full-Stack | 55 | supabase-foundation | implemented |
+| `rls-first-principles` | Row Level Security: The House Rules, Written in SQL | Full-Stack | 60 | supabase-auth-storage | implemented |
+| `rls-testing-discipline` | Testing RLS: The Matrix That Makes Policies a Contract | Full-Stack | 55 | rls-first-principles | implemented |
+| `gauntlet-m6` | Checkpoint · Supabase Gauntlet (15 Q, pass ≥70%) | Full-Stack | 25 | all of Volume VI | implemented |
+
 ## Volumes VI–XI (module-scoped; lessons authored per batch)
 
 | Volume | Phase | Modules | Status |
@@ -100,8 +110,8 @@
 | III — React | React Phase | 6 modules complete · React Gauntlet passed-ready | ✅ complete |
 | IV — Web Architecture | Web Architecture Phase | 3 modules complete (REST, AuthN/AuthZ, Caching/Security) · Web Architecture Gauntlet passed-ready | ✅ complete |
 | V — PostgreSQL | Database Phase | 9 lessons implemented (Modeling, SQL, Performance, Tuning) · PostgreSQL Gauntlet passed-ready | ✅ complete |
-| VI — Supabase | Supabase Phase | 2 (Foundations, RLS) | next · B-20 |
-| VII — Next.js | Next.js Phase | 2 (App Router, Data/Mutations) | planned |
+| VI — Supabase | Supabase Phase | 4 lessons implemented (Foundations, Auth/Storage/Realtime, RLS, RLS Testing) · Supabase Gauntlet passed-ready | ✅ complete |
+| VII — Next.js | Next.js Phase | 2 (App Router, Data/Mutations) | next · B-21 |
 | VIII — Full-Stack Applications | Full-Stack Phase | 2 (Auth CRUD, Search/Filter/Pagination) | planned |
 | IX — Production Engineering | Production Engineering Phase | 3 (Testing, Queues, CI/CD & Observability) | planned |
 | X — Architecture | Architecture Phase | 1 (Pragmatic Architecture) | planned |
@@ -111,9 +121,9 @@
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | 20 sets / 252 cards: …react-performance (14), web-architecture (19), caching-security (14), sql-postgres (28) | implemented |
-| Glossary | 141 terms, domain-tagged, lesson-linked (incl. 21 SQL/Performance) | implemented |
-| Troubleshooting index | 46 symptom-based entries (incl. 6 PostgreSQL) | implemented |
+| Flashcard sets | 21 sets / 271 cards: …web-architecture (19), caching-security (14), sql-postgres (28), supabase-rls (19) | implemented |
+| Glossary | 154 terms, domain-tagged, lesson-linked (incl. 13 Supabase/RLS) | implemented |
+| Troubleshooting index | 49 symptom-based entries (incl. 3 Supabase/RLS) | implemented |
 | A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |

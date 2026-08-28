@@ -25,6 +25,7 @@ import { m20 } from "./lessons20";
 import { m21 } from "./lessons21";
 import { m22 } from "./lessons22";
 import { m23 } from "./lessons23";
+import { m24 } from "./lessons24";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -76,8 +77,8 @@ export const COURSE: VolumeDef[] = [
     ]),
   ]),
   v(6, "VI", "Supabase", "Supabase Phase", "Auth, RLS, Storage, Realtime, and local-first workflows.", [
-    mod("v6m1", 1, "Supabase Foundations", "The platform, clients, and publishable vs privileged keys.", "planned", []),
-    mod("v6m2", 2, "Row Level Security From First Principles", "Policies, and testing user-A vs user-B.", "planned", []),
+    mod("v6m1", 1, "Supabase Foundations", "The platform, clients, keys, Auth, Storage, and Realtime — one database, many rooms.", "implemented", m24.slice(0, 2)),
+    mod("v6m2", 2, "Row Level Security From First Principles", "Policies as the authorization boundary, and the matrix that tests user-A vs user-B.", "implemented", m24.slice(2)),
   ]),
   v(7, "VII", "Next.js", "Next.js Phase", "App Router: Server/Client Components, data fetching, and secure mutations.", [
     mod("v7m1", 1, "App Router & Rendering", "Layouts, Server vs Client Components, execution boundaries.", "planned", []),
@@ -146,6 +147,7 @@ export const BATTLE_REFS: BattleRef[] = [
   { id: "gauntlet-m3", title: "Checkpoint · React Gauntlet", volumeId: 3, afterModule: "v3m6", blurb: "A cumulative fight across all of Volume III — the mental model, state & rendering, effects & data, forms, architecture & testing, and performance — pass at 70% to close the React phase." },
   { id: "gauntlet-m4", title: "Checkpoint · Web Architecture Gauntlet", volumeId: 4, afterModule: "v4m3", blurb: "A cumulative fight across all of Volume IV — REST grammar, API contracts, authentication & authorization, sessions & tokens, caching, and the trust-boundary mindset — pass at 70% to close the web architecture phase." },
   { id: "gauntlet-m5", title: "Checkpoint · PostgreSQL Gauntlet", volumeId: 5, afterModule: "v5m3", blurb: "A cumulative fight across all of Volume V — relational modeling, keys & constraints, normalization, SQL fluency, transactions, indexes, query plans, and tuning in the wild — pass at 70% to close the database phase." },
+  { id: "gauntlet-m6", title: "Checkpoint · Supabase Gauntlet", volumeId: 6, afterModule: "v6m2", blurb: "A cumulative fight across all of Volume VI — the platform and its keys, Auth/Storage/Realtime as rooms in one building, RLS as the house rules, and the testing matrix that makes them a contract — pass at 70% to close the Supabase phase." },
 ];
 
 export const BATTLES: BossBattle[] = [
@@ -433,6 +435,62 @@ export const BATTLES: BossBattle[] = [
           { id: "g5q13", type: "single", prompt: "Why does page 500 of an OFFSET-paginated feed cost far more than page 1?", options: ["the index degrades over time", "OFFSET N reads and discards N rows, so cost grows linearly with depth", "later pages have more data", "the connection pool throttles deep pages"], answer: [1], explain: "OFFSET 10000 reads 10,020 rows to return 20. Keyset pagination resumes from a cursor (WHERE (created_at,id) < last) and never skips, so depth doesn't add cost.", tags: ["query-tuning", "sql-select-discipline"] },
           { id: "g5q14", type: "single", prompt: "Under transaction-mode connection pooling, the practice that becomes mandatory is…", options: ["larger LIMIT clauses", "keeping transactions short — a transaction pins a pooled connection until COMMIT", "more indexes", "OFFSET pagination"], answer: [1], explain: "The pool only reclaims a connection at COMMIT. A transaction left open while calling a remote API holds the connection, starving every other borrower. 'Short transactions' goes from advice to requirement.", tags: ["query-tuning", "sql-ctes-transactions"] },
           { id: "g5q15", type: "single", prompt: "An endpoint is slow. High query COUNT with cheap individual plans. The fix lives on which axis?", options: ["axis 2 — make each call faster (index)", "axis 1 — reduce the call count (one joined/batched query)", "increase the pool size", "rewrite in a CTE"], answer: [1], explain: "High count + cheap plans is the N+1 signature. An index would shave each cheap call and hide the real problem. Collapse the per-row queries first; measure the count drop before anything else.", tags: ["query-tuning"] },
+        ],
+      },
+    ],
+  },
+  {
+    id: "gauntlet-m6",
+    title: "Supabase Gauntlet",
+    subtitle: "Volume VI cumulative · 15 questions · pass ≥ 70%",
+    passPct: 70,
+    intro: [
+      "Volume VI moved your PostgreSQL skills behind an API coat: the platform's three roles and two keys, Auth as the front desk that issues badges, Storage and Realtime as rooms obeying the same rules — and Row Level Security as the house rules themselves, tested until they're a contract.",
+      "This gauntlet mixes both modules the way production mixes them: a key choice is a security decision, a missing WITH CHECK is an authorization hole, an empty list may be a type bug in a policy. Several answers are 'technically possible but professionally wrong' — choose what you'd defend in review.",
+    ],
+    rules: [
+      "15 questions across four fronts; you need 70% to pass.",
+      "Every wrong answer links back to the lesson that teaches it — remediate, then retake.",
+      "When two answers seem defensible, choose the one that survives an attacker asking the right question.",
+    ],
+    sections: [
+      {
+        title: "The Platform: Roles & Keys",
+        desc: "Who wears which identity, and which key opens which doors.",
+        questions: [
+          { id: "g6q1", type: "single", prompt: "The publishable (anon) key is safe to ship in browser bundles because…", options: ["it is encrypted and short-lived", "safety comes from Row Level Security limiting the anon/authenticated roles — the key itself is not a secret", "browsers sandbox it away from scripts", "it only works over HTTPS"], answer: [1], explain: "The key identifies the caller; RLS decides what that caller may touch. If safety depended on the key's secrecy, DevTools would end it — so it doesn't.", tags: ["supabase-foundation"] },
+          { id: "g6q2", type: "single", prompt: "A teammate 'fixed' an RLS-denied insert by building the client with the service key and a NEXT_PUBLIC_ env var. The correct response is…", options: ["accept it — the feature works now", "rotate the service key immediately (it's in the public bundle), switch to the publishable key, and repair the policy that denied the insert", "move the key to a different env var name", "disable RLS on that table instead"], answer: [1], explain: "The key is already public: rotation first, always. The denied insert was RLS working; the fix belongs in the policy. Escalating privilege to silence a policy bug is the incident signature.", tags: ["supabase-foundation", "rls-testing-discipline"] },
+          { id: "g6q3", type: "multi", prompt: "Select ALL statements that are TRUE about the three database roles.", options: ["anon is the identity of anonymous callers with minimal rights", "authenticated is who a logged-in user's queries run as, with auth.uid() resolving to their id", "service_role bypasses Row Level Security entirely", "all three are safe to use from browser code"], answer: [0, 1, 2], explain: "service_role removes every rule for its holder — it is server-only by definition. anon and authenticated are the browser-facing identities, limited by RLS.", tags: ["supabase-foundation"] },
+          { id: "g6q4", type: "boolean", prompt: "A schema change applied only through the dashboard SQL editor is an acceptable production workflow.", options: ["True", "False"], answer: [1], explain: "False — dashboard objects exist only where they were clicked. Schema lives in migration files so every environment converges from Git; the 'works for me' trigger-drift lab is what happens otherwise.", tags: ["supabase-foundation", "supabase-auth-storage"] },
+        ],
+      },
+      {
+        title: "Identity: Auth, Storage, Realtime",
+        desc: "The front desk, the badge, and the rooms that check it.",
+        questions: [
+          { id: "g6q5", type: "single", prompt: "In the profiles pattern, domain tables reference…", options: ["auth.users directly everywhere", "public.profiles(id), which itself references auth.users", "the user's email, normalized to lowercase", "the raw JWT string"], answer: [1], explain: "One bridge table decouples your schema from the auth schema and lets cascade deletion flow correctly. Emails are mutable facts, not identities; JWTs are ephemeral.", tags: ["supabase-auth-storage"] },
+          { id: "g6q6", type: "single", prompt: "Why does Auth split sessions into an access token plus a refresh token?", options: ["to halve storage usage", "JWTs can't be revoked, so short-lived access tokens pair with a rotatable, revocable refresh token — statelessness with control", "refresh tokens are encrypted at rest", "it's required by OAuth"], answer: [1], explain: "The Volume IV trade-off, managed for you: cheap stateless verification everywhere (access) plus a server-held token that can be rotated and revoked (refresh), with reuse detection as the theft alarm.", tags: ["supabase-auth-storage", "sessions-tokens"] },
+          { id: "g6q7", type: "boolean", prompt: "A Realtime subscriber can receive change events for rows their RLS policies would not let them SELECT.", options: ["True", "False"], answer: [1], explain: "False — realtime delivery is gated by the same RLS check as SELECT. The publication opts the table in; the policy decides delivery. Realtime extends the boundary; it never punches through it.", tags: ["supabase-auth-storage", "rls-first-principles"] },
+          { id: "g6q8", type: "single", prompt: "Scoping avatar uploads to ${user.id}/avatar.png matters because…", options: ["filenames must be globally unique", "the bucket policy can then enforce 'write only under your own folder' as a database-checked rule instead of a client convention", "CDNs require hierarchical paths", "it enables image compression"], answer: [1], explain: "(storage.foldername(name))[1] = auth.uid()::text turns a path convention into enforceable SQL. Client-side conventions are suggestions; this is a law.", tags: ["supabase-auth-storage", "rls-first-principles"] },
+        ],
+      },
+      {
+        title: "The House Rules: RLS Mechanics",
+        desc: "USING, WITH CHECK, composition, and the doors they guard.",
+        questions: [
+          { id: "g6q9", type: "single", prompt: "A table has RLS enabled and zero policies. A logged-in user queries it and gets…", options: ["all rows — policies only restrict", "an error naming the missing policy", "zero rows — enabled RLS with no matching policy denies everything", "only rows created in the last hour"], answer: [2], explain: "Enabled + no policy = deny. The failure mode is a broken feature (loud, testable), never a public table (silent, catastrophic). That inversion is the design philosophy.", tags: ["rls-first-principles"] },
+          { id: "g6q10", type: "single", prompt: "An UPDATE policy carries only using (user_id = auth.uid()). The concrete exploit is…", options: ["reading other users' rows", "updating your own row to set user_id to a victim's id — the USING passes, and with no WITH CHECK the rewritten row sails through", "deleting the whole table", "impersonating service_role"], answer: [1], explain: "USING picks the rows you may target; WITH CHECK validates what the row becomes. A write policy that can alter the authorization column needs both clauses or 'edit yours' becomes 'donate yours'.", tags: ["rls-first-principles"] },
+          { id: "g6q11", type: "single", prompt: "Two SELECT policies exist: owners and team members. A row matches only the team policy. Access is…", options: ["denied — both must pass", "granted — policies OR together within an operation; any yes wins", "granted only if the owner policy was created first", "undefined — conflicting policies error at query time"], answer: [1], explain: "Any yes wins; there is no deny keyword and order is irrelevant. You build access by adding policies — the planner folds them all into the query.", tags: ["rls-first-principles"] },
+          { id: "g6q12", type: "single", prompt: "The table OWNER (e.g. postgres) bypasses RLS unless you…", options: ["grant them the authenticated role", "add alter table … force row level security", "write an explicit owner-deny policy", "connect over SSL"], answer: [1], explain: "PostgreSQL historically exempts owners. force row level security posts the 'rules apply to me too' sign — forgetting it is the classic 'works in tests, open in prod' inversion.", tags: ["rls-first-principles"] },
+        ],
+      },
+      {
+        title: "The Drills: Testing & Failure Classes",
+        desc: "The matrix, the two failure classes, and the crowbar you never reach for.",
+        questions: [
+          { id: "g6q13", type: "single", prompt: "Why is over-grant the dangerous RLS failure class?", options: ["it throws loud errors", "it is silent — wrong rows simply appear for whoever asks, so only an adversarial test (the matrix) finds it", "it only affects anonymous users", "it corrupts the write path"], answer: [1], explain: "Over-denial breaks features loudly (tickets find it). Over-grant breaks confidentiality silently (attackers find it). The four-cell matrix exists because nothing else hunts the silent class.", tags: ["rls-testing-discipline"] },
+          { id: "g6q14", type: "single", prompt: "In the matrix, 'user A updates user B's row' is asserted by checking…", options: ["the HTTP status is 500", "the returned row count after the update (with .select()) is zero — the USING clause rejected the target", "that the client throws", "the service-role audit log"], answer: [1], explain: "PostgREST filters rather than refuses: a rejected update touches and returns zero rows. Assert on that emptiness — it is the refusal expressed as data.", tags: ["rls-testing-discipline"] },
+          { id: "g6q15", type: "multi", prompt: "Select ALL legitimate uses of the service role.", options: ["backups and bulk admin jobs from trusted servers", "one tightly-reviewed 'above the law' operation behind a small server function", "making a failing feature work by bypassing the policy", "CI tests impersonating regular users"], answer: [0, 1], explain: "Service role is for operations genuinely above the rules, server-side and tightly wrapped. Using it to silence a policy bug removes every rule from that path — and CI tests impersonate users precisely to exercise the rules.", tags: ["rls-testing-discipline"] },
         ],
       },
     ],
@@ -796,6 +854,30 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "The review loop", back: "Reproduce with real numbers → profile (count + plan) → change ONE thing → measure → keep or revert. Beats every guess.", lesson: "query-tuning" },
     ],
   },
+  {
+    id: "supabase-rls", title: "Supabase & Row Level Security", blurb: "Volume VI — the platform's keys, the auth hinge, the house rules, and the drills that make them a contract.",
+    cards: [
+      { front: "Supabase in one line", back: "Your PostgreSQL database plus a generated HTTP API (PostgREST), with Auth/Storage/Realtime as rooms in the same building — one trust model, many doors.", lesson: "supabase-foundation" },
+      { front: "Three roles", back: "anon (anonymous, minimal), authenticated (logged-in; auth.uid() resolves their id), service_role (bypasses RLS — server-only root password).", lesson: "supabase-foundation" },
+      { front: "Publishable vs service key", back: "Publishable: public by design, safe because RLS limits it. Service: removes every limit — env-var-only, rotate on any leak, never NEXT_PUBLIC_.", lesson: "supabase-foundation" },
+      { front: "A client call, translated", back: "supabase.from('tasks').select() is a typed GET against PostgREST; the database runs it as the caller's role and RLS appends the real WHERE before any row leaves.", lesson: "supabase-foundation" },
+      { front: "Schema lives in…", back: "Migration files in Git. The dashboard explores; Git records. 'Not in supabase/migrations' means 'doesn't exist'.", lesson: "supabase-foundation" },
+      { front: "auth.uid()", back: "The hinge: resolves the current JWT to a user id inside SQL. Every policy, storage rule, and realtime filter hangs off it.", lesson: "supabase-auth-storage" },
+      { front: "The profiles pattern", back: "public.profiles(id → auth.users) bridges identity to your schema; domain tables reference profiles; a trigger creates the row on signup.", lesson: "supabase-auth-storage" },
+      { front: "Access + refresh split", back: "Short stateless JWT (can't be revoked) + rotatable server-held refresh token (can). Reuse detection revokes the family — the theft alarm.", lesson: "supabase-auth-storage" },
+      { front: "Storage policy as path law", back: "(storage.foldername(name))[1] = auth.uid()::text — uploads outside your own folder are refused by the database, not by convention.", lesson: "supabase-auth-storage" },
+      { front: "RLS default posture", back: "Enabled + no matching policy = deny everything. A forgotten rule breaks a feature (loud), never opens a table (silent).", lesson: "rls-first-principles" },
+      { front: "USING vs WITH CHECK", back: "USING: may this existing row be seen/targeted? WITH CHECK: may this new/rewritten row exist? UPDATE needs both.", lesson: "rls-first-principles" },
+      { front: "Policy composition", back: "Policies OR within an operation — any yes wins. No deny keyword; absence is the only no. Order never matters.", lesson: "rls-first-principles" },
+      { front: "The owner exemption", back: "Table owners bypass RLS unless you alter table … force row level security — the 'rules apply to me too' sign.", lesson: "rls-first-principles" },
+      { front: "The missing-WITH-CHECK exploit", back: "USING lets you target your own row; without WITH CHECK you can rewrite user_id to a victim — legal start, illegal finish.", lesson: "rls-first-principles" },
+      { front: "Admin via table", back: "exists(select 1 from admins where user_id = auth.uid()) — granting admin is an INSERT; the check is live SQL, auditable, deploy-free.", lesson: "rls-first-principles" },
+      { front: "The four-cell matrix", back: "A-reads-B, A-writes-B, anon-reads, anon-writes — plus owner positive controls. Per table, as real roles, in CI.", lesson: "rls-testing-discipline" },
+      { front: "Over-grant vs over-denial", back: "Over-grant: silent, only the matrix finds it. Over-denial: loud; debug with set role + policy-as-WHERE-clause, never disable RLS.", lesson: "rls-testing-discipline" },
+      { front: "Denied reads return…", back: "Empty results, not errors — PostgREST filters. Assert on zero rows; that's why over-grants are invisible to error monitoring.", lesson: "rls-testing-discipline" },
+      { front: "Service role is a crowbar when…", back: "…used to silence a failing policy. Fix the policy instead; reserve service role for wrapped, reviewed, server-only exceptions.", lesson: "rls-testing-discipline" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -939,6 +1021,19 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Connection pool", def: "A broker lending a finite set of DB connections to many short-lived requests; protects the DB from connection exhaustion.", domain: "Performance", lesson: "query-tuning" },
   { term: "Transaction-mode pooling", def: "Lending a connection only for the duration of a transaction; makes short transactions mandatory.", domain: "Performance", lesson: "query-tuning" },
   { term: "pg_stat_statements", def: "The extension aggregating query counts and timings — the first place to look when tuning.", domain: "Performance", lesson: "query-tuning" },
+  { term: "PostgREST", def: "The layer that turns tables into REST endpoints and runs client queries as limited database roles.", domain: "Supabase", lesson: "supabase-foundation" },
+  { term: "service_role", def: "The privileged Supabase role that bypasses RLS; server-only, treated as a root password.", domain: "Supabase", lesson: "supabase-foundation" },
+  { term: "Publishable key", def: "The public Supabase key shipped to browsers; safe only because RLS limits the roles it maps to.", domain: "Supabase", lesson: "supabase-foundation" },
+  { term: "auth.uid()", def: "The SQL function resolving the current JWT to a user id — the hinge of Supabase's security model.", domain: "Supabase", lesson: "supabase-auth-storage" },
+  { term: "Profiles pattern", def: "A public.profiles bridge table (id → auth.users) that domain tables reference, created by a signup trigger.", domain: "Supabase", lesson: "supabase-auth-storage" },
+  { term: "Row Level Security", def: "Per-table, per-operation rules the database folds into every query — authorization as a property of the data.", domain: "Supabase", lesson: "rls-first-principles" },
+  { term: "USING clause", def: "The policy guard over existing rows: what may be seen or targeted.", domain: "Supabase", lesson: "rls-first-principles" },
+  { term: "WITH CHECK clause", def: "The policy guard over written rows: what may come to exist.", domain: "Supabase", lesson: "rls-first-principles" },
+  { term: "Default deny", def: "Enabled RLS + no matching policy = no rows. Forgotten rules break features, not confidentiality.", domain: "Supabase", lesson: "rls-first-principles" },
+  { term: "force row level security", def: "Makes RLS apply to the table's owner too — the 'rules apply to me' sign.", domain: "Supabase", lesson: "rls-first-principles" },
+  { term: "Authorization matrix", def: "The per-table four-cell test (A-reads-B, A-writes-B, anon-reads, anon-writes) plus owner positive controls.", domain: "Supabase", lesson: "rls-testing-discipline" },
+  { term: "Over-grant", def: "A policy too permissive; silent; found only by adversarial matrix tests.", domain: "Supabase", lesson: "rls-testing-discipline" },
+  { term: "Over-denial", def: "A policy too strict; loud; debugged via the set-role loop, never by disabling RLS.", domain: "Supabase", lesson: "rls-testing-discipline" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -987,6 +1082,9 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "endpoint-slow-list", symptom: "A list endpoint is instant for small users but seconds for power users; response time grows linearly with list length.", layer: "Query count (N+1)", causes: ["A query that depends on a loop variable — one fetch per row (N+1)", "An ORM's lazy relationship loading inside a serialization loop"], diagnose: ["Count the queries for the endpoint with a large user (pg_stat_statements or query logging) — expect ~1+N", "Read the code for a query inside a for/forEach/map over the list"], fix: "Collapse the per-row fetch into one JOIN or an IN-list over the collected ids; assemble the nested shape in memory. In an ORM, use eager loading (include/select_related/with).", prevent: "For every list endpoint ask 'how many queries for 500 rows?'; write the eager-loading version first.", related: "query-tuning" },
   { id: "deep-page-slow", symptom: "The first page of a feed loads fast but later pages (or infinite-scroll near the end) get progressively slower.", layer: "Pagination (OFFSET)", causes: ["OFFSET-based pagination, where cost grows linearly with depth", "No index matching the ORDER BY used for paging"], diagnose: ["Check whether the query uses LIMIT/OFFSET and how large the offset gets", "EXPLAIN ANALYZE the deep page — look for rows read and discarded"], fix: "Switch to keyset pagination: WHERE (sort_col, id) < (last_seen), ORDER BY (sort_col, id) DESC, LIMIT N, backed by an index on (sort_col DESC, id DESC).", prevent: "Design feeds and timelines as cursors from the start; reserve OFFSET for admin grids that genuinely need page-jumping.", related: "query-tuning" },
   { id: "pool-exhausted", symptom: "Requests fail with 'too many connections' / 'pool exhausted', especially under load or after a deploy.", layer: "Connection pooling", causes: ["More concurrent requests than the pool/DB connection limit", "Transactions held open too long (remote calls or waits inside BEGIN/COMMIT), pinning pooled connections"], diagnose: ["Check the pooler's stats (active vs idle connections, waiting clients)", "Search for BEGIN...COMMIT blocks that call remote APIs or await user input"], fix: "Fix long transactions first (move remote calls outside the transaction); then size the pool to the DB limit. Don't just raise max_connections — it hides cause (2).", prevent: "Keep transactions short; treat 'pool exhausted' as a symptom with two causes (too many requests, or connections held too long) and diagnose before resizing.", related: "query-tuning" },
+  { id: "rls-empty-everywhere", symptom: "Logged-in users see empty lists everywhere; no errors, data intact when checked as postgres.", layer: "RLS over-denial", causes: ["A policy expression with a type mismatch (e.g. bigint = uuid::text) that evaluates false for everyone", "A policy edited in one environment but not deployed as a migration", "force row level security added for a role that connects as the table owner, with no owner policy"], diagnose: ["set role authenticated; select * from <table>; in the SQL editor — reproduce the client's view", "Diff recent policy migrations; evaluate each policy expression by hand against a known row"], fix: "Repair the policy expression (matching types), deploy it as a migration, and run the four-cell matrix to confirm both the denial and the positive controls.", prevent: "Policies live in migrations and the matrix runs in CI — a broken expression becomes a red build, not a silent empty app.", related: "rls-testing-discipline" },
+  { id: "rls-can-write-others", symptom: "A user can modify or reassign another user's rows (ownership changes, status escalation) despite policies existing.", layer: "RLS over-grant (write path)", causes: ["An UPDATE policy with USING but no WITH CHECK, allowing the authorization column to be rewritten", "An INSERT policy that doesn't check the row being created belongs to the caller"], diagnose: ["As user A, PATCH your own row setting user_id to user B — if it succeeds, the write path is open", "Read each write policy for both USING and WITH CHECK clauses"], fix: "Add with check (user_id = auth.uid()) to update/insert policies; recreate via migration; add the A-writes-B matrix cell to CI.", prevent: "Review rule: any write policy that can alter the authorization-relevant column needs both clauses; the matrix tests writes, not just reads.", related: "rls-first-principles" },
+  { id: "service-key-in-bundle", symptom: "The service_role key appears in deployed client JavaScript (found via bundle search or a leaked env).", layer: "Credential exposure", causes: ["A NEXT_PUBLIC_ (or equivalent) env var holding the service key", "A 'quick fix' that switched a failing client call to the service key to bypass RLS"], diagnose: ["Grep the production bundle for the key prefix (e.g. the service_role JWT header)", "Find every createClient call and trace which key each uses"], fix: "ROTATE the service key first (it's already public). Rebuild the client with the publishable key and fix the RLS policy that caused the original denial.", prevent: "The service key exists only in server-only env vars; CI greps bundles for key prefixes; an RLS denial is a policy ticket, never a privilege escalation.", related: "supabase-foundation" },
 ];
 
 /* ————— batch queue ————— */
@@ -1014,5 +1112,7 @@ export const BATCHES: Batch[] = [
   { id: "B-18b", title: "Web Architecture · Caching & Security + Gauntlet", scope: "V4·M3", status: "shipped", summary: "Caching as a trust-boundary problem (four cache sites, Cache-Control vocabulary, ETag/304 handshake, the deploy-stale debugging lab, public-vs-private golden rule) and security fundamentals (the three boundary rules, server-side validation, output encoding + the stored-XSS debugging lab, CORS/CSP as contracts, secret hygiene, the five-minute review) — 12 quiz questions, 2 debugging labs, 2 outdated-pattern pairs. Closes Volume IV with the 15-question Web Architecture Gauntlet." },
   { id: "B-19", title: "PostgreSQL · Modeling, SQL & Performance", scope: "V5·M1–M3", status: "shipped", summary: "Relational thinking + the ERD-first habit, keys & constraints as enforced laws (orphan-rows lab), normalization with the intentionally-bad-schema decomposition walkthrough; SELECT's execution order + the precedence-trap lab + parameterization, JOINs/grain with the double-counted-revenue lab, CTEs & transactions with the partial-write lab; indexes + the 'slower after I added an index' lab, EXPLAIN ANALYZE + the stale-statistics lab. 8 lessons · 44 quiz questions · 7 debugging labs · 2 outdated-pattern pairs · the database phase opens." },
   { id: "B-19b", title: "PostgreSQL · Query Tuning + Gauntlet", scope: "V5·M3 finale", status: "shipped", summary: "query-tuning: the N+1 trap (ORM-era) with the 'endpoint fine until the list grows' debugging lab, OFFSET's cliff → keyset pagination, connection pooling (transaction mode), and the review loop — plus the PostgreSQL Gauntlet (gauntlet-m5, 15 Q / 4 fronts, spans M1–M3) closing Volume V. 1 lesson · 6 quiz questions · 1 debugging lab · 1 outdated-pattern pair · Database Phase Review." },
-  { id: "B-20", title: "Supabase · Foundations & RLS", scope: "V6·M1–M2", status: "next", summary: "Postgres-as-a-service: the Supabase client, Auth (email + OAuth), Storage, Realtime, and — the heart of it — Row Level Security as the authorization boundary, with the user-A-vs-user-B testing discipline carried over from Volume IV. Local-first workflows and generated types." },
+  { id: "B-20", title: "Supabase · Foundations & RLS", scope: "V6·M1–M2", status: "shipped", summary: "The platform as Postgres wearing an API coat: three roles + two keys with the service-key-in-bundle debugging lab, the typed-client translation, migrations + generated types; Auth/Storage/Realtime as rooms in one building with the profiles pattern and the trigger-drift debugging lab; RLS as the house rules — USING vs WITH CHECK, default deny, policy composition, the missing-WITH-CHECK exploit lab, admin-via-table; and the four-cell authorization matrix with the over-denial type-mismatch lab. 4 lessons · 23 quiz questions · 3 debugging labs · Supabase Gauntlet (gauntlet-m6, 15 Q / 4 fronts) closes Volume VI." },
+  { id: "B-21", title: "Next.js · App Router Foundations", scope: "V7·M1", status: "next", summary: "The App Router mental model: file-system routing, layouts, Server vs Client Components as an execution-boundary decision, and where Supabase's two clients and two keys live (server-only secrets never cross into bundles). Data fetching and caching/revalidation per the current stable version, with the 'hydratation mismatch' and 'secret in the client bundle' debugging labs." },
+  { id: "B-22", title: "Next.js · Mutations, Metadata & Architecture", scope: "V7·M2", status: "queued", summary: "Server Actions and Route Handlers as the secure mutation surface, validation at the boundary, metadata/SEO, error/loading/not-found architecture, and the Next.js Gauntlet closing Volume VII." },
 ];
