@@ -42,6 +42,17 @@ vercel --prod   # promote to production
 
 ---
 
+## Progressive Web App
+
+The course is an installable, offline-capable PWA:
+
+- **`public/manifest.webmanifest`** — name, theme, SVG icons (any + maskable), and launch shortcuts into roadmap / search / flashcards / completion.
+- **`public/sw.js`** — hand-rolled service worker: precaches the app shell on install, serves navigations network-first with an offline fallback, cache-first for hashed `/assets/*` and Google Fonts, stale-while-revalidate for the rest. Versioned caches are swept on activate.
+- **Polite updates** — a new worker waits instead of swapping mid-lesson; the app surfaces a "new edition deployed → reload" toast, and an offline chip appears when connectivity drops.
+- **Install affordance** — when the browser fires `beforeinstallprompt`, an Install chip appears in the top bar.
+
+No workbox, no build plugin — the SW ships as a plain file, so its behavior is auditable in one read. HTTPS (included with Vercel) is the only runtime requirement.
+
 ## Local development
 
 ```bash

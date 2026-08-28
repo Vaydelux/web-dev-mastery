@@ -1,0 +1,40 @@
+{
+  "id": "/",
+  "name": "Zero→Mastery — Full-Stack Web Development",
+  "short_name": "Zero→Mastery",
+  "description": "80 lessons · 11 volumes · 11 gauntlets. An interactive full-stack curriculum from how a URL becomes pixels to production incidents — model it, break it, debug it, ship it.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0c110e",
+  "theme_color": "#0c110e",
+  "categories": ["education", "developer-tools"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Course roadmap", "url": "/#/", "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }] },
+    { "name": "Search the course", "url": "/#/search", "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }] },
+    { "name": "Flashcards", "url": "/#/flashcards", "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }] },
+    { "name": "Completion ledger", "url": "/#/completion", "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }] }
+  ]
+}

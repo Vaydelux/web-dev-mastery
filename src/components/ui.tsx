@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Accessibility, ArrowRight, BookOpen, Bug, Check, ChevronDown, ChevronRight, Clock, Copy,
-  Database, Flag, Gauge, Info, Layers, Lightbulb, Lock, Map as MapIcon, Menu, Moon, Play,
-  RefreshCw, Search, Server, Shield, Sparkles, Sun, Sword, Terminal, X, Zap, Grid3x3, FileText, ListChecks,
+  Database, Download, Flag, Gauge, Info, Layers, Lightbulb, Lock, Map as MapIcon, Menu, Moon, Play,
+  RefreshCw, Search, Server, Shield, Sparkles, Sun, Sword, Terminal, WifiOff, X, Zap, Grid3x3, FileText, ListChecks,
 } from "lucide-react";
 import type { LessonStatus, MasteryLevel } from "../lib/core";
 
@@ -12,7 +12,7 @@ export const Icons = {
   search: Search, sun: Sun, moon: Moon, menu: Menu, copy: Copy, chevD: ChevronDown, chevR: ChevronRight,
   cards: Grid3x3, target: Flag, bulb: Lightbulb, db: Database, lock: Lock, refresh: RefreshCw,
   map: MapIcon, zap: Zap, clock: Clock, play: Play, sword: Sword, sparkles: Sparkles, file: FileText, list: ListChecks,
-  flag: Flag,
+  flag: Flag, download: Download, wifiOff: WifiOff,
 };
 
 /* ————— Markdown-lite inline renderer (`code` and **bold**) ————— */
