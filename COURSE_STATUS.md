@@ -132,21 +132,37 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
 - ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11. Volumes III, IV, and V now each have cumulative gauntlets. A combined Volumes III–V cross-volume assessment remains pending (a candidate for a later review pass).
 - `candidate-new-module` — Browser storage landscape before authenticated progress (V2/V3).
-- `misordered` — CORS deserves a dedicated debugging lesson in V4, not only a callout.
+- ~~`misordered` — CORS deserves a dedicated debugging lesson in V4.~~ ✅ covered by the `cors-blocked-legit` troubleshooting entry + callouts in web-security-fundamentals.
 - `needs-production-context` — Monitoring for render-pipeline metrics (V9).
+- ✅ Production-topics ledger: search/filter/pagination and state management now have full lessons (Volume VIII, B-22). Remaining ledger items (queues, email, rate limiting, payments, i18n, scaling) land in Volumes IX–X.
 
 ## Technical debt
 - Search index rebuilt once at load (fine at current corpus size; revisit >500 entries).
 - Flashcard scheduling is user-driven (Leitner-lite); consider SM-2 as sets grow.
 
+## Generation log (batches 21–22)
+
+### Batch 21 — Volume VII · Next.js App Router Foundations (M1–M2) — implemented
+- `nextjs-app-router` (filesystem routes, layouts/pages/loading/error, Server vs Client as execution boundary, streaming, secret-crossed-border lab), `server-client-boundary` (hydration + mismatch fix, two Supabase clients, three server doors, server-only guards, works-in-dev-mismatch lab), `nextjs-data-mutations` (three freshness layers, dirty-set revalidation, client-state staleness, Suspense/error, updated-but-stale lab).
+- 18 quiz questions, 3 debugging labs, 2 outdated-pattern pairs; Next.js Gauntlet `gauntlet-m7` (15 Q / 4 fronts) closes Volume VII.
+- `nextjs-foundations` flashcard set (18 cards), 12 Next.js glossary terms, 3 troubleshooting entries.
+
+### Batch 22 — Volume VIII · Full-Stack Applications (M1–M2) — implemented
+- `auth-crud-anatomy` (five gates, RLS zero-rows refusals, Result-returning actions, optimistic UI + rollback, save-silent-fail lab), `crud-states-resilience` (five-state matrix, double-submit idempotency, freshness guards, soft delete, click-once-two-records lab), `search-filter-url` (URL as query state, allow-list sort, page-reset invariant, results UX, page-3-after-filter lab), `pagination-keyset` (OFFSET cliff vs cursors, tiebreakers, opaque cursors, load-more-dup-gaps lab).
+- 24 quiz questions, 3 debugging labs, 2 outdated-pattern pairs; Full-Stack Gauntlet `gauntlet-m8` (15 Q / 4 fronts) closes Volume VIII.
+- `fullstack-apps` flashcard set (21 cards), 14 Full-Stack glossary terms, 4 troubleshooting entries.
+- **Volumes VII and VIII complete.** Next.js and Full-Stack applications phases certified by `gauntlet-m7` and `gauntlet-m8`.
+
+### Running totals after batch 22
+- 74 lessons implemented · 8 gauntlets · 23 flashcard sets / 310 cards · 180 glossary terms · 56 troubleshooting entries.
+- Search index, queue, sidebar, and all reference surfaces regenerate from the data model.
+
 ## Recommended next batch
-**Batch 20 — Supabase · Foundations & RLS (Volume VI):** open the Supabase phase. Author `v6m1` Supabase
-**Batch 21 — Next.js · App Router Foundations (Volume VII):** open the Next.js phase. Author `v7m1`: the
-App Router mental model (file-system routing, layouts, Server vs Client Components as an execution-boundary
-decision), where Supabase's two clients and two keys live (server-only secrets never cross into bundles), and
-data fetching + caching/revalidation per the current stable version. Include the "hydration mismatch" and
-"secret in the client bundle" debugging labs, and the Outdated-Patterns lesson (Pages Router vs App Router).
-Full scope on the generation queue. Then STOP and request review (bounded generation contract).
+**Batch 23 — Production Engineering (Volume IX):** testing that matters (unit, integration, and the
+RLS/validation tests that earn their keep), background jobs & queues (producers, consumers, retries,
+idempotency, dead-letters), and CI/CD + observability (pipelines, deploys, logs, alerts) — closing with a
+Production Gauntlet. Full scope on the generation queue. Then STOP and request review (bounded generation
+contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?

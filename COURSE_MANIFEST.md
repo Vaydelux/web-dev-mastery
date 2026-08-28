@@ -103,6 +103,25 @@
 | `rls-testing-discipline` | Testing RLS: The Matrix That Makes Policies a Contract | Full-Stack | 55 | rls-first-principles | implemented |
 | `gauntlet-m6` | Checkpoint · Supabase Gauntlet (15 Q, pass ≥70%) | Full-Stack | 25 | all of Volume VI | implemented |
 
+## Volume VII — Next.js (Full-Stack level)
+
+| ID | Title | Level | Min | Prereqs | Status |
+|---|---|---|---|---|---|
+| `nextjs-app-router` | The App Router: Your Filesystem Is the Route Table | Full-Stack | 55 | rls-testing-discipline | implemented |
+| `server-client-boundary` | The Boundary: Hydration, Two Clients, and Secrets That Stay Put | Full-Stack | 55 | nextjs-app-router | implemented |
+| `nextjs-data-mutations` | Data, Caches, and Revalidation: Making Freshness a Decision | Full-Stack | 60 | server-client-boundary | implemented |
+| `gauntlet-m7` | Checkpoint · Next.js Gauntlet (15 Q, pass ≥70%) | Full-Stack | 25 | all of Volume VII | implemented |
+
+## Volume VIII — Full-Stack Applications (Full-Stack level)
+
+| ID | Title | Level | Min | Prereqs | Status |
+|---|---|---|---|---|---|
+| `auth-crud-anatomy` | Authenticated CRUD: The Anatomy of a Feature | Full-Stack | 60 | nextjs-data-mutations | implemented |
+| `crud-states-resilience` | CRUD Under Pressure: States, Concurrency, and Idempotency | Full-Stack | 55 | auth-crud-anatomy | implemented |
+| `search-filter-url` | Search, Filter, and Pagination Are One Problem | Full-Stack | 55 | crud-states-resilience | implemented |
+| `pagination-keyset` | Pagination at Scale: From OFFSET to Cursors | Full-Stack | 50 | search-filter-url | implemented |
+| `gauntlet-m8` | Checkpoint · Full-Stack Gauntlet (15 Q, pass ≥70%) | Full-Stack | 25 | all of Volume VIII | implemented |
+
 ## Volumes VI–XI (module-scoped; lessons authored per batch)
 
 | Volume | Phase | Modules | Status |
@@ -111,9 +130,9 @@
 | IV — Web Architecture | Web Architecture Phase | 3 modules complete (REST, AuthN/AuthZ, Caching/Security) · Web Architecture Gauntlet passed-ready | ✅ complete |
 | V — PostgreSQL | Database Phase | 9 lessons implemented (Modeling, SQL, Performance, Tuning) · PostgreSQL Gauntlet passed-ready | ✅ complete |
 | VI — Supabase | Supabase Phase | 4 lessons implemented (Foundations, Auth/Storage/Realtime, RLS, RLS Testing) · Supabase Gauntlet passed-ready | ✅ complete |
-| VII — Next.js | Next.js Phase | 2 (App Router, Data/Mutations) | next · B-21 |
-| VIII — Full-Stack Applications | Full-Stack Phase | 2 (Auth CRUD, Search/Filter/Pagination) | planned |
-| IX — Production Engineering | Production Engineering Phase | 3 (Testing, Queues, CI/CD & Observability) | planned |
+| VII — Next.js | Next.js Phase | 3 lessons implemented (App Router, Boundary/Secrets, Data/Caching) · Next.js Gauntlet passed-ready | ✅ complete |
+| VIII — Full-Stack Applications | Full-Stack Phase | 4 lessons implemented (Auth CRUD, Resilience, Search/Filter, Keyset Pagination) · Full-Stack Gauntlet passed-ready | ✅ complete |
+| IX — Production Engineering | Production Engineering Phase | 3 (Testing, Queues, CI/CD & Observability) | next · B-23 |
 | X — Architecture | Architecture Phase | 1 (Pragmatic Architecture) | planned |
 | XI — Capstones & Mastery | Capstone & Mastery Phase | 1 (Capstone Build) | planned |
 
@@ -121,9 +140,9 @@
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | 21 sets / 271 cards: …web-architecture (19), caching-security (14), sql-postgres (28), supabase-rls (19) | implemented |
-| Glossary | 154 terms, domain-tagged, lesson-linked (incl. 13 Supabase/RLS) | implemented |
-| Troubleshooting index | 49 symptom-based entries (incl. 3 Supabase/RLS) | implemented |
+| Flashcard sets | 23 sets / 310 cards: …sql-postgres (28), supabase-rls (19), nextjs-foundations (18), fullstack-apps (21) | implemented |
+| Glossary | 180 terms, domain-tagged, lesson-linked (incl. 12 Next.js, 14 Full-Stack) | implemented |
+| Troubleshooting index | 56 symptom-based entries (incl. 3 Next.js, 4 Full-Stack) | implemented |
 | A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |
