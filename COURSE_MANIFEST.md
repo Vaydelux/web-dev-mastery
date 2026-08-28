@@ -78,13 +78,28 @@
 | `web-security-fundamentals` | Security Fundamentals: The Trust-Boundary Mindset | Full-Stack | 55 | caching-fundamentals | implemented |
 | `gauntlet-m4` | Checkpoint · Web Architecture Gauntlet (15 Q, pass ≥70%) | Full-Stack | 25 | all of Volume IV | implemented |
 
-## Volumes V–XI (module-scoped; lessons authored per batch)
+## Volume V — PostgreSQL (Full-Stack level)
+
+| ID | Title | Level | Min | Prereqs | Status |
+|---|---|---|---|---|---|
+| `relational-thinking` | The Relational Model: Why Your Data Deserves a Schema | Full-Stack | 45 | web-security-fundamentals | implemented |
+| `tables-keys-constraints` | Keys and Constraints: The Laws Your Database Won't Forget | Full-Stack | 55 | relational-thinking | implemented |
+| `normalization` | Normalization: Every Fact Once — and When to Break the Rule | Full-Stack | 50 | tables-keys-constraints | implemented |
+| `sql-select-discipline` | SELECT Discipline: Queries Run in an Order You Didn't Write | Full-Stack | 50 | normalization | implemented |
+| `sql-joins-aggregates` | JOINs and Aggregates: Where the Relational Payoff Lives | Full-Stack | 55 | sql-select-discipline | implemented |
+| `sql-ctes-transactions` | CTEs and Transactions: Readable Recipes, Atomic Facts | Full-Stack | 50 | sql-joins-aggregates | implemented |
+| `indexes` | Indexes: The Table of Contents Your Database Reads First | Full-Stack | 55 | sql-ctes-transactions | implemented |
+| `explain-analyze` | EXPLAIN ANALYZE: The Difference Between Guessing and Knowing | Full-Stack | 50 | indexes | implemented |
+| `query-tuning` | Query Tuning in the Wild: N+1, Pagination, and Pools | Full-Stack | 50 | explain-analyze | planned (B-19b) |
+| `gauntlet-m5` | Checkpoint · PostgreSQL Gauntlet (ships with B-19b) | Full-Stack | 25 | all of Volume V | planned |
+
+## Volumes VI–XI (module-scoped; lessons authored per batch)
 
 | Volume | Phase | Modules | Status |
 |---|---|---|---|
 | III — React | React Phase | 6 modules complete · React Gauntlet passed-ready | ✅ complete |
 | IV — Web Architecture | Web Architecture Phase | 3 modules complete (REST, AuthN/AuthZ, Caching/Security) · Web Architecture Gauntlet passed-ready | ✅ complete |
-| V — PostgreSQL | Database Phase | 3 (Modeling, SQL, Performance) | next · B-19 |
+| V — PostgreSQL | Database Phase | 8 lessons implemented (Modeling, SQL, Performance); query-tuning + Gauntlet in B-19b | in progress |
 | VI — Supabase | Supabase Phase | 2 (Foundations, RLS) | planned |
 | VII — Next.js | Next.js Phase | 2 (App Router, Data/Mutations) | planned |
 | VIII — Full-Stack Applications | Full-Stack Phase | 2 (Auth CRUD, Search/Filter/Pagination) | planned |
@@ -96,9 +111,9 @@
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | 19 sets / 224 cards: …react-performance (14), web-architecture (19), caching-security (14) | implemented |
-| Glossary | 120 terms, domain-tagged, lesson-linked | implemented |
-| Troubleshooting index | 40 symptom-based entries | implemented |
+| Flashcard sets | 20 sets / 245 cards: …react-performance (14), web-architecture (19), caching-security (14), sql-postgres (21) | implemented |
+| Glossary | 135 terms, domain-tagged, lesson-linked (incl. 15 SQL/Performance) | implemented |
+| Troubleshooting index | 43 symptom-based entries (incl. 3 PostgreSQL) | implemented |
 | A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |

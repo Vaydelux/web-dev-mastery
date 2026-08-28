@@ -107,6 +107,13 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Running totals: 19 flashcard sets / 224 cards, 120 glossary terms, 40 troubleshooting entries, 54 lessons implemented.
 - **Volume IV complete: all 3 modules.** Full-Stack level now has its first volume certified by `gauntlet-m4`.
 
+### Batch 19 — Volume V · PostgreSQL: Modeling, SQL & Performance (M1–M3) — implemented
+- `relational-thinking`, `tables-keys-constraints`, `normalization` (M1); `sql-select-discipline`, `sql-joins-aggregates`, `sql-ctes-transactions` (M2); `indexes`, `explain-analyze` (M3 core).
+- 44 quiz questions, 7 debugging labs (orphan rows, customer-moved, precedence trap, double-counted revenue, partial write, slower-after-index, stale stats), 2 outdated-pattern pairs.
+- `sql-postgres` flashcard set (21 cards), 15 SQL glossary terms, 3 PostgreSQL troubleshooting entries.
+- Running totals: 20 flashcard sets / 245 cards, 135 glossary terms, 43 troubleshooting entries, 62 lessons implemented.
+- The database phase opens; Volume V core complete. `query-tuning` + the PostgreSQL Gauntlet (`gauntlet-m5`) ship in B-19b.
+
 ## Known gaps (classified)
 - ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
 - ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11 (Builder Gauntlet `gauntlet-m2` spans V2 M1–M3). Volume III (React Gauntlet) and Volume IV (Web Architecture Gauntlet) now each have cumulative checkpoints. A combined Volumes III–V cross-volume assessment remains pending once PostgreSQL ships.
@@ -119,12 +126,10 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Flashcard scheduling is user-driven (Leitner-lite); consider SM-2 as sets grow.
 
 ## Recommended next batch
-**Batch 19 — PostgreSQL (Volume V):** open the database phase. Author `v5m1` Relational Modeling
-(relational thinking, tables/keys/constraints, normalization + when to denormalize, ERDs), then `v5m2` SQL
-Fluency (SELECT discipline, joins, aggregates/GROUP BY, CTEs/subqueries, transactions), then `v5m3`
-Performance (indexes, EXPLAIN/ANALYZE, query planning). Include an intentionally-poor-schema refactoring lab,
-ERD-before-schema practice, and a PostgreSQL Gauntlet closing Volume V. Full scope on the generation queue.
-Then STOP and request review (bounded generation contract).
+**Batch 19b — PostgreSQL · Query Tuning + Gauntlet:** author `query-tuning` (the N+1 trap in the ORM era,
+keyset pagination at scale, connection pooling, and the gauntlet-prep review loop), then ship the PostgreSQL
+Gauntlet (`gauntlet-m5`, spans V5 M1–M3) and record the Database Phase Review. Full scope on the generation
+queue. Then STOP and request review (bounded generation contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?

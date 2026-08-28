@@ -21,6 +21,9 @@ import { m16 } from "./lessons16";
 import { m17 } from "./lessons17";
 import { m18 } from "./lessons18";
 import { m19 } from "./lessons19";
+import { m20 } from "./lessons20";
+import { m21 } from "./lessons21";
+import { m22 } from "./lessons22";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -64,9 +67,12 @@ export const COURSE: VolumeDef[] = [
     mod("v4m3", 3, "Caching & Security Fundamentals", "Cache headers, XSS, CSRF, and the trust-boundary mindset.", "implemented", m19),
   ]),
   v(5, "V", "PostgreSQL", "Database Phase", "Relational modeling, SQL, transactions, indexes, and EXPLAIN.", [
-    mod("v5m1", 1, "Relational Modeling", "Tables, keys, normalization, and ERDs.", "planned", []),
-    mod("v5m2", 2, "SQL Fluency", "Joins, aggregates, CTEs, and window functions.", "planned", []),
-    mod("v5m3", 3, "Performance", "Indexes, EXPLAIN, and query planning.", "planned", []),
+    mod("v5m1", 1, "Relational Modeling", "Tables, keys, normalization, and ERDs.", "implemented", m20),
+    mod("v5m2", 2, "SQL Fluency", "Selects, joins, aggregates, CTEs, and transactions.", "implemented", m21),
+    mod("v5m3", 3, "Performance", "Indexes, EXPLAIN, and query planning.", "implemented", [
+      ...m22,
+      p("query-tuning", "Query Tuning in the Wild: N+1, Pagination, and Pools", 5, 3, 3, 50, "The ORM-era traps: N+1 reads, keyset pagination at scale, connection pooling — and the Postgres Gauntlet that closes Volume V.", ["explain-analyze"], ["performance"]),
+    ]),
   ]),
   v(6, "VI", "Supabase", "Supabase Phase", "Auth, RLS, Storage, Realtime, and local-first workflows.", [
     mod("v6m1", 1, "Supabase Foundations", "The platform, clients, and publishable vs privileged keys.", "planned", []),
@@ -699,6 +705,32 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "The five-minute review", back: "Input validated? Output encoded? AuthZ on every route? Secrets off-limits to client/logs/commits? New dependency vetted? Ask on every diff.", lesson: "web-security-fundamentals" },
     ],
   },
+  {
+    id: "sql-postgres", title: "SQL & PostgreSQL", blurb: "Volume V — the relational contract, the query order, the grain, and the plan.",
+    cards: [
+      { front: "A constraint is…", back: "A law the database enforces for every writer, forever. Code validates for UX; the schema makes the invariant impossible to break.", lesson: "tables-keys-constraints" },
+      { front: "FK vs UNIQUE vs CHECK", back: "FK = must point at an existing row. UNIQUE = no duplicate values. CHECK = any boolean domain rule, including cross-column.", lesson: "tables-keys-constraints" },
+      { front: "ON DELETE RESTRICT vs CASCADE", back: "RESTRICT refuses to delete a parent with children (you decide their fate). CASCADE silently deletes children along with the parent. Both deliberate; neither default-by-accident.", lesson: "tables-keys-constraints" },
+      { front: "The three anomalies", back: "Update (change one copy, forget others), insertion (fact can't exist without a carrier), deletion (carrier dies, fact dies). Normalization rules all three out.", lesson: "normalization" },
+      { front: "Snapshot vs copy", back: "A snapshot is its own immutable fact (price at sale). A copy is a stale-fact-in-waiting. Copies that must ever change shouldn't be copies.", lesson: "normalization" },
+      { front: "SQL's logical order", back: "FROM → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → LIMIT. Aliases are born at SELECT — that's why WHERE can't see them.", lesson: "sql-select-discipline" },
+      { front: "The precedence trap", back: "AND binds tighter than OR: WHERE a AND b OR c means (a AND b) OR c. Naked ORs return more rows than intended — always parenthesize.", lesson: "sql-select-discipline" },
+      { front: "OFFSET's cliff", back: "OFFSET N computes N+limit rows and discards N — cost grows with page depth. Keyset pagination resumes from a value: constant cost, no jumps.", lesson: "sql-select-discipline" },
+      { front: "Parameterized queries", back: "SQL text and values travel separately, so values can never become syntax. The structural defense against injection — never concatenate input into SQL.", lesson: "sql-select-discipline" },
+      { front: "INNER vs LEFT JOIN", back: "INNER = matching pairs only. LEFT = all left rows, NULLs where no match — 'include even without'. Conditions on the optional side go in ON, not WHERE.", lesson: "sql-joins-aggregates" },
+      { front: "Fan-out", back: "A 1:N join produces one row per pair — the 1-side multiplies. Aggregates over the multiplied set inherit the lie. Pre-aggregate, then join.", lesson: "sql-joins-aggregates" },
+      { front: "The grain question", back: "'What is ONE ROW of my answer?' — asked before every GROUP BY. Wrong grain = confidently precise wrong numbers.", lesson: "sql-joins-aggregates" },
+      { front: "WHERE vs HAVING", back: "WHERE filters rows before grouping; HAVING filters groups after aggregation. Each at its own grain.", lesson: "sql-joins-aggregates" },
+      { front: "ACID, one breath", back: "Atomicity: all-or-nothing. Consistency: valid state to valid state. Isolation: no peeking at drafts. Durability: committed survives the crash.", lesson: "sql-ctes-transactions" },
+      { front: "Short transactions", back: "Think and fetch OUTSIDE; BEGIN → writes → COMMIT inside. Open transactions hold locks and pin old versions — long ones make everyone queue.", lesson: "sql-ctes-transactions" },
+      { front: "Leftmost-prefix rule", back: "An index on (a, b) serves queries anchored on a — with or without b — but not b alone. The book is sorted by a first.", lesson: "indexes" },
+      { front: "When an index can't help", back: "The query's lookup expression must match the index's sorted expression. Functions on columns (lower(email)), casts, or mismatched collation break the match silently.", lesson: "indexes" },
+      { front: "Index rent", back: "Every index taxes every write and competes for cache. Index the real access patterns, prove usage via pg_stat_user_indexes, drop the unused.", lesson: "indexes" },
+      { front: "Estimated vs actual", back: "The EXPLAIN gap that names stale statistics. When they diverge orders of magnitude, ANALYZE the table before touching structure — the cheapest correct move.", lesson: "explain-analyze" },
+      { front: "Three scans", back: "Seq (read all — right for small/broad), Index (jump to matches — needle finds), Bitmap (collect locations, fetch in a pass — the middle). Each right in its range.", lesson: "explain-analyze" },
+      { front: "Read plans bottom-up", back: "Leaves produce rows; upper nodes consume them. The cause — a scan returning too much, a join multiplying — lives at the bottom; cost pools upward.", lesson: "explain-analyze" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -822,6 +854,20 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Trust boundary", def: "Any line where untrusted data crosses into a trusted system — the place validation, encoding, and secret rules apply.", domain: "Security", lesson: "web-security-fundamentals" },
   { term: "Output encoding", def: "Contextually neutralizing text at render time (e.g. < to &lt;) so it displays instead of executing.", domain: "Security", lesson: "web-security-fundamentals" },
   { term: "CSP", def: "Content-Security-Policy: a site's declaration of which resources it may load; defense in depth against XSS.", domain: "Security", lesson: "web-security-fundamentals" },
+  { term: "Junction table", def: "A two-foreign-key table modeling a many-to-many relationship as pairs of facts.", domain: "SQL", lesson: "relational-thinking" },
+  { term: "Primary key", def: "The column(s) identifying a row exactly; the target foreign keys point at.", domain: "SQL", lesson: "tables-keys-constraints" },
+  { term: "Referential integrity", def: "The guarantee, enforced by foreign keys, that relationships always point at real rows.", domain: "SQL", lesson: "tables-keys-constraints" },
+  { term: "Normalization", def: "Storing each fact exactly once so updates, inserts, and deletes can't disagree.", domain: "SQL", lesson: "normalization" },
+  { term: "Execution order", def: "SQL runs FROM→WHERE→GROUP→HAVING→SELECT→ORDER→LIMIT, not the written order.", domain: "SQL", lesson: "sql-select-discipline" },
+  { term: "Keyset pagination", def: "Resuming a result set from the last seen value instead of OFFSET; constant cost per page.", domain: "SQL", lesson: "sql-select-discipline" },
+  { term: "Grain", def: "What one row of an aggregate represents — asked before every GROUP BY.", domain: "SQL", lesson: "sql-joins-aggregates" },
+  { term: "CTE", def: "A named subquery in a WITH clause; a readable step the planner usually inlines.", domain: "SQL", lesson: "sql-ctes-transactions" },
+  { term: "Transaction", def: "An all-or-nothing unit of work: COMMIT applies every statement, ROLLBACK none.", domain: "SQL", lesson: "sql-ctes-transactions" },
+  { term: "ACID", def: "Atomicity, Consistency, Isolation, Durability — the guarantees a committed transaction makes.", domain: "SQL", lesson: "sql-ctes-transactions" },
+  { term: "Composite index", def: "An index over multiple columns, usable by queries on a leftmost prefix of them.", domain: "Performance", lesson: "indexes" },
+  { term: "Covering index", def: "An index carrying all columns a query needs, enabling an index-only scan.", domain: "Performance", lesson: "indexes" },
+  { term: "Sequential scan", def: "Reading every row of a table; correct when most rows match, costly when few do.", domain: "Performance", lesson: "explain-analyze" },
+  { term: "EXPLAIN ANALYZE", def: "Runs the query and reports actual rows/times against the planner's estimates.", domain: "Performance", lesson: "explain-analyze" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -865,6 +911,8 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "stale-after-deploy", symptom: "A deploy succeeds and works in incognito/staging, but real users see the old app or old data for hours.", layer: "Caching / delivery policy", causes: ["HTML entry point served with a long max-age and pointing at unversioned asset URLs", "An API response cached as public/long-lived when it's actually user-specific or mutable", "CDN edge holding a stale copy with a long TTL"], diagnose: ["Reproduce with a warm cache (normal window), not incognito; check the Network tab response headers of the entry point", "curl -I the URL to see Cache-Control and ETag; compare with the CDN console TTL"], fix: "Serve HTML with no-cache and assets with content-hashed, immutable names. For APIs, mark user-specific responses private/no-cache and set TTLs as explicit consistency budgets.", prevent: "Default stance: HTML no-cache, fingerprinted assets immutable. Bake it into the deploy config once.", related: "caching-fundamentals" },
   { id: "cors-blocked-legit", symptom: "The console reports a CORS error for a request that should be allowed; disabling CORS 'fixes' it.", layer: "CORS configuration", causes: ["The API's Access-Control-Allow-Origin doesn't include your frontend's exact origin (scheme+host+port)", "A credentialed request against a wildcard (*) origin, which browsers forbid", "A preflight (OPTIONS) failing because the method/headers aren't allowed"], diagnose: ["Read the exact origin in the error and compare to the Access-Control-Allow-Origin the server returns", "Check whether the request sends credentials (cookies/auth) — wildcard + credentials is invalid"], fix: "Add your frontend origin explicitly to the allow-list (never * with credentials), and allow the methods/headers the preflight asks for. Fix the integration, not the policy.", prevent: "Treat a CORS block as the system working: it names the exact contract to adjust. Keep the allow-list minimal and per-environment.", related: "web-security-fundamentals" },
   { id: "xss-stored-rendered", symptom: "A user's saved text (bio, comment, name) renders as live markup/links/buttons for every viewer instead of plain text.", layer: "Output encoding", causes: ["User text rendered through an unencoded path (innerHTML / dangerouslySetInnerHTML / v-html)", "A sanitizer configured too loosely, keeping scripts or event attributes"], diagnose: ["View the attacker's content raw (endpoint or DevTools) — the markup is stored, placed by a user", "Save any HTML in your own field; confirm it renders live while plain fields render inert"], fix: "Render user text as text by default ({value} / textContent). If rich markup is a real need, route through a strict allow-list sanitizer and strip scripts, event attributes, and javascript: URLs.", prevent: "Code-review rule: any raw-HTML sink on user-influenced data needs justification + sanitizer. Add a CSP so a miss can't load arbitrary scripts.", related: "web-security-fundamentals" },
+  { id: "duplicate-key-violation", symptom: "Inserts fail with 'duplicate key value violates unique constraint' — often intermittently, under load or retries.", layer: "Constraints / application writes", causes: ["A retry re-submitted an insert that already succeeded (no idempotency key)", "A race between two writers creating the same logical row", "A UNIQUE constraint added to data that already contains duplicates"], diagnose: ["Read the constraint name in the error — which column(s) collided?", "Check whether the failing write is a retry or a genuine second creation"], fix: "Make the write idempotent (client-generated idempotency key / ON CONFLICT DO NOTHING or UPDATE) rather than weakening the constraint.", prevent: "Treat UNIQUE violations as the database catching a real double-write; design the upsert path before you need it under load.", related: "tables-keys-constraints" },
+  { id: "fk-violation-on-insert", symptom: "Insert fails with 'violates foreign key constraint' naming a column like user_id or order_id.", layer: "Referential integrity", causes: ["The referenced row doesn't exist yet (ordering bug in the write sequence)", "The id was fabricated client-side or came from stale cache", "A parent row was deleted while children still reference it (missing ON DELETE rule)"], diagnose: ["SELECT the referenced id — does the parent row exist right now?", "Trace where the id value came from (client, cache, previous step)"], fix: "Create the parent first (or in the same transaction), and never trust client-supplied foreign ids without a server-side existence check.", prevent: "Wrap parent+child writes in one transaction; let the FK be the source of truth for existence, not the UI.", related: "tables-keys-constraints" },
 ];
 
 /* ————— batch queue ————— */
@@ -890,5 +938,6 @@ export const BATCHES: Batch[] = [
   { id: "B-17", title: "React · Performance, Profiling & Gauntlet", scope: "V3·M6", status: "shipped", summary: "The cost ladder (render → diff → commit → paint) with the 16.6ms frame budget as judge, memo as a measured last resort and the identity rules that make it win, the 'list that janks while you type' debugging lab, virtualization as the scale answer; then the five-step profiling loop, the three profiler verdicts, the 'modal that stutters on open' long-task debugging lab, and Core Web Vitals — 12 quiz questions, 2 debugging labs. Closes Volume III with the 15-question React Gauntlet." },
   { id: "B-18", title: "Web Architecture · Contracts & Identity", scope: "V4·M1–M2", status: "shipped", summary: "REST as three vocabularies (nouns/verbs/outcomes) with the PUT-vs-PATCH clobbering debugging lab and URL-state pagination; API contracts with the client-memory test, additive rules, versioning strategies, and the 'mobile app broke but the web is fine' breaking-change debugging lab; AuthN-vs-AuthZ with salted-slow hashing, opaque sessions, and the IDOR user-A-vs-user-B debugging lab; cookies/tokens with HttpOnly/Secure/SameSite, the XSS-token-theft and CSRF threat models, and the short-access/rotating-refresh design — 24 quiz questions, 4 debugging labs, 2 outdated-pattern pairs." },
   { id: "B-18b", title: "Web Architecture · Caching & Security + Gauntlet", scope: "V4·M3", status: "shipped", summary: "Caching as a trust-boundary problem (four cache sites, Cache-Control vocabulary, ETag/304 handshake, the deploy-stale debugging lab, public-vs-private golden rule) and security fundamentals (the three boundary rules, server-side validation, output encoding + the stored-XSS debugging lab, CORS/CSP as contracts, secret hygiene, the five-minute review) — 12 quiz questions, 2 debugging labs, 2 outdated-pattern pairs. Closes Volume IV with the 15-question Web Architecture Gauntlet." },
-  { id: "B-19", title: "PostgreSQL", scope: "Volume V", status: "next", summary: "Relational modeling (tables, keys, normalization, ERDs), SQL fluency (joins, aggregates, CTEs), and performance (indexes, EXPLAIN) — relational data done properly. Opens the database phase." },
+  { id: "B-19", title: "PostgreSQL · Modeling, SQL & Performance", scope: "V5·M1–M3", status: "shipped", summary: "Relational thinking + the ERD-first habit, keys & constraints as enforced laws (orphan-rows lab), normalization with the intentionally-bad-schema decomposition walkthrough; SELECT's execution order + the precedence-trap lab + parameterization, JOINs/grain with the double-counted-revenue lab, CTEs & transactions with the partial-write lab; indexes + the 'slower after I added an index' lab, EXPLAIN ANALYZE + the stale-statistics lab. 8 lessons · 44 quiz questions · 7 debugging labs · 2 outdated-pattern pairs · the database phase opens." },
+  { id: "B-19b", title: "PostgreSQL · Query Tuning + Gauntlet", scope: "V5·M3 finale", status: "next", summary: "query-tuning: the N+1 trap (ORM-era), keyset pagination at scale, connection pooling, and the gauntlet-prep review loop; then the PostgreSQL Gauntlet (gauntlet-m5, spans M1–M3) closes Volume V with the Database Phase Review." },
 ];
