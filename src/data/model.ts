@@ -15,6 +15,7 @@ import { m10 } from "./lessons10";
 import { m11 } from "./lessons11";
 import { m12 } from "./lessons12";
 import { m13 } from "./lessons13";
+import { m14 } from "./lessons14";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -48,10 +49,7 @@ export const COURSE: VolumeDef[] = [
     mod("v3m1", 1, "React Mental Models", "UI as a function of state; JSX, props, composition, and the render cycle.", "implemented", m11),
     mod("v3m2", 2, "State & the Rendering Model", "The state-classification doctrine and how React decides what to re-render.", "implemented", m12),
     mod("v3m3", 3, "Effects Discipline & Data", "Effects as synchronization, dependency honesty, and the bridge to server state.", "implemented", m13),
-    mod("v3m4", 4, "Forms & Controlled Inputs", "Forms as controlled state: validation, UX, and accessible error surfacing.", "planned", [
-      p("controlled-forms", "Controlled Inputs and the Single Source of Truth", 3, 4, 1, 50, "Value + onChange ownership, form events, and why uncontrolled has a place.", ["data-fetching"], ["forms"]),
-      p("forms-validation-ux", "Validation UX: Errors That Help, Not Accuse", 3, 4, 2, 50, "Validate on blur/submit, accessible error wiring, and the submit pipeline.", ["controlled-forms"], ["validation"]),
-    ]),
+    mod("v3m4", 4, "Forms & Controlled Inputs", "Forms as controlled state: validation, UX, and accessible error surfacing.", "implemented", m14),
     mod("v3m5", 5, "Component Architecture & Testing", "Patterns that scale: composition, colocation, context boundaries, and meaningful tests.", "planned", [
       p("component-patterns", "Component Patterns: Colocation, Context, and When to Reach for Each", 3, 5, 1, 55, "Prop drilling vs context, compound components, and the colocation principle.", ["forms-validation-ux"], ["architecture"]),
       p("testing-react", "Testing React: Behavior, Not Implementation", 3, 5, 2, 55, "Testing Library queries, user events, and the tests that earn their keep.", ["component-patterns"], ["testing"]),
@@ -486,6 +484,25 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "Fetched = foreign", back: "Responses cross a trust boundary: parse → validate → trust, never render raw server text as markup, keep error details out of user-facing copy.", lesson: "data-fetching" },
     ],
   },
+  {
+    id: "react-forms", title: "Forms & Validation UX", blurb: "Volume III · M4 — ownership of keystrokes and errors that help, not accuse.",
+    cards: [
+      { front: "Controlled component", back: "An input whose value renders from state on EVERY render and whose changes flow up via onChange. The DOM is a mirror, never the owner.", lesson: "controlled-forms" },
+      { front: "Uncontrolled component", back: "The DOM owns the value (defaultValue + ref); you read it at submit. Fine for file pickers or read-once forms — not for anything reactive.", lesson: "controlled-forms" },
+      { front: "The ownership-flip warning", back: "'Changing an uncontrolled input to be controlled' = value was undefined on some render, handing the DOM ownership, then taking it back. Fix: value ?? \"\", checked={!!x}.", lesson: "controlled-forms" },
+      { front: "defaultValue vs value", back: "defaultValue declares the DOM owner (uncontrolled). value declares React the owner. Both at once is a contradiction — pick one owner for life.", lesson: "controlled-forms" },
+      { front: "Form = one ledger", back: "Whole forms live in one object/reducer so cross-field rules have a single home. Ten scattered useStates are ten ledgers that drift.", lesson: "controlled-forms" },
+      { front: "Draft state law", back: "Form values are the user's territory: persistable drafts, but never trusted. The server re-establishes every fact it stores.", lesson: "controlled-forms" },
+      { front: "Errors: compute always, reveal on a clock", back: "validate(values) is pure and runs every render; DISPLAY is gated by touched[field] || submitted. Stored error strings drift — derived ones can't.", lesson: "forms-validation-ux" },
+      { front: "The three validation clocks", back: "While-typing (cheap counters), on-blur (field verdicts once a thought is complete), at-submit (system-wide verdict). Mid-word values aren't verdicts.", lesson: "forms-validation-ux" },
+      { front: "Accessible error wiring", back: "aria-invalid + aria-describedby on the field; role=alert summary at failed submit; focus moves to the first failing field.", lesson: "forms-validation-ux" },
+      { front: "The five-step submit pipeline", back: "preventDefault → setSubmitted (reveal all) → validate fork (focus + announce) → pending (disable + 'Saving…') → Result fork (done or server message).", lesson: "forms-validation-ux" },
+      { front: "The silent exit", back: "A submit handler that returns on invalid without revealing, focusing, or announcing — the 'button does nothing' bug. Every rejection must render.", lesson: "forms-validation-ux" },
+      { front: "Why pending phase matters", back: "It's correctness, not polish: one in-flight submission per form blocks double-clicks and impatient-retry duplicates.", lesson: "forms-validation-ux" },
+      { front: "Client validation is…", back: "UX for honest users. The server runs the same rules as the authority — the client's opinion never substitutes for its verdict.", lesson: "forms-validation-ux" },
+      { front: "noValidate", back: "Switches off the browser's built-in bubbles so your timed, accessible conversation runs instead of all-or-nothing native popups.", lesson: "forms-validation-ux" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -566,6 +583,13 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Race condition", def: "Out-of-order responses where the last arrival, not the last request, writes state.", domain: "React", lesson: "data-fetching" },
   { term: "AbortController", def: "The cancellation handle whose signal a fetch obeys; aborting in cleanup kills superseded flights.", domain: "React", lesson: "data-fetching" },
   { term: "Request union", def: "idle/loading/error/success modeled as a discriminated union — every request moment has a face.", domain: "React", lesson: "data-fetching" },
+  { term: "Controlled component", def: "An input whose value renders from state every render and reports changes up via onChange.", domain: "React", lesson: "controlled-forms" },
+  { term: "Uncontrolled component", def: "An input the DOM owns (defaultValue + ref), read at submit.", domain: "React", lesson: "controlled-forms" },
+  { term: "Form state", def: "The whole form as one data object — the single ledger every field writes to.", domain: "React", lesson: "controlled-forms" },
+  { term: "Draft state", def: "In-progress form values: persistable, abandonable, and never trusted by the server.", domain: "React", lesson: "controlled-forms" },
+  { term: "Validation timing", def: "The three clocks: while-typing (counters), on-blur (field verdicts), at-submit (system verdict).", domain: "React", lesson: "forms-validation-ux" },
+  { term: "Touched map", def: "Per-field flags set on blur, gating when computed errors are revealed.", domain: "React", lesson: "forms-validation-ux" },
+  { term: "Submit pipeline", def: "preventDefault → submitted → validate fork → focus/announce → pending → Result.", domain: "React", lesson: "forms-validation-ux" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -594,6 +618,9 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "effect-every-render", symptom: "An effect fires after every render — the network tab shows constant identical requests, or a console log inside the effect scrolls endlessly.", layer: "React effects / dep identity", causes: ["A dependency created during render (object/array/inline arrow) gets a fresh identity every render", "The dependency array is omitted entirely (runs after every render by design)"], diagnose: ["Log inside the effect and count fires per single user action", "List the effect's deps and ask: which one is born fresh each render?"], fix: "Depend on the primitives the value carries, or memoize it on honest deps; add the array if it was omitted. Never silence the exhaustive-deps lint to stop re-runs.", prevent: "Treat react-hooks/exhaustive-deps as an error; audit every dep's identity story when writing the effect.", related: "effects-discipline" },
   { id: "infinite-effect-loop", symptom: "The component renders continuously with no user input; the CPU spins; sometimes 'Maximum update depth exceeded'.", layer: "React effects / state cycle", causes: ["The effect writes state that is also in its dependency array — every run triggers the next", "An object written to state that a dep compares by identity"], diagnose: ["Profiler: the component renders with no events at all", "Check whether any setState target appears (directly or via a derivative) in the same effect's deps"], fix: "Break the cycle: derive the value in render instead of storing it, or move the write to an event handler. An effect should synchronize outward, not feed itself.", prevent: "Rule: an effect must never write state it (or its deps) reads. Lint plus code review for effects that call set* on their own inputs.", related: "effects-discipline" },
   { id: "stale-search-results", symptom: "Search/list results occasionally show the PREVIOUS query — never on localhost, regularly on slow connections.", layer: "Async / effect lifecycle", causes: ["An older, slower response resolving after a newer one and overwriting state", "No cancellation (abort) or staleness check tied to the current query"], diagnose: ["Throttle DevTools to Slow 3G, type two queries quickly, watch the Network order vs. the rendered result", "Check whether the fetch effect's cleanup aborts the in-flight request"], fix: "AbortController in the effect; cleanup aborts on query change/unmount; ignore AbortError in the catch.", prevent: "Make abort-on-cleanup the fetch template, not an optimization; test by resolving two requests out of order.", related: "data-fetching" },
+  { id: "uncontrolled-flip", symptom: "Console warns 'A component is changing an uncontrolled input to be controlled'; the field clears itself while typing or the cursor jumps to the end.", layer: "React form ownership", causes: ["value={maybeUndefined} — some render passes undefined (or omits checked), flipping the field to DOM ownership", "Mixing defaultValue and value on one input"], fix: "Guarantee the value's type every render: value={x ?? \"\"}, checked={!!x}; initialize forms with real empties.", prevent: "A controlled input's value is ALWAYS a string from the first render; audit every server-fed value prop.", related: "controlled-forms", diagnose: ["Reproduce by rendering with the loading/undefined state, typing, then letting data arrive", "Log the value prop per render — find the undefined"] },
+  { id: "silent-failed-submit", symptom: "Pressing submit 'does nothing' — no error, no spinner, no navigation. The form is actually invalid.", layer: "React form validation UX", causes: ["The submit handler returns early on validation failure without setting submitted, focusing, or announcing", "Errors are gated behind blur-only touched flags and never revealed at submit"], diagnose: ["Submit an intentionally invalid form; watch for any rendered feedback", "Trace every exit path of handleSubmit — which ones render nothing?"], fix: "On invalid: setSubmitted(true) to reveal all, focus the first failing field, and announce a live-region summary.", prevent: "Review rule: every early return in a submit handler must point at what the user sees. Silent exits are the failure mode.", related: "forms-validation-ux" },
+  { id: "error-on-first-keystroke", symptom: "Fields yell 'Invalid email' after the first character; users start ignoring all errors.", layer: "React validation timing", causes: ["Errors are DISPLAYED on every onChange from the first keystroke, not just computed", "No touched/submitted gate between computation and revelation"], diagnose: ["Type one character into a fresh field; note when the error appears", "Check whether display is gated by blur (touched) or submit"], fix: "Compute always (pure validate), reveal per-field only after blur and everything at submit. Live display is for counters, not verdicts.", prevent: "Treat mid-word values as unfinished thoughts; the touched gate is the difference between a tutor and a heckler.", related: "forms-validation-ux" },
 ];
 
 /* ————— batch queue ————— */
@@ -614,8 +641,8 @@ export const BATCHES: Batch[] = [
   { id: "B-12", title: "React Mental Models", scope: "V3·M1", status: "shipped", summary: "Why React exists (Then-vs-Now from the Volume I manual-DOM app, reconciliation traced), JSX's three embedding rules + keys-as-identity with the wrong-checkbox debugging lab, and state/events/render cycle with the undercount + silent-no-op labs — 16 quiz questions, 2 debugging labs. Volume III opens with 6 scoped modules (Mental Models, State & Rendering, Effects & Data, Forms, Architecture & Testing, Performance)." },
   { id: "B-13", title: "React · State & the Rendering Model", scope: "V3·M2", status: "shipped", summary: "The state-classification doctrine (eight kinds of state with the three-question filing test, server-vs-client laws, derive-don't-store debugging lab) and the two-phase render-commit model (three triggers, the memo identity trap debugging lab, measure-first discipline) — 12 quiz questions, 2 debugging labs." },
   { id: "B-14", title: "React · Effects Discipline & Data", scope: "V3·M3", status: "shipped", summary: "Effects as synchronization (the concierge model, deps-as-contract, cleanup as the second handle), the infinite-loop and fresh-identity dep traps with the 'fires every render' debugging lab, the three misuse catalog, and StrictMode as smoke alarm; then server state under its laws — the 4-state request union, the out-of-order race-condition debugging lab with AbortController cleanup, and the cache-manager horizon — 12 quiz questions, 2 debugging labs." },
-  { id: "B-15", title: "React · Forms & Controlled Inputs", scope: "V3·M4", status: "next", summary: "Controlled components, the single-source-of-truth form, and accessible validation UX that helps instead of accuses." },
-  { id: "B-16", title: "React · Component Architecture & Testing", scope: "V3·M5", status: "queued", summary: "Colocation, context boundaries, compound components, and Testing Library behavior tests." },
+  { id: "B-15", title: "React · Forms & Controlled Inputs", scope: "V3·M4", status: "shipped", summary: "The controlled-component loop (value down, intent up, one owner always — including the 'uncontrolled to controlled' ownership-flip debugging lab), whole forms as one object/reducer with cross-field rules and derive-don't-store discipline; then validation as conversation — pure validate(), the touched/submitted revelation gate, aria-invalid + describedby + live-region wiring, and the full five-step submit pipeline with the 'button that does nothing' silent-exit debugging lab — 12 quiz questions, 2 debugging labs." },
+  { id: "B-16", title: "React · Component Architecture & Testing", scope: "V3·M5", status: "next", summary: "Colocation, context boundaries, compound components, and Testing Library behavior tests." },
   { id: "B-17", title: "React · Performance, Profiling & Gauntlet", scope: "V3·M6", status: "queued", summary: "Rendering performance, the profiler loop, virtualization — closing Volume III with a React Gauntlet." },
   { id: "B-18", title: "Web Architecture", scope: "Volume IV", status: "queued", summary: "REST, AuthN/AuthZ, caching & security — the browser/server boundary made rigorous." },
   { id: "B-19", title: "PostgreSQL", scope: "Volume V", status: "queued", summary: "Modeling, SQL, and performance — relational data done properly." },

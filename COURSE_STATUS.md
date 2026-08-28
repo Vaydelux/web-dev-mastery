@@ -70,6 +70,12 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - 12 quiz questions, 2 debugging labs; `react-effects-data` flashcard set (14 cards); 7 glossary terms; 3 troubleshooting entries.
 - Running totals: 14 flashcard sets / 147 cards, 76 glossary terms, 24 troubleshooting entries, 42 lessons implemented.
 
+### Batch 15 — Volume III · Forms & Controlled Inputs (M4) — implemented
+- `controlled-forms` (value-down/intent-up loop for every input type, one-form-one-ledger reducers, ownership-flip debugging lab), `forms-validation-ux` (pure validate(), touched/submitted revelation gate, accessible error wiring, five-step submit pipeline, silent-exit debugging lab).
+- 12 quiz questions, 2 debugging labs; `react-forms` flashcard set (14 cards); 7 glossary terms; 3 troubleshooting entries.
+- Running totals: 15 flashcard sets / 161 cards, 83 glossary terms, 27 troubleshooting entries, 44 lessons implemented.
+- Note: a prior session summary claimed this batch shipped without the lesson file persisting; this pass created `lessons14.ts` for real and verified the `data-fetching → controlled-forms` bridge before wiring.
+
 ## Known gaps (classified)
 - ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
 - ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11 (Builder Gauntlet `gauntlet-m2` spans V2 M1–M3). A combined Volumes III–V Full-Stack assessment remains pending.
@@ -82,10 +88,10 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Flashcard scheduling is user-driven (Leitner-lite); consider SM-2 as sets grow.
 
 ## Recommended next batch
-**Batch 15 — React · Forms & Controlled Inputs (V3·M4):** author `controlled-forms` (value + onChange
-ownership, the single-source-of-truth form, the uncontrolled escape hatch) and `forms-validation-ux`
-(validate on blur/submit, accessible error wiring, the submit pipeline). Full scope on the generation queue.
-Then STOP and request review (bounded generation contract).
+**Batch 16 — React · Component Architecture & Testing (V3·M5):** author `component-patterns` (colocation,
+prop drilling vs context, compound components, custom hooks as logic carriers) and `testing-react`
+(Testing Library behavior tests, queries by role, mocking boundaries, async testing). Full scope on the
+generation queue. Then STOP and request review (bounded generation contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?
