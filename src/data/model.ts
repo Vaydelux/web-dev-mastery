@@ -26,6 +26,7 @@ import { m21 } from "./lessons21";
 import { m22 } from "./lessons22";
 import { m23 } from "./lessons23";
 import { m24 } from "./lessons24";
+import { m25 } from "./lessons25";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -81,8 +82,8 @@ export const COURSE: VolumeDef[] = [
     mod("v6m2", 2, "Row Level Security From First Principles", "Policies as the authorization boundary, and the matrix that tests user-A vs user-B.", "implemented", m24.slice(2)),
   ]),
   v(7, "VII", "Next.js", "Next.js Phase", "App Router: Server/Client Components, data fetching, and secure mutations.", [
-    mod("v7m1", 1, "App Router & Rendering", "Layouts, Server vs Client Components, execution boundaries.", "planned", []),
-    mod("v7m2", 2, "Data & Mutations", "Fetching, caching, revalidation, and Route Handlers.", "planned", []),
+    mod("v7m1", 1, "App Router & Rendering", "Layouts, Server vs Client Components, execution boundaries.", "implemented", m25.slice(0, 2)),
+    mod("v7m2", 2, "Data & Mutations", "Fetching, caching, revalidation, and the three server doors.", "implemented", m25.slice(2)),
   ]),
   v(8, "VIII", "Full-Stack Applications", "Full-Stack Phase", "Authenticated CRUD, search/filter/pagination, files, and multi-tenancy.", [
     mod("v8m1", 1, "Authenticated CRUD", "End-to-end features with RLS and validation.", "planned", []),
@@ -148,6 +149,7 @@ export const BATTLE_REFS: BattleRef[] = [
   { id: "gauntlet-m4", title: "Checkpoint · Web Architecture Gauntlet", volumeId: 4, afterModule: "v4m3", blurb: "A cumulative fight across all of Volume IV — REST grammar, API contracts, authentication & authorization, sessions & tokens, caching, and the trust-boundary mindset — pass at 70% to close the web architecture phase." },
   { id: "gauntlet-m5", title: "Checkpoint · PostgreSQL Gauntlet", volumeId: 5, afterModule: "v5m3", blurb: "A cumulative fight across all of Volume V — relational modeling, keys & constraints, normalization, SQL fluency, transactions, indexes, query plans, and tuning in the wild — pass at 70% to close the database phase." },
   { id: "gauntlet-m6", title: "Checkpoint · Supabase Gauntlet", volumeId: 6, afterModule: "v6m2", blurb: "A cumulative fight across all of Volume VI — the platform and its keys, Auth/Storage/Realtime as rooms in one building, RLS as the house rules, and the testing matrix that makes them a contract — pass at 70% to close the Supabase phase." },
+  { id: "gauntlet-m7", title: "Checkpoint · Next.js Gauntlet", volumeId: 7, afterModule: "v7m2", blurb: "A cumulative fight across all of Volume VII — the App Router map, Server vs Client decisions, the secrets boundary, hydration, and the caching map — pass at 70% to close the Next.js phase." },
 ];
 
 export const BATTLES: BossBattle[] = [
