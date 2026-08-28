@@ -62,7 +62,9 @@
 | `forms-validation-ux` | Validation UX: Errors That Help, Not Accuse | Builder | 55 | controlled-forms | implemented |
 | `component-patterns` | Component Patterns: Colocation, Context, and When to Reach for Each | Builder | 55 | forms-validation-ux | implemented |
 | `testing-react` | Testing React: Behavior, Not Implementation | Builder | 55 | component-patterns | implemented |
-| V3·M6 | Performance & Profiling (2 lessons scoped) | Builder | — | — | planned (next · B-17) |
+| `rendering-performance` | Rendering Performance: Memo, Lists, and the Cost of a Render | Builder | 55 | testing-react | implemented |
+| `profiling-production` | Profiling: From Feeling Slow to Proving Why | Builder | 50 | rendering-performance | implemented |
+| `gauntlet-m3` | Checkpoint · React Gauntlet (15 Q, pass ≥70%) | Builder | 25 | all of Volume III | implemented |
 
 ## Volumes IV–XI (module-scoped; lessons authored per batch)
 
@@ -82,9 +84,9 @@
 
 | Asset | Contents | Status |
 |---|---|---|
-| Flashcard sets | 16 sets / 177 cards: …react-effects-data (14), react-forms (14), react-architecture (16) | implemented |
-| Glossary | 90 terms, domain-tagged, lesson-linked | implemented |
-| Troubleshooting index | 30 symptom-based entries | implemented |
+| Flashcard sets | 17 sets / 191 cards: …react-forms (14), react-architecture (16), react-performance (14) | implemented |
+| Glossary | 97 terms, domain-tagged, lesson-linked | implemented |
+| Troubleshooting index | 33 symptom-based entries | implemented |
 | A11y Checklist | interactive reference at /ref/a11y — 6 groups, persisted progress | implemented |
 | Design tokens + reference page | semantic light/dark system | implemented |
 | Version matrix | see COURSE_VERSION_MATRIX.md | implemented |

@@ -81,6 +81,19 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - 12 quiz questions, 2 debugging labs; `react-architecture` flashcard set (16 cards); 7 glossary terms; 3 troubleshooting entries.
 - Running totals: 16 flashcard sets / 177 cards, 90 glossary terms, 30 troubleshooting entries, 46 lessons implemented.
 
+### Batch 17 — Volume III · Performance, Profiling & Gauntlet (M6) — implemented
+- `rendering-performance` (cost ladder + frame budget, memo discipline, list identity rules, 'list that janks while you type' lab, virtualization), `profiling-production` (five-step loop, three profiler verdicts, 'modal that stutters on open' long-task lab, Core Web Vitals).
+- React Gauntlet `gauntlet-m3` (15 Q / 4 fronts / pass ≥70%) closes Volume III.
+- `react-performance` flashcard set (14 cards); 7 glossary terms; 3 troubleshooting entries.
+- Running totals: 17 flashcard sets / 191 cards, 97 glossary terms, 33 troubleshooting entries, 48 lessons implemented.
+- **Volume III complete: all 6 modules, 12 lessons.** React Phase Review below.
+
+### React Phase Review (after Volume III)
+- The mental-model → doctrine → discipline arc held: every later lesson could cite an earlier law (immutability, identity, derive-don't-store) instead of re-teaching it.
+- Visible-only-after-building: performance work kept surfacing identity as the root cause across M2/M5/M6 — reinforced the "identity first" teaching order.
+- Pending demonstration: none for React itself; the Full-Stack assessment combining Volumes III–V remains queued.
+- No misordering found; no content needed to move. Proceed to Volume IV — Web Architecture.
+
 ## Known gaps (classified)
 - ~~`needs-practice` — Git muscle-memory exercises (V1·M4).~~ ✅ closed by Batch 05.
 - ~~`needs-assessment` — Builder Gauntlet pending.~~ ✅ closed by Batch 11 (Builder Gauntlet `gauntlet-m2` spans V2 M1–M3). A combined Volumes III–V Full-Stack assessment remains pending.
@@ -93,10 +106,11 @@ Never rely on model memory alone to continue this project. Read MANIFEST + STATU
 - Flashcard scheduling is user-driven (Leitner-lite); consider SM-2 as sets grow.
 
 ## Recommended next batch
-**Batch 17 — React · Performance, Profiling & Gauntlet (V3·M6):** author `rendering-performance` (what a
-render costs, memo measured not guessed, lists at scale) and `profiling-production` (the DevTools profiler
-loop, virtualization, the measurement habit); ship the React Gauntlet spanning all six Volume III modules.
-Full scope on the generation queue. Then STOP and request review (bounded generation contract).
+**Batch 18 — Web Architecture (Volume IV):** author `rest-api-design` (resources, verbs, contracts that age
+well), `http-cache-negotiation` (cache headers, ETags, conditional requests), then Module 2 `authn-vs-authz`
+(cookies/sessions/tokens, the 401-vs-403 split) and Module 3 security fundamentals (XSS, CSRF, trust
+boundaries); close Volume IV with a Web Architecture gauntlet. Full scope on the generation queue. Then STOP
+and request review (bounded generation contract).
 
 ## Unresolved questions
 - Should HTML/CSS modules (V1·M5–M6) precede JS completion for learners who need visual wins earlier?

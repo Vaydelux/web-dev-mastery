@@ -17,6 +17,7 @@ import { m12 } from "./lessons12";
 import { m13 } from "./lessons13";
 import { m14 } from "./lessons14";
 import { m15 } from "./lessons15";
+import { m16 } from "./lessons16";
 
 /* ————— helpers ————— */
 const mod = (id: string, num: number, title: string, blurb: string, status: LessonStatus, lessons: Lesson[]): ModuleDef => ({
@@ -52,10 +53,7 @@ export const COURSE: VolumeDef[] = [
     mod("v3m3", 3, "Effects Discipline & Data", "Effects as synchronization, dependency honesty, and the bridge to server state.", "implemented", m13),
     mod("v3m4", 4, "Forms & Controlled Inputs", "Forms as controlled state: validation, UX, and accessible error surfacing.", "implemented", m14),
     mod("v3m5", 5, "Component Architecture & Testing", "Patterns that scale: composition, colocation, context boundaries, and meaningful tests.", "implemented", m15),
-    mod("v3m6", 6, "Performance & Profiling", "Measure first: renders, memo, lists, and the profiling loop that closes Volume III.", "planned", [
-      p("rendering-performance", "Rendering Performance: Memo, Lists, and the Cost of a Render", 3, 6, 1, 55, "When re-renders are fine, when they aren't, and memo as a last resort.", ["testing-react"], ["performance"]),
-      p("profiling-production", "Profiling: From Feeling Slow to Proving Why", 3, 6, 2, 50, "The DevTools profiler loop, virtualization, and the measurement habit.", ["rendering-performance"], ["profiling"]),
-    ]),
+    mod("v3m6", 6, "Performance & Profiling", "Measure first: renders, memo, lists, and the profiling loop that closes Volume III.", "implemented", m16),
   ]),
   v(4, "IV", "Web Architecture", "Web Architecture Phase", "HTTP in production depth: REST, cookies/sessions, authN vs authZ, caching, and security fundamentals.", [
     mod("v4m1", 1, "REST & API Design", "Resources, verbs, and contracts that age well.", "planned", []),
@@ -135,6 +133,7 @@ export const courseStats = () => {
 export const BATTLE_REFS: BattleRef[] = [
   { id: "gauntlet-m1", title: "Checkpoint · Foundation Gauntlet", volumeId: 1, afterModule: "v1m7", blurb: "A cumulative fight across all of Volume I — the web, JavaScript, your workstation, Git, semantics, CSS, and TypeScript — pass at 70%." },
   { id: "gauntlet-m2", title: "Checkpoint · Builder Gauntlet", volumeId: 2, afterModule: "v2m3", blurb: "A cumulative fight across all of Volume II — modules, boundaries, cycles, error ownership, Results, async failures, and the tooling that enforces it — pass at 70%." },
+  { id: "gauntlet-m3", title: "Checkpoint · React Gauntlet", volumeId: 3, afterModule: "v3m6", blurb: "A cumulative fight across all of Volume III — the mental model, state & rendering, effects & data, forms, architecture & testing, and performance — pass at 70% to close the React phase." },
 ];
 
 export const BATTLES: BossBattle[] = [
@@ -254,6 +253,62 @@ export const BATTLES: BossBattle[] = [
           { id: "m2b11", type: "single", prompt: "A bug reproduces only after pnpm build, and the trace is minified. First move?", options: ["Add console.logs to source", "Serve the real dist/ output and use source maps to translate the trace", "Reinstall node_modules", "Disable minification forever"], answer: [1], explain: "Dev and prod are different programs. Reproduce with the same pipeline, then read the minified trace via source maps." },
           { id: "m2b12", type: "single", prompt: "A test passes locally but fails in CI. Best interpretation?", options: ["CI is flaky, retry until green", "The code depends on something in my local environment that isn't shipped", "The test should be skipped", "Disable CI for this branch"], answer: [1], explain: "CI runs on a clean machine, surfacing hidden local dependencies (undeclared packages, uncommitted files, timezone). That's CI working, not broken." },
           { id: "m2b13", type: "boolean", prompt: "Skipping a persistently-failing test to unblock a merge keeps the CI gate trustworthy.", options: ["True", "False"], answer: [1], explain: "False — every skipped check is an agreed hole in the wall and trains the team that red can be ignored. Fix the failure or change the rule deliberately in review." },
+        ],
+      },
+    ],
+  },
+  {
+    id: "gauntlet-m3",
+    title: "React Gauntlet",
+    subtitle: "Volume III cumulative · 15 questions · pass ≥ 70%",
+    passPct: 70,
+    intro: [
+      "Six modules, one fight. The React Gauntlet mixes the mental model, state doctrine, effect discipline, forms, architecture, testing, and performance into the kinds of calls you'll make daily — not recall questions, but decisions.",
+      "Every question links back to the lesson that taught it. Miss one, re-read that lesson, and come back. The pass bar is 70% — the same bar your users apply, except they don't offer a retake.",
+    ],
+    rules: [
+      "15 questions across four fronts; each worth equal weight.",
+      "Predict before you answer — the explanations teach more than the scores.",
+      "70% or higher closes Volume III and certifies the React phase.",
+    ],
+    sections: [
+      {
+        title: "The Mental Model",
+        desc: "Describe, don't update — props, state, and reconciliation.",
+        questions: [
+          { id: "g3q1", type: "single", prompt: "A teammate proposes 'syncing the counter badge by updating the DOM node directly after each mutation, like in Volume I.' The structural objection is…", options: ["DOM APIs are slow", "it keeps two sources of truth — the data and its mirrors — and every mutation must remember every mirror", "React forbids touching the DOM", "it breaks hydration"], answer: [1], explain: "Manual mirrors drift by construction. React's model keeps ONE source of truth and derives the whole picture, so 'forgot to update the badge' is no longer a possible mistake.", tags: ["react-why"] },
+          { id: "g3q2", type: "single", prompt: "During a re-render, React finds a <p> where the previous render had an <h2>. It will…", options: ["update the element in place", "discard the old subtree and build fresh — type identity is the anchor of reconciliation", "throw a hydration error", "merge both into a <p>"], answer: [1], explain: "Same type → patch; different type → the old subtree is thrown away entirely and rebuilt, including any state it held. Type identity is what reconciliation hangs onto.", tags: ["react-why"] },
+          { id: "g3q3", type: "multi", prompt: "Select ALL truths about props.", options: ["They are typed, read-only inputs flowing down", "Children change them by writing back", "Callbacks props are how events flow up", "children is a special prop holding whatever was placed between the tags"], answer: [0, 2, 3], explain: "Data flows down, events flow up via callback props. Children never mutate props — writing to one corrupts data the parent owns, outside any render pass.", tags: ["jsx-props-composition"] },
+          { id: "g3q4", type: "single", prompt: "A handler calls setCount(count + 1) three times. count advances by…", options: ["3 — each call applies", "1 — all three read this render's snapshot; the updater form (c => c + 1) chains through the queue", "2 — batching pairs them", "0 — conflicting updates cancel"], answer: [1], explain: "Setters queue requests; the variable in scope is this render's snapshot. 'Computed from old → updater form' is the rule that makes batched updates correct.", tags: ["state-render-model"] },
+        ],
+      },
+      {
+        title: "State, Effects & Data",
+        desc: "Where state lives, how effects synchronize, and the laws of fetched data.",
+        questions: [
+          { id: "g3q5", type: "single", prompt: "A filtered list, its count, and its 'has results' flag should be…", options: ["three useState calls kept in sync by an effect", "derived during render from the source state — stored copies can drift, derived values cannot", "stored in context for speed", "memoized with useMemo in every consumer"], answer: [1], explain: "The three-question filing test: if it's computable from existing state, it's derived state — compute it at render. The sync-effect pattern is the stale-total bug waiting to happen.", tags: ["state-classification"] },
+          { id: "g3q6", type: "single", prompt: "Server state differs from client state because it…", options: ["lives in the browser, so it's faster", "is a cache of someone else's truth: it can go stale without your knowledge, duplicates across components, and loses races", "can't be stored in useState", "must always be refetched on every render"], answer: [1], explain: "Those laws are why fetches need loading/error unions, cancellation, and eventually a cache manager. Treating server data like ordinary client state is how stale UI ships.", tags: ["data-fetching"] },
+          { id: "g3q7", type: "single", prompt: "An effect's cleanup function runs…", options: ["only on unmount", "before every re-run of the effect AND at unmount — it's the second handle on the door", "whenever any state changes", "only in StrictMode"], answer: [1], explain: "Cleanup closes exactly what the body opened, every time the effect re-synchronizes. Effects without cleanup are doors left open — subscriptions leak, timers stack, requests race.", tags: ["effects-discipline"] },
+          { id: "g3q8", type: "boolean", prompt: "StrictMode's dev-only double-run of effects is a bug you should work around by removing StrictMode.", options: ["True", "False"], answer: [1], explain: "False — it's a smoke alarm. Double-running body→cleanup→body exposes missing cleanups that would leak in production. Fix the effect; never remove the alarm.", tags: ["effects-discipline"] },
+        ],
+      },
+      {
+        title: "Forms, Architecture & Tests",
+        desc: "Ownership of keystrokes, placement of state, and tests that earn their keep.",
+        questions: [
+          { id: "g3q9", type: "single", prompt: "'Warning: A component is changing an uncontrolled input to be controlled' means…", options: ["the form needs noValidate", "some render passed value={undefined}, handing the DOM ownership, then took it back — guarantee a string every render (value={x ?? \"\"})", "the input must be inside a <form>", "React 18 requires key on inputs"], answer: [1], explain: "Ownership must be decided once and held. The flip corrupts the input's value and cursor. Controlled means value is ALWAYS a string from the first render.", tags: ["controlled-forms"] },
+          { id: "g3q10", type: "single", prompt: "Errors are computed every render but should be REVEALED…", options: ["on the first keystroke, so users know immediately", "per-field after blur (touched) and everything at submit — mid-word values are unfinished thoughts, not verdicts", "only after the server rejects", "randomly, to keep users alert"], answer: [1], explain: "Computation is pure and constant; revelation has a clock. Yelling 'invalid email' after one character trains users to ignore every error you'll ever show.", tags: ["forms-validation-ux"] },
+          { id: "g3q11", type: "single", prompt: "Typing one character makes the whole app re-render and lag. The first thing to check is…", options: ["whether a context value is an inline object AND consumers lack field-level subscriptions — fast data broadcast through one channel", "adding memo to every component", "moving everything to Redux", "the browser cache"], answer: [0], explain: "A Provider whose value is born every render re-renders every consumer on every change. Split fast-changing data from stable dispatch, or subscribe at field granularity — then measure again.", tags: ["component-patterns"] },
+          { id: "g3q12", type: "single", prompt: "A rename of a button label breaks 40 tests. The diagnosis is…", options: ["the tests are catching a real bug", "the tests assert implementation details (text/class names) instead of behavior — rewrite them around roles and user events", "Testing Library is misconfigured", "the component should be memoized"], answer: [1], explain: "Tests are a contract about behavior, not a snapshot of markup. Query by role/label, act with user events, assert on outcomes — refactors then leave them green.", tags: ["testing-react"] },
+        ],
+      },
+      {
+        title: "Performance & Profiling",
+        desc: "The cost ladder, the frame budget, and the loop that turns feelings into numbers.",
+        questions: [
+          { id: "g3q13", type: "single", prompt: "The profiler shows many small green renders but the app still janks. The cost lives…", options: ["in React's scheduler", "below React: commit, layout, and paint — record the browser Performance tab and hunt the long task", "in the network", "in StrictMode"], answer: [1], explain: "The React Profiler meters render + diff only. Frozen UI with innocent React bars is a main-thread problem: one >50ms synchronous block is blocking paint and input alike.", tags: ["profiling-production"] },
+          { id: "g3q14", type: "single", prompt: "A 1,000-row list janks while typing. The fix order is…", options: ["virtualize immediately", "identity first (data keys, memoized derived list, stable callbacks) → memo rows, measured → virtualize only at true scale", "memo the parent", "move filtering to a web worker first"], answer: [1], explain: "Without stable identity, memo comparisons lose and the diff misbehaves; virtualization would hide those bugs instead of fixing them. The ladder is identity → memo → window.", tags: ["rendering-performance"] },
+          { id: "g3q15", type: "multi", prompt: "Select ALL statements that are TRUE.", options: ["The 16.6ms frame budget is the pass/fail line for interaction response", "memo helps when props keep fresh identities every render", "LCP measures when the main content became visible", "Profiling the dev build gives trustworthy numbers"], answer: [0, 2], explain: "memo compares by reference, so fresh inline props defeat it every time. And dev builds double-render, skip minification, and add checks — throttle a production build before trusting any number.", tags: ["rendering-performance", "profiling-production"] },
         ],
       },
     ],
@@ -522,6 +577,25 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "Snapshots as strategy", back: "Fast to write, fail as diff-noise walls reviewers approve blindly. State the contract in English with behavior assertions instead.", lesson: "testing-react" },
     ],
   },
+  {
+    id: "react-performance", title: "Performance & Profiling", blurb: "Volume III · M6 — the cost ladder, the frame budget, and the loop that ends guessing.",
+    cards: [
+      { front: "The cost ladder", back: "render (cheap) → diff (cheap) → commit (DOM work) → layout/paint (often the real cost). Fix the rung that's heavy — in diagnostic order.", lesson: "rendering-performance" },
+      { front: "Re-render ≠ repaint", back: "Rendering builds descriptions; the browser only pays for what the diff commits. A flood of tiny green profiler bars is usually fine.", lesson: "rendering-performance" },
+      { front: "The frame budget", back: "16.6ms per frame at 60fps — the pass/fail line for handler + render + diff + commit + paint. Cross it and the user feels lag.", lesson: "rendering-performance" },
+      { front: "memo is a last resort", back: "Order: (1) measure, (2) move state down so the parent stops re-rendering, (3) stabilize identities, (4) memo. It compares by reference and costs a comparison.", lesson: "rendering-performance" },
+      { front: "Why inline props defeat memo", back: "Anything born during render (object, array, arrow) has fresh identity — the comparison always fails. Stabilize with useMemo/useCallback on honest deps.", lesson: "rendering-performance" },
+      { front: "List identity ladder", back: "Data keys → memoized derived list → stable row callbacks, THEN memo(Row), THEN virtualize at scale. Skipping ahead hides bugs instead of fixing them.", lesson: "rendering-performance" },
+      { front: "Virtualization", back: "Render only the visible window + buffer behind an honest-height spacer: 20,000 rows cost like ~20. Earned at scale; complexity (focus, dynamic heights) is real.", lesson: "rendering-performance" },
+      { front: "The five-step loop", back: "reproduce → record → verdict sentence ('X took Y ms because Z') → change ONE thing → re-measure. No number moved? Hypothesis dies; next.", lesson: "profiling-production" },
+      { front: "Profiler verdict A: wasted renders", back: "Many green bars; 'parent rendered' or fresh-identity 'props changed'. Fix: move state down, stabilize identities, memo last.", lesson: "profiling-production" },
+      { front: "Profiler verdict B: expensive render", back: "One wide box — the function itself is slow. Fix: memoize the computation, move it out of render, compute where the input changes.", lesson: "profiling-production" },
+      { front: "Profiler verdict C: expensive commit", back: "Small React bars, frame still over budget. Fix below React: fewer DOM nodes, virtualize, simpler CSS, no layout thrash.", lesson: "profiling-production" },
+      { front: "Long task", back: "Synchronous main-thread work >~50ms — nothing paints or responds while it runs. Invisible to React's Profiler; the browser Performance tab is ground truth.", lesson: "profiling-production" },
+      { front: "LCP / INP / CLS", back: "When main content became visible / how fast the screen answers an interaction / whether layout jumped. Field (RUM) is what users felt; lab numbers must agree with it.", lesson: "profiling-production" },
+      { front: "Never profile the dev build", back: "StrictMode double-renders, no minification, dev checks — a simulation. Throttle a production build 4×, THEN trust the numbers.", lesson: "profiling-production" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -616,6 +690,13 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Behavior test", def: "Asserts the observable contract through user-shaped actions; survives internal refactors.", domain: "React", lesson: "testing-react" },
   { term: "Query hierarchy", def: "Role → label → text → test-id; each step down moves further from the user.", domain: "React", lesson: "testing-react" },
   { term: "findBy*", def: "An async Testing Library query that polls until the element appears or times out.", domain: "React", lesson: "testing-react" },
+  { term: "Cost ladder", def: "render → diff → commit → layout/paint; fix the rung that's heavy, in diagnostic order.", domain: "React", lesson: "rendering-performance" },
+  { term: "Frame budget", def: "16.6ms per frame at 60fps — the objective line for interaction responsiveness.", domain: "React", lesson: "rendering-performance" },
+  { term: "Virtualization", def: "Rendering only the visible window (+ buffer) so DOM size stays constant at any list length.", domain: "React", lesson: "rendering-performance" },
+  { term: "Profiling loop", def: "Reproduce → record → verdict → one change → re-measure, until the number is under budget.", domain: "React", lesson: "profiling-production" },
+  { term: "Flame graph", def: "Boxes = component renders; width = time, depth = tree depth.", domain: "React", lesson: "profiling-production" },
+  { term: "Long task", def: "Synchronous main-thread work >~50ms that blocks paint and input; invisible to React's Profiler.", domain: "React", lesson: "profiling-production" },
+  { term: "Core Web Vitals", def: "LCP (loading), INP (interaction), CLS (stability) — the users' performance numbers.", domain: "React", lesson: "profiling-production" },
 ];
 
 /* ————— troubleshooting ————— */
@@ -650,6 +731,9 @@ export const TROUBLESHOOTING: TroubleEntry[] = [
   { id: "context-rerender-storm", symptom: "The whole tree re-renders on every keystroke or tick after a value was moved into context; the Profiler shows components lighting up that never read the value.", layer: "React context identity/subscription", causes: ["The provider value is built inline — a fresh object identity every provider render", "A fast-changing field shares a context with stable dispatchers, so every consumer wakes on every tick"], diagnose: ["Profiler → 'Why did this render?' on a consumer that only dispatches", "Check the provider's value expression for inline object/array literals"], fix: "Memoize the provider value; SPLIT fast-changing data from stable dispatch into separate contexts; keep high-churn state out of context entirely.", prevent: "Apply the wide+deep+slow qualification before publishing anything; lint against inline provider values.", related: "component-patterns" },
   { id: "usecontext-undefined", symptom: "Cannot read properties of undefined (reading 'user') inside a component that calls useContext(MyContext) — or the hook silently returns undefined.", layer: "React context boundaries", causes: ["The consumer renders ABOVE (or outside) the provider", "The context's default is undefined and no boundary check exists"], diagnose: ["Print the component tree: is the consumer a descendant of the provider?", "Check createContext's default value"], fix: "Move the provider above the consumer; wrap the context in a hook that THROWS with a clear message outside its provider.", prevent: "Ship every context as provider+hook in one module, with the hook enforcing the boundary at runtime.", related: "component-patterns" },
   { id: "tests-break-on-refactor", symptom: "Renaming a class, extracting a child, or swapping a wrapper div turns dozens of tests red although the app behaves identically.", layer: "Test style / coupling", causes: ["Tests query by class names, DOM structure (querySelector), or component internals/props", "Snapshot suites diffing whole markup trees"], diagnose: ["Read the failures: do they assert structure or observable output?", "Refactor one component's markup; count tests that die with zero behavior change"], fix: "Rewrite queries through the user's vocabulary (getByRole/Label/Text), assert observable output, ban container.querySelector via lint.", prevent: "PR rule: a pure refactor breaking tests means the tests are debt — fix them in the same PR. testing-library + no-node-access lint enforce the style.", related: "testing-react" },
+  { id: "list-jank-on-type", symptom: "A search box above a large list lags several keystrokes behind; typing feels heavy.", layer: "React list identity / render cost", causes: ["Rows keyed by index while the list filters on every keystroke", "Fresh inline callbacks per row defeating any memo", "All rows re-render per character and the update chain crosses the frame budget"], diagnose: ["Profiler: record one keystroke; count rendered rows vs the frame budget", "Check keys, the derived list's identity, and row callback identity"], fix: "Identity first — data keys, a memoized filtered list, one stable row handler — then memo(Row); virtualize only at thousands of rows.", prevent: "For lists over ~100 rows, write the identity story before the styling; measure before reaching for virtualization.", related: "rendering-performance" },
+  { id: "memo-no-effect", symptom: "memo() was added 'for performance' but the profiler still shows the component rendering every parent render.", layer: "React memo / identity", causes: ["A prop (inline object/array/arrow, or children) gets a fresh identity each render, so the shallow compare always fails", "The real cost isn't rendering — it's commit/paint, which memo cannot touch"], diagnose: ["Profiler → 'Why did this render?' — which props changed, and are their references new each time?", "Compare React render times vs total frame time — is the heavy rung below React?"], fix: "Stabilize identities (useMemo/useCallback with honest deps) or move state down so the parent stops re-rendering; if commit/paint is the cost, reduce DOM work instead.", prevent: "memo is step four, not step one: measure → restructure → stabilize → memo. Memoized components with inline props are a comparison you always lose.", related: "rendering-performance" },
+  { id: "slow-open-stutter", symptom: "Opening a modal/screen freezes the UI for a beat; the React Profiler shows tiny render times.", layer: "Main-thread long task", causes: ["Eager synchronous work at mount (building/sorting large collections during render or in a useMemo)", "Heavy layout work forced by the first paint of complex markup"], diagnose: ["Record the click in the browser Performance tab (not the React Profiler)", "Find the >50ms block on the main thread; expand its call stack"], fix: "Defer the work: render the shell instantly and build data lazily/paginated, in an idle callback, or in a worker; simplify first-paint markup.", prevent: "Treat any synchronous block over ~50ms as a defect; profile in the browser tab whenever React's numbers look innocent but users disagree.", related: "profiling-production" },
 ];
 
 /* ————— batch queue ————— */
@@ -672,7 +756,7 @@ export const BATCHES: Batch[] = [
   { id: "B-14", title: "React · Effects Discipline & Data", scope: "V3·M3", status: "shipped", summary: "Effects as synchronization (the concierge model, deps-as-contract, cleanup as the second handle), the infinite-loop and fresh-identity dep traps with the 'fires every render' debugging lab, the three misuse catalog, and StrictMode as smoke alarm; then server state under its laws — the 4-state request union, the out-of-order race-condition debugging lab with AbortController cleanup, and the cache-manager horizon — 12 quiz questions, 2 debugging labs." },
   { id: "B-15", title: "React · Forms & Controlled Inputs", scope: "V3·M4", status: "shipped", summary: "The controlled-component loop (value down, intent up, one owner always — including the 'uncontrolled to controlled' ownership-flip debugging lab), whole forms as one object/reducer with cross-field rules and derive-don't-store discipline; then validation as conversation — pure validate(), the touched/submitted revelation gate, aria-invalid + describedby + live-region wiring, and the full five-step submit pipeline with the 'button that does nothing' silent-exit debugging lab — 12 quiz questions, 2 debugging labs." },
   { id: "B-16", title: "React · Component Architecture & Testing", scope: "V3·M5", status: "shipped", summary: "The three questions that place state (who/how far/how fast), props vs lift vs context with the PA-system model, the 'everything re-renders when I type' context debugging lab, compound components with baked-in ARIA roles, custom hooks as contract-bearing logic packages (render-props/HOC outdated pair); then behavior-first testing — the query hierarchy, user-event act loops, brittle-test anatomy with the '40 tests break on a rename' debugging lab, boundary mocking + findBy async flows — 12 quiz questions, 2 debugging labs." },
-  { id: "B-17", title: "React · Performance, Profiling & Gauntlet", scope: "V3·M6", status: "next", summary: "What a render costs, memo measured not guessed, lists at scale, the profiler loop — closing Volume III with a React Gauntlet spanning all six modules." },
-  { id: "B-18", title: "Web Architecture", scope: "Volume IV", status: "queued", summary: "REST, AuthN/AuthZ, caching & security — the browser/server boundary made rigorous." },
+  { id: "B-17", title: "React · Performance, Profiling & Gauntlet", scope: "V3·M6", status: "shipped", summary: "The cost ladder (render → diff → commit → paint) with the 16.6ms frame budget as judge, memo as a measured last resort and the identity rules that make it win, the 'list that janks while you type' debugging lab, virtualization as the scale answer; then the five-step profiling loop, the three profiler verdicts, the 'modal that stutters on open' long-task debugging lab, and Core Web Vitals — 12 quiz questions, 2 debugging labs. Closes Volume III with the 15-question React Gauntlet." },
+  { id: "B-18", title: "Web Architecture", scope: "Volume IV", status: "next", summary: "REST & API contracts that age well, authentication vs authorization (cookies, sessions, tokens), caching & security fundamentals (XSS, CSRF, trust boundaries) — the browser/server boundary made rigorous. Flesh out V4's three modules with full lessons and a Web Architecture gauntlet." },
   { id: "B-19", title: "PostgreSQL", scope: "Volume V", status: "queued", summary: "Modeling, SQL, and performance — relational data done properly." },
 ];

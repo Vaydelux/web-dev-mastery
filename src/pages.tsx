@@ -61,6 +61,7 @@ function ContinueCard() {
   const { prog } = useProgress();
   const next = orderedContent().find((l) => !prog.lessons[l.id]?.done);
   const battle = next ? BATTLE_REFS.find((b) => b.volumeId === next.volume && b.afterModule === `v${next.volume}m${next.module}`) : undefined;
+  const owedBattle = !next ? BATTLE_REFS.find((b) => !(prog.battles[b.id]?.passed)) : undefined;
   return (
     <div className="card-hard mb-6 flex flex-col gap-4 border-acc/40 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
       <div className="min-w-0">
@@ -71,7 +72,10 @@ function ContinueCard() {
             <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-faint">volume {next.volume} · module {next.module} · ~{next.minutes} min</p>
           </>
         ) : (
-          <h3 className="font-display text-lg font-bold text-ink sm:text-xl">You've cleared every authored lesson.</h3>
+          <>
+            <h3 className="font-display text-lg font-bold text-ink sm:text-xl">You've cleared every authored lesson.</h3>
+            {owedBattle && <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-err">one gauntlet still stands between you and certification</p>}
+          </>
         )}
       </div>
       <div className="flex shrink-0 flex-wrap items-center gap-2.5">
@@ -85,7 +89,12 @@ function ContinueCard() {
             <Icons.sword size={14} /> boss battle
           </Link>
         )}
-        {!next && <Link to="/queue" className="link-acc inline-flex items-center gap-1.5 font-mono text-[12.5px] font-semibold"><Icons.clock size={14} /> generation queue →</Link>}
+        {!next && owedBattle && (
+          <Link to={`/battle/${owedBattle.id}`} className="group inline-flex items-center gap-2 rounded-lg border border-err/50 bg-errsoft px-5 py-3 font-mono text-[13px] font-semibold text-err transition-all hover:-translate-y-0.5">
+            <Icons.sword size={15} /> take the {owedBattle.id === "gauntlet-m1" ? "Foundation" : owedBattle.id === "gauntlet-m2" ? "Builder" : owedBattle.id === "gauntlet-m3" ? "React" : ""} gauntlet
+          </Link>
+        )}
+        {!next && !owedBattle && <Link to="/queue" className="link-acc inline-flex items-center gap-1.5 font-mono text-[12.5px] font-semibold"><Icons.clock size={14} /> generation queue →</Link>}
       </div>
     </div>
   );
@@ -849,6 +858,7 @@ const LOG = [
   { batch: "Batch 14 · Volume III — Effects Discipline & Data", date: "2026-02", items: ["effects-discipline: the concierge model, deps-as-contract, cleanup as the second handle, infinite-loop + fresh-identity dep traps ('fires every render' lab), misuse catalog, StrictMode as smoke alarm", "data-fetching: server-state laws, the 4-state request union, the out-of-order race lab with AbortController cleanup, cache-manager horizon", "react-effects-data flashcards (14) · 7 glossary terms · 3 troubleshooting entries · 12 quiz questions · 2 debugging labs"] },
   { batch: "Batch 15 · Volume III — Forms & Controlled Inputs", date: "2026-02", items: ["controlled-forms: the value-down/intent-up loop for every input type, one-form-one-ledger reducers with cross-field rules, the uncontrolled→controlled ownership-flip debugging lab", "forms-validation-ux: pure validate() + touched/submitted revelation gate, aria-invalid/describedby/live-region wiring, the five-step submit pipeline, the 'button that does nothing' silent-exit debugging lab", "react-forms flashcards (14) · 7 glossary terms · 3 troubleshooting entries · 12 quiz questions · 2 debugging labs · 44 lessons implemented"] },
   { batch: "Batch 16 · Volume III — Component Architecture & Testing", date: "2026-02", items: ["component-patterns: the three placement questions, props vs lift vs context (PA-system model), compound components with baked-in ARIA roles, custom hooks as contract-bearing packages, render-props/HOC outdated pair, the 'everything re-renders when I type' context debugging lab", "testing-react: the query hierarchy, user-event act loops, brittle-test anatomy + the '40 tests break on a rename' debugging lab, boundary mocking, findBy async flows, the earn-its-keep filter", "react-architecture flashcards (16) · 7 glossary terms · 3 troubleshooting entries · 12 quiz questions · 2 debugging labs · 46 lessons implemented"] },
+  { batch: "Batch 17 · Volume III — Performance, Profiling & Gauntlet", date: "2026-02", items: ["rendering-performance: the cost ladder + 16.6ms frame budget, memo as measured last resort, the identity rules for fast lists, the 'list that janks while you type' debugging lab, virtualization's windowing math, PureComponent-era outdated pair", "profiling-production: the five-step loop, Profiler's three verdicts, the 'modal that stutters on open' long-task debugging lab, Core Web Vitals (LCP/INP/CLS), dev-build-profiling trap", "React Gauntlet (15 Q / 4 fronts across all six modules) closes Volume III · react-performance flashcards (14) · 7 glossary terms · 3 troubleshooting entries · 12 quiz questions · 2 debugging labs · 48 lessons implemented · React Phase Review recorded in COURSE_STATUS.md"] },
 ];
 
 export function StatusPage() {
@@ -870,7 +880,7 @@ export function StatusPage() {
       </div>
       <div className="card mt-8 border-l-4 border-acc p-5">
         <p className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accink">Recommended next batch</p>
-        <p className="text-[14.5px] leading-[1.75] text-soft"><strong className="font-semibold text-ink">Batch 17 — React · Performance, Profiling & Gauntlet (V3·M6):</strong> what a render costs, memo measured not guessed, lists at scale, the profiler loop — closing Volume III with a React Gauntlet spanning all six modules. Full scope on the <Link to="/queue" className="link-acc font-semibold">generation queue</Link> — it is the ordering authority.</p>
+        <p className="text-[14.5px] leading-[1.75] text-soft"><strong className="font-semibold text-ink">Batch 18 — Web Architecture (Volume IV):</strong> REST & API contracts that age well, authentication vs authorization (cookies, sessions, tokens), and caching & security fundamentals — the browser/server boundary made rigorous, closing with a Web Architecture gauntlet. Full scope on the <Link to="/queue" className="link-acc font-semibold">generation queue</Link> — it is the ordering authority.</p>
       </div>
     </RefShell>
   );
