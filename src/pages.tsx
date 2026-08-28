@@ -91,7 +91,7 @@ function ContinueCard() {
         )}
         {!next && owedBattle && (
           <Link to={`/battle/${owedBattle.id}`} className="group inline-flex items-center gap-2 rounded-lg border border-err/50 bg-errsoft px-5 py-3 font-mono text-[13px] font-semibold text-err transition-all hover:-translate-y-0.5">
-            <Icons.sword size={15} /> take the {{ "gauntlet-m1": "Foundation", "gauntlet-m2": "Builder", "gauntlet-m3": "React", "gauntlet-m4": "Web Architecture" }[owedBattle.id] ?? ""} gauntlet
+            <Icons.sword size={15} /> take the {{ "gauntlet-m1": "Foundation", "gauntlet-m2": "Builder", "gauntlet-m3": "React", "gauntlet-m4": "Web Architecture", "gauntlet-m5": "PostgreSQL", "gauntlet-m6": "Supabase", "gauntlet-m7": "Next.js" }[owedBattle.id] ?? ""} gauntlet
           </Link>
         )}
         {!next && !owedBattle && <Link to="/queue" className="link-acc inline-flex items-center gap-1.5 font-mono text-[12.5px] font-semibold"><Icons.clock size={14} /> generation queue →</Link>}

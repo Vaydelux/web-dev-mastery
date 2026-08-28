@@ -497,6 +497,62 @@ export const BATTLES: BossBattle[] = [
       },
     ],
   },
+  {
+    id: "gauntlet-m7",
+    title: "Next.js Gauntlet",
+    subtitle: "Volume VII cumulative · 15 questions · pass ≥ 70%",
+    passPct: 70,
+    intro: [
+      "Volume VII moved your app onto two computers and made you the border agent: the filesystem became the route table, every component chose a side (Server or Client), secrets learned they only travel one way, and freshness became a decision you declare — not a default you inherit.",
+      "This gauntlet mixes both modules the way production mixes them: a caching choice that shows one user another's data is a security bug; a hydration mismatch is a correctness alarm; a missing revalidation is an incident waiting for a TTL. Several answers are 'technically possible but professionally wrong' — choose what you'd defend in review.",
+    ],
+    rules: [
+      "15 questions across four fronts; you need 70% to pass.",
+      "Every wrong answer links back to the lesson that teaches it — remediate, then retake.",
+      "When two answers seem defensible, choose the one that keeps secrets on the server and fresh data on the screen.",
+    ],
+    sections: [
+      {
+        title: "The Map: Routing & Rendering",
+        desc: "Folders as routes, layouts as persistence, streaming as the delivery model.",
+        questions: [
+          { id: "g7q1", type: "single", prompt: "Which file renders the URL /dashboard/projects/42?", options: ["app/dashboard/projects/[id]/page.tsx", "app/dashboard/projects/page.tsx", "app/dashboard/page.tsx", "app/layout.tsx"], answer: [0], explain: "Folders are route segments; [id] captures the dynamic value (params.id === '42'); page.tsx is what makes a folder a URL. The parent layouts wrap it but are not the route's content.", tags: ["nextjs-app-router"] },
+          { id: "g7q2", type: "single", prompt: "You navigate from /dashboard/projects/42 to /dashboard/projects/43. What happens to the layouts?", options: ["they remount and lose their state", "both persist — only the [id] page re-renders", "the root layout persists but the dashboard layout remounts", "everything re-renders including the HTML shell"], answer: [1], explain: "Layouts persist across navigations of the routes they wrap; only the page segment changes. That persistence is why providers and shared state live in layouts.", tags: ["nextjs-app-router"] },
+          { id: "g7q3", type: "single", prompt: "While a slow async page is still rendering on the server, the user instantly sees…", options: ["a blank screen until it finishes", "the layouts plus the loading.tsx fallback — streaming sends the shell first", "an error boundary", "a client-rendered skeleton from localStorage"], answer: [1], explain: "Streaming sends what's ready now (layouts + loading fallbacks) and fills in the async pieces as they resolve. loading.tsx is the visible placeholder for its sibling page.", tags: ["nextjs-app-router"] },
+          { id: "g7q4", type: "multi", prompt: "Select ALL things that are TRUE of Server Components.", options: ["they are the default component type", "they can await the database directly", "they ship zero JavaScript to the browser", "they can call useState and attach onClick handlers"], answer: [0, 1, 2], explain: "Server Components run once on the server: direct data access, secrets legal, no JS shipped. Hooks and handlers are browser-only — those require a 'use client' file.", tags: ["nextjs-app-router"] },
+        ],
+      },
+      {
+        title: "The Border: Server vs Client & Secrets",
+        desc: "Execution boundaries, the two keys, and the one direction secrets travel.",
+        questions: [
+          { id: "g7q5", type: "single", prompt: "The 'use client' directive marks…", options: ["a performance hint", "an execution boundary: this file and everything it imports ships to and runs in the browser", "a CSS-in-JS mode", "that the component must be rendered inside Suspense"], answer: [1], explain: "It's a boundary, not a hint. Everything reachable from a 'use client' file joins the client bundle — which is exactly why secrets must never be imported there.", tags: ["server-client-boundary", "nextjs-app-router"] },
+          { id: "g7q6", type: "single", prompt: "A Client Component needs to delete a database record. The correct architecture is…", options: ["import the server client and delete directly from the browser", "call a Server Action; the deletion runs on the server where the secret lives, and the client sends only intent", "store the service key in localStorage and use it on click", "delete via the publishable client with no authorization check"], answer: [1], explain: "Privileged operations live server-side (Server Actions / Route Handlers); the browser invokes them, never embodies them. The client sends intent; the server validates, authorizes, and executes.", tags: ["server-client-boundary"] },
+          { id: "g7q7", type: "single", prompt: "Which value is acceptable behind a NEXT_PUBLIC_ env var?", options: ["SUPABASE_SERVICE_ROLE_KEY", "the publishable/anon key", "a database connection string with credentials", "a signing secret for webhooks"], answer: [1], explain: "NEXT_PUBLIC_ ships a value into every browser bundle, so only public-by-design values belong there. The anon key is safe because RLS limits it; anything privileged behind NEXT_PUBLIC_ is leaked by construction.", tags: ["server-client-boundary", "supabase-foundation"] },
+          { id: "g7q8", type: "single", prompt: "What does `import \"server-only\"` at the top of a module do?", options: ["makes the module run faster", "fails the build if a client component imports this module — a guard at the border", "enables server-side caching", "marks the module as deprecated"], answer: [1], explain: "It's a tripwire: importing a server-only module from a client boundary throws at build time, catching secret-leaks before they ship.", tags: ["server-client-boundary"] },
+        ],
+      },
+      {
+        title: "The Handoff: Hydration",
+        desc: "Two renders that must agree, and the split-brain failures when they don't.",
+        questions: [
+          { id: "g7q9", type: "single", prompt: "Hydration is…", options: ["the server sending HTML", "the browser re-running components to take over the server-rendered HTML, which must match", "minifying the page for transfer", "warming the full-route cache"], answer: [1], explain: "The server ships HTML for speed; the browser then re-renders to attach interactivity. The two renders must agree, or React flags a mismatch and may discard the server's work.", tags: ["server-client-boundary"] },
+          { id: "g7q10", type: "single", prompt: "Which value, read during render, is LEAST likely to cause a hydration mismatch?", options: ["new Date().getHours()", "window.innerWidth", "a prop passed down from a Server Component", "Math.random()"], answer: [2], explain: "A prop has one value, computed once on the server and handed to the client — both renders see the same thing. Time, randomness, and window differ between the two computers.", tags: ["server-client-boundary"] },
+          { id: "g7q11", type: "single", prompt: "The correct fix for a 'rendered different on client' mismatch is…", options: ["add suppressHydrationWarning", "make both renders agree: stable output during render, real value in useEffect after mount", "mark the whole page 'use client'", "disable server rendering for the route"], answer: [1], explain: "Agree first, then update. The other options silence or sidestep a real disagreement between the HTML shown and the app running — which also degrades SEO and causes visible flicker.", tags: ["server-client-boundary"] },
+        ],
+      },
+      {
+        title: "Freshness: Caches & Revalidation",
+        desc: "The three copies of the truth, and the mutations that must declare what they dirty.",
+        questions: [
+          { id: "g7q12", type: "single", prompt: "After a Server Action updates a product, the database is correct but the page still shows the old value. The most likely cause is…", options: ["the transaction rolled back", "the mutation didn't revalidate the caches that render that data (its dirty set)", "React state is broken", "the browser cached the DNS record"], answer: [1], explain: "The write succeeded; a cached copy (data cache or rendered route) was never told it's stale. Mutations must declare their dirty set via revalidatePath/revalidateTag.", tags: ["nextjs-data-mutations"] },
+          { id: "g7q13", type: "single", prompt: "next: { revalidate: 60 } on a fetch means…", options: ["the request is delayed 60 seconds", "serve the cached result for up to 60s, then refresh it", "retry the request for 60 seconds on failure", "cache it only on the client for 60s"], answer: [1], explain: "It's a freshness budget: cached output is fresh for 60 seconds; after that, the next request triggers revalidation. You chose 'a minute of staleness is acceptable'.", tags: ["nextjs-data-mutations"] },
+          { id: "g7q14", type: "single", prompt: "A value held in a Client Component's useState will update after a Server Action mutates the database…", options: ["automatically, via revalidation", "never on its own — you must refetch, reconcile, or subscribe (e.g. Realtime)", "only after a full page reload", "only in development"], answer: [1], explain: "Server revalidation reaches server-rendered copies, not browser-held state. Client state needs a pull (refetch) or a push (Realtime) to learn about server changes.", tags: ["nextjs-data-mutations", "data-fetching"] },
+          { id: "g7q15", type: "multi", prompt: "Select ALL TRUE statements about error.tsx.", options: ["It must be a Client Component", "It catches runtime errors in its route segment", "It receives an error object and a reset() to retry", "It catches build-time and server-deploy errors"], answer: [0, 1, 2], explain: "error.tsx is a client-side runtime boundary scoped to a route segment, with reset() for recovery. Build/deploy errors happen outside the running app and are not caught here.", tags: ["nextjs-data-mutations"] },
+        ],
+      },
+    ],
+  },
 ];
 export const getBattle = (id: string): BossBattle | undefined => BATTLES.find((b) => b.id === id);
 
@@ -880,6 +936,29 @@ export const FLASHCARD_SETS: FlashcardSet[] = [
       { front: "Service role is a crowbar when…", back: "…used to silence a failing policy. Fix the policy instead; reserve service role for wrapped, reviewed, server-only exceptions.", lesson: "rls-testing-discipline" },
     ],
   },
+  {
+    id: "nextjs-foundations", title: "Next.js App Router Foundations", blurb: "Volume VII — the two-computer map, the border, the handoff, and the freshness decisions.",
+    cards: [
+      { front: "The App Router", back: "The filesystem IS the route table: folders are segments, page.tsx makes a folder a URL, [param] folders capture dynamic values. No central route config.", lesson: "nextjs-app-router" },
+      { front: "layout vs page", back: "Layouts PERSIST across navigations (providers, shared state). Pages are the route's content and re-render on navigation. That persistence split decides where state lives.", lesson: "nextjs-app-router" },
+      { front: "Server Component", back: "Default component type. Runs once on the server, can await the DB and read secrets, ships zero JS — but no hooks, handlers, or browser APIs.", lesson: "nextjs-app-router" },
+      { front: "Client Component", back: "'use client' at the top. Runs in the browser, fully interactive, but it's PUBLIC code — no secrets, no privileged DB access.", lesson: "nextjs-app-router" },
+      { front: "The boundary rule", back: "Data flows DOWN across 'use client' as props; secrets NEVER cross. A Server Component can host a Client Component, passing results — never credentials.", lesson: "nextjs-app-router", },
+      { front: "Streaming", back: "Send the shell (layouts + loading.tsx) immediately; paint async pieces as they resolve. Speed without discarding server rendering.", lesson: "nextjs-app-router" },
+      { front: "loading.tsx", back: "The instant fallback rendered while its sibling page.tsx is still being prepared on the server — the visible face of streaming.", lesson: "nextjs-app-router" },
+      { front: "Hydration", back: "The browser re-rendering to take over the server's HTML. Iron rule: the two renders must match, or the takeover disagrees with the page it's taking over.", lesson: "server-client-boundary" },
+      { front: "The mismatch fix", back: "Agree first, then update: stable output during render, real value in useEffect after mount. Never suppressHydrationWarning — it's a correctness alarm.", lesson: "server-client-boundary" },
+      { front: "Mismatch sources", back: "Anything that differs between the two computers: new Date(), Math.random(), window dimensions, localStorage. Keep them out of the render phase.", lesson: "server-client-boundary" },
+      { front: "Two Supabase clients", back: "Browser client (publishable key, realtime/RLS-reads) vs Server client (session/service-backed, secrets legal). 'use client' files may only build the publishable one.", lesson: "server-client-boundary" },
+      { front: "NEXT_PUBLIC_ means…", back: "'publish this value to every browser bundle.' Only the anon/publishable key may carry it. A service key behind NEXT_PUBLIC_ is a root password in a window.", lesson: "server-client-boundary" },
+      { front: "Three server doors", back: "Server Actions (your UI calls them), Route Handlers (HTTP/webhooks call them), server fetch (your render calls it). All run server-side; all receive untrusted input — validate at each door.", lesson: "server-client-boundary" },
+      { front: "revalidatePath vs revalidateTag", back: "Path busts a route's rendered output; Tag busts data-cache entries by name. Most mutations need both — the data AND the page showing it.", lesson: "nextjs-data-mutations" },
+      { front: "The three freshness layers", back: "Data cache (fetch results), full-route cache (rendered HTML), client state (useState). Every stale-data bug names one of the three.", lesson: "nextjs-data-mutations" },
+      { front: "The dirty set", back: "Every mutation must declare which routes/tags it dirties and revalidate exactly that. Shared data in layouts needs tags, since it appears on many paths.", lesson: "nextjs-data-mutations" },
+      { front: "Client state never self-updates", back: "Server revalidation can't reach a browser's useState. It needs a pull (refetch) or a push (Realtime) — or lift the data back to a Server Component.", lesson: "nextjs-data-mutations" },
+      { front: "error.tsx", back: "A CLIENT runtime-error boundary scoped to its route segment; gets error + reset(). Catches runtime errors, not build/deploy errors.", lesson: "nextjs-data-mutations" },
+    ],
+  },
 ];
 export const getSet = (id: string): FlashcardSet | undefined => FLASHCARD_SETS.find((s) => s.id === id);
 
@@ -1036,6 +1115,20 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Authorization matrix", def: "The per-table four-cell test (A-reads-B, A-writes-B, anon-reads, anon-writes) plus owner positive controls.", domain: "Supabase", lesson: "rls-testing-discipline" },
   { term: "Over-grant", def: "A policy too permissive; silent; found only by adversarial matrix tests.", domain: "Supabase", lesson: "rls-testing-discipline" },
   { term: "Over-denial", def: "A policy too strict; loud; debugged via the set-role loop, never by disabling RLS.", domain: "Supabase", lesson: "rls-testing-discipline" },
+  { term: "App Router", def: "Next.js's file-system router: folders are routes, special files (page/layout/loading/error) are roles.", domain: "Next.js", lesson: "nextjs-app-router" },
+  { term: "Server Component", def: "Default component type; runs on the server, ships zero JS, can await data and read secrets.", domain: "Next.js", lesson: "nextjs-app-router" },
+  { term: "Client Component", def: "'use client' component; runs in the browser, fully interactive, must stay secret-free.", domain: "Next.js", lesson: "nextjs-app-router" },
+  { term: "layout.tsx", def: "Persistent wrapper for a route segment; survives navigation; home for providers and shared state.", domain: "Next.js", lesson: "nextjs-app-router" },
+  { term: "Streaming", def: "Sending the shell immediately and filling async pieces in as they resolve on the server.", domain: "Next.js", lesson: "nextjs-app-router" },
+  { term: "Hydration", def: "The browser re-rendering to take over server HTML; the two renders must match.", domain: "Next.js", lesson: "server-client-boundary" },
+  { term: "Hydration mismatch", def: "Server and client disagreeing about the initial output; a correctness alarm, not a cosmetic warning.", domain: "Next.js", lesson: "server-client-boundary" },
+  { term: "server-only", def: "A package that fails the build if a client boundary imports a server module — a guard at the border.", domain: "Next.js", lesson: "server-client-boundary" },
+  { term: "Server Action", def: "A server function callable from Client Components; the secure UI mutation door.", domain: "Next.js", lesson: "server-client-boundary" },
+  { term: "Route Handler", def: "An app/api HTTP endpoint for webhooks and integrations.", domain: "Next.js", lesson: "server-client-boundary" },
+  { term: "Revalidation", def: "Invalidating cached output (by path or tag) so the next render refetches from the source.", domain: "Next.js", lesson: "nextjs-data-mutations" },
+  { term: "Data cache", def: "Memoized fetch/query results keyed by request; controlled per-fetch with cache and next.revalidate.", domain: "Next.js", lesson: "nextjs-data-mutations" },
+  { term: "Full-route cache", def: "Stored rendered output of a page; busted by revalidatePath after mutations.", domain: "Next.js", lesson: "nextjs-data-mutations" },
+  { term: "Dirty set", def: "The routes and tags a mutation dirties; each must be revalidated or stale copies persist.", domain: "Next.js", lesson: "nextjs-data-mutations" },
 ];
 
 /* ————— troubleshooting ————— */
