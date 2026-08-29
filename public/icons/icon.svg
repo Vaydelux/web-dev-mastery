@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Full-bleed tile so maskable cropping keeps the field. Content sits in
+       the central 60% safe zone (Android masks to a circle/squircle). -->
+  <rect width="512" height="512" fill="#101814"/>
+  <path d="M112 160 L208 256 L112 352" fill="none" stroke="#3fd68f" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="264" y="160" width="136" height="46" rx="12" fill="#e3a94e"/>
+  <rect x="264" y="306" width="136" height="46" rx="12" fill="#3fd68f"/>
+</svg>

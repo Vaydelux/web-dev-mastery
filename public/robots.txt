@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap-less SPA — all content is served from the single index.
